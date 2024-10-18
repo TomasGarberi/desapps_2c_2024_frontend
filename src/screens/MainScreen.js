@@ -1,22 +1,95 @@
-// src/screens/MainScreen.js
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-export default function MainScreen() {
+export default function MainScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Pantalla Principal</Text>
-    </View>
+    <LinearGradient
+      colors={['#FF6F61', '#3B3F58']}
+      style={styles.background}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <View style={styles.container}>
+        {/* Logo */}
+        <Image source={require('../assets/logo.png')} style={styles.logo} />
+
+        {/* Botón Ingresar */}
+        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.buttonText}>Ingresar</Text>
+        </TouchableOpacity>
+
+        {/* Botón Continuar con Google */}
+        <TouchableOpacity style={styles.googleButton}>
+          <Image source={require('../assets/google-logo.png')} style={styles.googleLogo} />
+          <Text style={styles.buttonText}>Continuar con Google</Text>
+        </TouchableOpacity>
+
+        {/* Texto clickeable */}
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.registerText}>
+            ¿No tenes Cuenta? <Text style={styles.boldText}>Registrate</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
-    fontSize: 24,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  logo: {
+    width: 212,
+    height: 215,
+    marginBottom: 50, // Separación del logo con los botones
+    resizeMode: 'contain',
+  },
+  loginButton: {
+    width: 319,
+    height: 46,
+    backgroundColor: '#292634', // Color del botón Ingresar (actualizado)
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 319,
+    height: 46,
+    backgroundColor: '#FF4057', // Color del botón de Google (actualizado)
+    borderRadius: 5,
+    marginBottom: 40,
+  },
+  googleLogo: {
+    width: 19.47,
+    height: 20,
+    marginRight: 10, // Espacio entre logo y texto
+  },
+  buttonText: {
+    fontFamily: 'Roboto_400Regular',
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
+  registerText: {
+    fontFamily: 'Roboto_400Regular',
+    fontSize: 12,
+    color: '#FFFFFF',
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
 });
