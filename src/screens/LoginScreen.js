@@ -1,90 +1,97 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-// Validación del formulario
-const LoginSchema = Yup.object().shape({
-  email: Yup.string().email('Email inválido').required('Email requerido'),
-  password: Yup.string().min(4, 'Mínimo 4 caracteres').required('Contraseña requerida')
-});
-
-const LoginScreen = () => {
-  const handleLogin = async (values) => {
-    try {
-      const response = await axios.post('https://virtserver.swaggerhub.com/ADRIFIERRO/TP-DAI-Swagger/1.0.0/sessions/login', {
-        email: values.email,
-        password: values.password
-      });
-      Alert.alert('Login exitoso', `Token: ${response.data.accessToken}`);
-    } catch (error) {
-      Alert.alert('Error al iniciar sesión', 'Verifica tus credenciales');
-    }
-  };
-
+export default function LoginScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Iniciar Sesión</Text>
-      <Formik
-        initialValues={{ email: '', password: '' }}
-        validationSchema={LoginSchema}
-        onSubmit={values => handleLogin(values)}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View>
-            <TextInput
-              placeholder="Email"
-              style={styles.input}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}
-            />
-            {errors.email && touched.email && <Text style={styles.error}>{errors.email}</Text>}
-            
-            <TextInput
-              placeholder="Contraseña"
-              secureTextEntry
-              style={styles.input}
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-            />
-            {errors.password && touched.password && <Text style={styles.error}>{errors.password}</Text>}
-            
-            <Button onPress={handleSubmit} title="Ingresar" />
-          </View>
-        )}
-      </Formik>
+      {/* Logo */}
+      <Text style={styles.logo}>LATTICE</Text>
+      
+      {/* Input de Usuario */}
+      <TextInput 
+        style={styles.input}
+        placeholder="Usuario"
+        placeholderTextColor="#FFFFFF"
+      />
+      
+      {/* Input de Contraseña */}
+      <TextInput 
+        style={styles.input}
+        placeholder="Contraseña"
+        placeholderTextColor="#FFFFFF"
+        secureTextEntry
+      />
+      
+      {/* Botón de Ingreso */}
+      <TouchableOpacity style={styles.loginButton}>
+        <Text style={styles.loginButtonText}>Ingresar</Text>
+      </TouchableOpacity>
+      
+      {/* Botón de Google */}
+      <TouchableOpacity style={styles.googleButton}>
+        <Text style={styles.googleButtonText}>Continuar con Google</Text>
+      </TouchableOpacity>
+
+      {/* Texto de Registro */}
+      <Text style={styles.registerText}>¿No tenes Cuenta? <Text style={styles.registerLink}>Regístrate</Text></Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'radial-gradient(circle, #FF6F61, #3B3F58)',
+    alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#fff'
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center'
+  logo: {
+    fontSize: 48,
+    color: '#FFFFFF',
+    marginBottom: 40,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5
+    width: 300,
+    height: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    color: '#FFFFFF',
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderRadius: 5,
   },
-  error: {
-    fontSize: 12,
-    color: 'red',
-    marginBottom: 10
+  loginButton: {
+    backgroundColor: '#292634',
+    width: 319,
+    height: 46,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  loginButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  googleButton: {
+    backgroundColor: '#FF4057',
+    width: 319,
+    height: 46,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  googleButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  registerText: {
+    color: '#FFFFFF',
+    marginTop: 20,
+  },
+  registerLink: {
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   }
 });
 
-export default LoginScreen;
