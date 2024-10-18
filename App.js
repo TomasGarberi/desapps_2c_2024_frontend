@@ -1,8 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SplashScreen from './src/screens/SplashScreen'; // Asegúrate de que esta ruta sea correcta
-import MainScreen from './src/screens/MainScreen'; // Pantalla principal que veremos después del Splash
+import SplashScreen from './src/screens/SplashScreen'; 
+import MainScreen from './src/screens/MainScreen'; 
+import LoginScreen from './src/screens/LoginScreen'; 
 import AppLoading from 'expo-app-loading';
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
@@ -30,10 +31,14 @@ export default function App() {
         <Stack.Screen
           name="MainScreen"
           component={MainScreen}
-          options={{ headerShown: false }} // Opciones para la pantalla principal
+          options={{ headerShown: false }} // Pantalla principal sin header
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }} // Pantalla de login sin header
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
