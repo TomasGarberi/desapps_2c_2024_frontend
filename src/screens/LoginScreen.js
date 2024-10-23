@@ -27,14 +27,14 @@ export default function LoginScreen() {
     >
       {/* Botón de regreso */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../assets/back-icon.png')} style={styles.backIcon} /> 
+        <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
       </TouchableOpacity>
 
       {/* Logo */}
       <Image source={require('../assets/logo.png')} style={styles.logo} />
 
       {/* Texto "¿Olvidaste tu contraseña?" clickeable */}
-      <TouchableOpacity onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('ForgotPasswordStep1')}>
         <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
       </TouchableOpacity>
 
@@ -68,7 +68,7 @@ export default function LoginScreen() {
         >
           <View style={styles.inputWrapper}>
             <TextInput
-              placeholder="Contraseña"
+              placeholder="************"
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               style={styles.input}
               secureTextEntry
@@ -83,7 +83,7 @@ export default function LoginScreen() {
       </TouchableOpacity>
 
       {/* Texto de registro clickeable */}
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.registerContainer}>
         <Text style={styles.registerText}>
           ¿No tienes cuenta? <Text style={styles.registerBold}>Regístrate</Text>
         </Text>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20, // Asegura que no se pegue a los bordes laterales
+    paddingHorizontal: 20,
   },
   backButton: {
     position: "absolute",
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
   logo: {
     width: 168,
     height: 150,
-    marginBottom: 30,  // Más espaciado debajo del logo
+    marginBottom: 20,  // Separación ajustada
   },
   forgotText: {
     color: "#FFFFFF",
     fontSize: 12,
-    fontFamily: "Roboto_700Bold", // Bold para resaltar la pregunta
-    marginBottom: 30, // Espaciado debajo del texto
+    fontFamily: "Roboto_700Bold",
+    marginBottom: 20, // Separación ajustada
   },
   inputContainer: {
     width: 320,
@@ -131,20 +131,19 @@ const styles = StyleSheet.create({
   },
   inputGradient: {
     borderRadius: 5,
-    padding: 2,  // Tamaño del contorno
+    padding: 2,
   },
   inputWrapper: {
-    backgroundColor: "transparent",  // Fondo transparente
+    backgroundColor: "transparent",
     borderRadius: 5,
-    padding: 0, // Asegura que el padding no modifique el tamaño del contorno
   },
   input: {
     color: "#FFFFFF",
     fontSize: 14,
     fontFamily: "Roboto_300Light",
-    backgroundColor: "transparent",  // Fondo transparente
+    backgroundColor: "transparent",
     padding: 10,
-    height: 46,  // Asegura la altura correcta
+    height: 46,
   },
   loginButton: {
     width: 320,
@@ -154,12 +153,15 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 30,  // Más espaciado debajo del botón
+    marginBottom: 30,
   },
   loginText: {
     color: "#FFFFFF",
     fontSize: 14,
     fontFamily: "Roboto_700Bold",
+  },
+  registerContainer: {
+    marginTop: 20,
   },
   registerText: {
     color: "#FFFFFF",

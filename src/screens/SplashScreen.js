@@ -8,7 +8,7 @@ export default function SplashScreen({ navigation }) {
     ExpoSplashScreen.preventAutoHideAsync(); // Usamos el nombre renombrado aquí
     setTimeout(async () => {
       await ExpoSplashScreen.hideAsync(); // Usamos el nombre renombrado aquí
-      navigation.replace("MainScreen"); // Navegamos a la pantalla principal
+      navigation.replace("Main"); // Navegamos a la pantalla principal
     }, 2000); // Mostrar el splash por 2 segundos
   }, []);
 
