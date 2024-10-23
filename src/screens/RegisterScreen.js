@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Switch } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Switch, Modal } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
@@ -7,6 +7,7 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@e
 export default function RegisterScreen() {
   const navigation = useNavigation();
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // Cargar fuentes
   let [fontsLoaded] = useFonts({
@@ -18,6 +19,17 @@ export default function RegisterScreen() {
   if (!fontsLoaded) {
     return null; // Esperamos a que carguen las fuentes
   }
+
+  const handleRegister = () => {
+    // Lógica de registro aquí
+    // Simulación de registro exitoso
+    setIsModalVisible(true);
+  };
+
+  const handleContinue = () => {
+    setIsModalVisible(false);
+    navigation.navigate("Login");
+  };
 
   return (
     <LinearGradient
@@ -71,16 +83,33 @@ export default function RegisterScreen() {
         />
         <Text style={styles.termsText}>
           Acepto los{" "}
-          <Text style={styles.termsBold} onPress={() => alert('Mostrar términos y condiciones')}>
+          <Text style={styles.termsBold} onPress={() => navigation.navigate('TermsScreen')}>
             Términos y Condiciones
           </Text>
         </Text>
       </View>
 
       {/* Botón de Crear Cuenta */}
-      <TouchableOpacity style={styles.registerButton}>
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerText}>Crear Cuenta</Text>
       </TouchableOpacity>
+
+      {/* Modal de confirmación */}
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        animationType="fade"
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Tu usuario ha sido creado satisfactoriamente.</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={handleContinue}>
+              <Text style={styles.modalButtonText}>Continuar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -158,5 +187,35 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontFamily: "Roboto_700Bold",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    color: "#000000",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: "#000000",
+    borderRadius: 5,
+    padding: 10,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
   },
 });

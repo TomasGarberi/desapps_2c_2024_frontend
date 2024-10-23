@@ -115,6 +115,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   boldText: {
-    fontWeight: 'bold',
+    fontFamily: 'Roboto_700Bold', 
   },
 });
