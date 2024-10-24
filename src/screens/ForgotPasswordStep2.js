@@ -21,7 +21,7 @@ export default function ForgotPasswordStep2() {
       end={{ x: 1, y: 1 }}
     >
       {/* Botón de regreso */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Login")}>
         <Image source={require("../assets/back-icon.png")} style={styles.backIcon} />
       </TouchableOpacity>
 
@@ -31,21 +31,14 @@ export default function ForgotPasswordStep2() {
       {/* Campos de Código */}
       <View style={styles.codeContainer}>
         {code.map((digit, index) => (
-          <LinearGradient
+          <TextInput
             key={index}
-            colors={["#902CA5", "#00F0FF"]}
-            style={styles.inputGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <TextInput
-              value={digit}
-              onChangeText={(text) => handleChange(text, index)}
-              style={styles.codeInput}
-              keyboardType="numeric"
-              maxLength={1}
-            />
-          </LinearGradient>
+            value={digit}
+            onChangeText={(text) => handleChange(text, index)}
+            style={styles.codeInput}
+            keyboardType="numeric"
+            maxLength={1}
+          />
         ))}
       </View>
 
@@ -91,6 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: 250,
     marginBottom: 30,
+    gap: 10,
   },
   inputGradient: {
     width: 46,
@@ -105,6 +99,11 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_700Bold",
     backgroundColor: "transparent",
     textAlign: "center",
+    width: 46,
+    height: 46,
+    borderImageSlice: 1,
+    borderWidth: '2px',
+    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
   },
   instructionsText: {
     color: "#FFFFFF",

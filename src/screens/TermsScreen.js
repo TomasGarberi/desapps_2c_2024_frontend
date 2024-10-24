@@ -56,13 +56,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   scrollContainer: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingBottom: 40,
+    marginBottom: 40,
   },
   text: {
     fontSize: 12,
+    paddingRight: 8,
     fontFamily: "Roboto_400Regular",
     color: "#FFFFFF",
     textAlign: "justify",

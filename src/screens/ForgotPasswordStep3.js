@@ -29,7 +29,7 @@ export default function ForgotPasswordStep3() {
       end={{ x: 1, y: 1 }}
     >
       {/* Botón de regreso */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Login")}>
         <Image source={require("../assets/back-icon.png")} style={styles.backIcon} />
       </TouchableOpacity>
 
@@ -39,45 +39,33 @@ export default function ForgotPasswordStep3() {
       {/* Campo de Contraseña */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Contraseña</Text>
-        <LinearGradient
-          colors={["#902CA5", "#00F0FF"]}
-          style={styles.inputGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.inputWrapper}>
-            <TextInput
-              placeholder="************"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              secureTextEntry
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-            />
-          </View>
-        </LinearGradient>
+
+        <View style={styles.inputWrapper}>
+          <TextInput
+            placeholder="************"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            secureTextEntry
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
       </View>
 
       {/* Campo de Repetir Contraseña */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Repetir Contraseña</Text>
-        <LinearGradient
-          colors={["#902CA5", "#00F0FF"]}
-          style={styles.inputGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.inputWrapper}>
-            <TextInput
-              placeholder="************"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              secureTextEntry
-              style={styles.input}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-          </View>
-        </LinearGradient>
+
+        <View style={styles.inputWrapper}>
+          <TextInput
+            placeholder="************"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            secureTextEntry
+            style={styles.input}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        </View>
       </View>
 
       {/* Botón de Guardar Contraseña */}
@@ -151,6 +139,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     padding: 10,
     height: 46,
+    borderImageSlice: 1,
+    borderWidth: '2px',
+    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
   },
   saveButton: {
     width: 320,

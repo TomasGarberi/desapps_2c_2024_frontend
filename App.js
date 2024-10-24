@@ -5,13 +5,13 @@ import SplashScreen from './src/screens/SplashScreen';
 import MainScreen from './src/screens/MainScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
-import ForgotPasswordStep1 from './src/screens/ForgotPasswordStep1'; 
+import ForgotPasswordStep1 from './src/screens/ForgotPasswordStep1';
 import ForgotPasswordStep2 from './src/screens/ForgotPasswordStep2';
 import ForgotPasswordStep3 from './src/screens/ForgotPasswordStep3';
 import TermsScreen from './src/screens/TermsScreen';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
+import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -20,6 +20,8 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
+    Roboto_700Bold,
+    Roboto_300Light,
   });
 
   if (!fontsLoaded) {

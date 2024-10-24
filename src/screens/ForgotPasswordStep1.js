@@ -15,7 +15,7 @@ export default function ForgotPasswordStep1() {
     >
       {/* Botón de regreso */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../assets/back-icon.png')} style={styles.backIcon} /> 
+        <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
       </TouchableOpacity>
 
       {/* Logo */}
@@ -24,22 +24,15 @@ export default function ForgotPasswordStep1() {
       {/* Campo de Email */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>E-Mail</Text>
-        <LinearGradient
-          colors={["#902CA5", "#00F0FF"]}
-          style={styles.inputGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.inputWrapper}>
-            <TextInput
-              placeholder="Escribe tu correo"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              style={styles.input}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-        </LinearGradient>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            placeholder="Escribe tu correo"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            style={styles.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
       </View>
 
       {/* Botón de Recuperar */}
@@ -95,12 +88,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   input: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontFamily: "Roboto_300Light",
-    backgroundColor: "transparent",
-    padding: 10,
-    height: 46,
+    background: 'transparent',
+    border: '2px solid',
+    borderImageSlice: 1,
+    borderWidth: '2px',
+    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
+    borderRadius: '8px',
+    padding: '10px',
+    color: '#fff',
+    outline: 'none',
   },
   resetButton: {
     width: 320,
