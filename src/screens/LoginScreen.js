@@ -41,12 +41,6 @@ export default function LoginScreen() {
       {/* Campo de Usuario */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Usuario</Text>
-        <LinearGradient
-          colors={["#902CA5", "#00F0FF"]}
-          style={styles.inputGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
           <View style={styles.inputWrapper}>
             <TextInput
               placeholder="usuario@mail.com"
@@ -54,27 +48,19 @@ export default function LoginScreen() {
               style={styles.input}
             />
           </View>
-        </LinearGradient>
       </View>
 
       {/* Campo de Contraseña */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Contraseña</Text>
-        <LinearGradient
-          colors={["#902CA5", "#00F0FF"]}
-          style={styles.inputGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.inputWrapper}>
-            <TextInput
-              placeholder="************"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              style={styles.input}
-              secureTextEntry
-            />
-          </View>
-        </LinearGradient>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            placeholder="************"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            style={styles.input}
+            secureTextEntry
+          />
+        </View>
       </View>
 
       {/* Botón de Ingresar */}
@@ -138,12 +124,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   input: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontFamily: "Roboto_300Light",
-    backgroundColor: "transparent",
-    padding: 10,
-    height: 46,
+    background: 'transparent',
+    border: '2px solid',
+    borderImageSlice: 1,
+    borderWidth: '2px',
+    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
+    borderRadius: '8px',
+    padding: '10px',
+    color: '#fff',
+    outline: 'none',
   },
   loginButton: {
     width: 320,

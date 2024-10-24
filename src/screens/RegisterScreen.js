@@ -40,7 +40,7 @@ export default function RegisterScreen() {
     >
       {/* Botón de regreso */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../assets/back-icon.png')} style={styles.backIcon} /> 
+        <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
       </TouchableOpacity>
 
       {/* Logo */}
@@ -50,25 +50,19 @@ export default function RegisterScreen() {
       {["Nombre", "Usuario", "Email", "Contraseña"].map((label, index) => (
         <View key={index} style={styles.inputContainer}>
           <Text style={styles.inputLabel}>{label}</Text>
-          <LinearGradient
-            colors={["#902CA5", "#00F0FF"]}
-            style={styles.inputGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <View style={styles.inputWrapper}>
-              <TextInput
-                placeholder={
-                  label === "Email" ? "usuario@mail.com" : 
-                  label === "Contraseña" ? "************" : 
-                  `Escriba su ${label}`
-                }
-                placeholderTextColor="rgba(255, 255, 255, 0.5)"
-                style={styles.input}
-                secureTextEntry={label === "Contraseña"}
-              />
-            </View>
-          </LinearGradient>
+
+          <View style={styles.inputWrapper}>
+            <TextInput
+              placeholder={
+                label === "Email" ? "usuario@mail.com" :
+                  label === "Contraseña" ? "************" :
+                    `Escriba su ${label}`
+              }
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
+              style={styles.input}
+              secureTextEntry={label === "Contraseña"}
+            />
+          </View>
         </View>
       ))}
 
@@ -153,10 +147,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   input: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontFamily: "Roboto_300Light",
-    padding: 10,
+    background: 'transparent',
+    border: '2px solid',
+    borderImageSlice: 1,
+    borderWidth: '2px',
+    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
+    borderRadius: '8px',
+    padding: '10px',
+    color: '#fff',
+    outline: 'none',
   },
   termsContainer: {
     width: "80%",
