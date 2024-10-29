@@ -1,16 +1,28 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
 export default function ForgotPasswordStep2() {
   const navigation = useNavigation();
   const [code, setCode] = useState(["", "", "", ""]);
+  const [errors, setErrors] = useState(false);
 
   const handleChange = (text, index) => {
     const newCode = [...code];
-    newCode[index] = text;
+    newCode[index] = text.replace(/[^0-9]/g, ""); // Asegura que solo se ingresen números
     setCode(newCode);
+  };
+
+  // Manejar la validación y la navegación al siguiente paso
+  const handleValidation = () => {
+    if (code.includes("") || code.some((digit) => isNaN(digit))) {
+      setErrors(true);
+      Alert.alert("Código Incorrecto", "Por favor, ingrese los cuatro dígitos del código.");
+    } else {
+      setErrors(false);
+      navigation.navigate("ForgotPasswordStep3");
+    }
   };
 
   return (
@@ -35,7 +47,7 @@ export default function ForgotPasswordStep2() {
             key={index}
             value={digit}
             onChangeText={(text) => handleChange(text, index)}
-            style={styles.codeInput}
+            style={[styles.codeInput, errors && digit === "" && styles.errorBorder]}
             keyboardType="numeric"
             maxLength={1}
           />
@@ -50,7 +62,7 @@ export default function ForgotPasswordStep2() {
       {/* Botón de Validar */}
       <TouchableOpacity
         style={styles.validateButton}
-        onPress={() => navigation.navigate('ForgotPasswordStep3')}
+        onPress={handleValidation}
       >
         <Text style={styles.validateText}>Validar</Text>
       </TouchableOpacity>
@@ -86,12 +98,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     gap: 10,
   },
-  inputGradient: {
-    width: 46,
-    height: 46,
-    borderRadius: 5,
-    padding: 2,
-  },
   codeInput: {
     flex: 1,
     color: "#FFFFFF",
@@ -104,6 +110,9 @@ const styles = StyleSheet.create({
     borderImageSlice: 1,
     borderWidth: '2px',
     borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
+  },
+  errorBorder: {
+    borderColor: "red", // Cambia el color del borde si hay un error
   },
   instructionsText: {
     color: "#FFFFFF",

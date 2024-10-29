@@ -1,10 +1,37 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
 export default function ForgotPasswordStep1() {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({});
+
+  // Validación básica de email
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Manejar el botón de "Recuperar Contraseña"
+  const handlePasswordReset = () => {
+    let validationErrors = {};
+
+    if (!email) {
+      validationErrors.email = "El campo de email es obligatorio.";
+    } else if (!isValidEmail(email)) {
+      validationErrors.email = "Por favor, ingrese un email válido.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setErrors({});
+      Alert.alert("Recuperación de Contraseña", "Se ha enviado un código de recuperación a tu correo electrónico.");
+      navigation.navigate('ForgotPasswordStep2');
+    }
+  };
 
   return (
     <LinearGradient
@@ -31,14 +58,17 @@ export default function ForgotPasswordStep1() {
             style={styles.input}
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
       </View>
 
       {/* Botón de Recuperar */}
       <TouchableOpacity
         style={styles.resetButton}
-        onPress={() => navigation.navigate('ForgotPasswordStep2')}
+        onPress={handlePasswordReset}
       >
         <Text style={styles.resetText}>Recuperar Contraseña</Text>
       </TouchableOpacity>
@@ -66,8 +96,8 @@ const styles = StyleSheet.create({
     width: 168,
     height: 150,
     position: 'absolute',
-    top: 166, // Posición Y
-    left: 112, // Posición X
+    top: 166,
+    left: 112,
   },
   inputContainer: {
     width: 320,
@@ -78,10 +108,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Roboto_400Regular",
     marginBottom: 5,
-  },
-  inputGradient: {
-    borderRadius: 5,
-    padding: 2,
   },
   inputWrapper: {
     backgroundColor: "transparent",
@@ -97,6 +123,12 @@ const styles = StyleSheet.create({
     padding: '10px',
     color: '#fff',
     outline: 'none',
+  },
+  errorText: {
+    color: "red",
+    fontSize: 10,
+    fontFamily: "Roboto_400Regular",
+    marginTop: 5,
   },
   resetButton: {
     width: 320,
