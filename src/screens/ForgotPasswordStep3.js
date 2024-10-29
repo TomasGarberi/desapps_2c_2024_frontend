@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Modal } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Modal, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
@@ -8,12 +8,37 @@ export default function ForgotPasswordStep3() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+  const [errors, setErrors] = useState({});
 
+  // Validación de requisitos de la contraseña
+  const isValidPassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  // Manejar la validación y el guardado de la contraseña
   const handleSavePassword = () => {
-    // Aquí puedes añadir la lógica para guardar la contraseña
+    let validationErrors = {};
 
-    // Mostrar el modal de confirmación
-    setModalVisible(true);
+    if (!password) {
+      validationErrors.password = "El campo de contraseña es obligatorio.";
+    } else if (!isValidPassword(password)) {
+      validationErrors.password = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.";
+    }
+
+    if (!confirmPassword) {
+      validationErrors.confirmPassword = "El campo de confirmación de contraseña es obligatorio.";
+    } else if (password !== confirmPassword) {
+      validationErrors.confirmPassword = "Las contraseñas no coinciden.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setErrors({});
+      setModalVisible(true);
+    }
   };
 
   const handleContinue = () => {
@@ -39,33 +64,36 @@ export default function ForgotPasswordStep3() {
       {/* Campo de Contraseña */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Contraseña</Text>
-
-        <View style={styles.inputWrapper}>
-          <TextInput
-            placeholder="************"
-            placeholderTextColor="rgba(255, 255, 255, 0.5)"
-            secureTextEntry
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
+        <TextInput
+          placeholder="************"
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          secureTextEntry
+          style={styles.input}
+          value={password}
+          onFocus={() => setShowPasswordRequirements(true)}
+          onBlur={() => setShowPasswordRequirements(false)}
+          onChangeText={setPassword}
+        />
+        {showPasswordRequirements && (
+          <Text style={styles.passwordRequirements}>
+            La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.
+          </Text>
+        )}
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
       </View>
 
       {/* Campo de Repetir Contraseña */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Repetir Contraseña</Text>
-
-        <View style={styles.inputWrapper}>
-          <TextInput
-            placeholder="************"
-            placeholderTextColor="rgba(255, 255, 255, 0.5)"
-            secureTextEntry
-            style={styles.input}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-        </View>
+        <TextInput
+          placeholder="************"
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          secureTextEntry
+          style={styles.input}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
       </View>
 
       {/* Botón de Guardar Contraseña */}
@@ -112,7 +140,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 168,
     height: 150,
-    marginBottom: 40, // Espacio debajo del logo
+    marginBottom: 40,
   },
   inputContainer: {
     width: 320,
@@ -124,14 +152,6 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_400Regular",
     marginBottom: 5,
   },
-  inputGradient: {
-    borderRadius: 5,
-    padding: 2,
-  },
-  inputWrapper: {
-    backgroundColor: "transparent",
-    borderRadius: 5,
-  },
   input: {
     color: "#FFFFFF",
     fontSize: 14,
@@ -139,9 +159,21 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     padding: 10,
     height: 46,
-    borderImageSlice: 1,
-    borderWidth: '2px',
-    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
+    borderColor: "rgba(255, 255, 255, 0.5)",
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 10,
+    fontFamily: "Roboto_400Regular",
+    marginTop: 5,
+  },
+  passwordRequirements: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontFamily: "Roboto_400Regular",
+    marginTop: 5,
   },
   saveButton: {
     width: 320,

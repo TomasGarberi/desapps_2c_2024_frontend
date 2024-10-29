@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Switch, Modal } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Switch, Modal, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
@@ -8,6 +8,13 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    nombre: "",
+    usuario: "",
+    email: "",
+    password: "",
+  });
 
   // Cargar fuentes
   let [fontsLoaded] = useFonts({
@@ -17,13 +24,60 @@ export default function RegisterScreen() {
   });
 
   if (!fontsLoaded) {
-    return null; // Esperamos a que carguen las fuentes
+    return null;
   }
 
+  // Validar email
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Validar requisitos de contraseña
+  const isValidPassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  // Manejar los cambios en los campos
+  const handleInputChange = (name, value) => {
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   const handleRegister = () => {
-    // Lógica de registro aquí
-    // Simulación de registro exitoso
-    setIsModalVisible(true);
+    let validationErrors = {};
+
+    if (!formData.nombre) {
+      validationErrors.nombre = "El campo de nombre es obligatorio.";
+    }
+
+    if (!formData.usuario) {
+      validationErrors.usuario = "El campo de usuario es obligatorio.";
+    } // Aquí se agregaría la lógica para verificar si el usuario ya existe
+
+    if (!formData.email) {
+      validationErrors.email = "El campo de email es obligatorio.";
+    } else if (!isValidEmail(formData.email)) {
+      validationErrors.email = "Por favor, ingrese un email válido.";
+    } // Aquí se agregaría la lógica para verificar si el email ya existe
+
+    if (!formData.password) {
+      validationErrors.password = "El campo de contraseña es obligatorio.";
+    } else if (!isValidPassword(formData.password)) {
+      validationErrors.password = "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un número.";
+    }
+
+    if (!isTermsAccepted) {
+      Alert.alert("Términos y Condiciones", "Debe aceptar los términos y condiciones para registrarse.");
+      return;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setErrors({});
+      setIsModalVisible(true);
+    }
   };
 
   const handleContinue = () => {
@@ -38,35 +92,33 @@ export default function RegisterScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      {/* Botón de regreso */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
       </TouchableOpacity>
 
-      {/* Logo */}
       <Image source={require('../assets/logo.png')} style={styles.logo} />
 
-      {/* Campos de entrada */}
       {["Nombre", "Usuario", "Email", "Contraseña"].map((label, index) => (
         <View key={index} style={styles.inputContainer}>
           <Text style={styles.inputLabel}>{label}</Text>
-
           <View style={styles.inputWrapper}>
             <TextInput
               placeholder={
                 label === "Email" ? "usuario@mail.com" :
-                  label === "Contraseña" ? "************" :
-                    `Escriba su ${label}`
+                label === "Contraseña" ? "************" :
+                `Escriba su ${label}`
               }
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               style={styles.input}
               secureTextEntry={label === "Contraseña"}
+              value={formData[label.toLowerCase()]}
+              onChangeText={(text) => handleInputChange(label.toLowerCase(), text)}
             />
           </View>
+          {errors[label.toLowerCase()] && <Text style={styles.errorText}>{errors[label.toLowerCase()]}</Text>}
         </View>
       ))}
 
-      {/* Switch de términos y condiciones */}
       <View style={styles.termsContainer}>
         <Switch
           value={isTermsAccepted}
@@ -83,12 +135,10 @@ export default function RegisterScreen() {
         </Text>
       </View>
 
-      {/* Botón de Crear Cuenta */}
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerText}>Crear Cuenta</Text>
       </TouchableOpacity>
 
-      {/* Modal de confirmación */}
       <Modal
         transparent={true}
         visible={isModalVisible}
@@ -138,10 +188,6 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_400Regular",
     marginBottom: 5,
   },
-  inputGradient: {
-    borderRadius: 5,
-    padding: 1,
-  },
   inputWrapper: {
     backgroundColor: "transparent",
     borderRadius: 5,
@@ -156,6 +202,12 @@ const styles = StyleSheet.create({
     padding: '10px',
     color: '#fff',
     outline: 'none',
+  },
+  errorText: {
+    color: "red",
+    fontSize: 10,
+    fontFamily: "Roboto_400Regular",
+    marginTop: 5,
   },
   termsContainer: {
     width: "80%",

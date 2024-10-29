@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
@@ -6,6 +6,9 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@e
 
 export default function LoginScreen() {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
 
   // Cargar fuentes
   let [fontsLoaded] = useFonts({
@@ -15,8 +18,37 @@ export default function LoginScreen() {
   });
 
   if (!fontsLoaded) {
-    return null; // Esperamos a que carguen las fuentes
+    return null;
   }
+
+  // Validación básica de email
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Función para manejar el inicio de sesión
+  const handleLogin = () => {
+    let validationErrors = {};
+
+    if (!email) {
+      validationErrors.email = "El campo de email es obligatorio.";
+    } else if (!isValidEmail(email)) {
+      validationErrors.email = "Por favor, ingrese un email válido.";
+    }
+
+    if (!password) {
+      validationErrors.password = "El campo de contraseña es obligatorio.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setErrors({});
+      // Lógica de navegación a la pantalla principal después de validar
+      navigation.navigate('Home');
+    }
+  };
 
   return (
     <LinearGradient
@@ -25,50 +57,45 @@ export default function LoginScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      {/* Botón de regreso */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Main')}>
         <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
       </TouchableOpacity>
 
-      {/* Logo */}
       <Image source={require('../assets/logo.png')} style={styles.logo} />
 
-      {/* Texto "¿Olvidaste tu contraseña?" clickeable */}
       <TouchableOpacity onPress={() => navigation.navigate('ForgotPasswordStep1')}>
         <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
       </TouchableOpacity>
 
-      {/* Campo de Usuario */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Usuario</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              placeholder="usuario@mail.com"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              style={styles.input}
-            />
-          </View>
+        <TextInput
+          placeholder="usuario@mail.com"
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+        />
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
       </View>
 
-      {/* Campo de Contraseña */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Contraseña</Text>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            placeholder="************"
-            placeholderTextColor="rgba(255, 255, 255, 0.5)"
-            style={styles.input}
-            secureTextEntry
-          />
-        </View>
+        <TextInput
+          placeholder="************"
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          style={styles.input}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
       </View>
 
-      {/* Botón de Ingresar */}
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginText}>Ingresar</Text>
       </TouchableOpacity>
 
-      {/* Texto de registro clickeable */}
       <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.registerContainer}>
         <Text style={styles.registerText}>
           ¿No tienes cuenta? <Text style={styles.registerBold}>Regístrate</Text>
@@ -97,13 +124,13 @@ const styles = StyleSheet.create({
   logo: {
     width: 168,
     height: 150,
-    marginBottom: 20,  // Separación ajustada
+    marginBottom: 20,
   },
   forgotText: {
     color: "#FFFFFF",
     fontSize: 12,
     fontFamily: "Roboto_700Bold",
-    marginBottom: 20, // Separación ajustada
+    marginBottom: 20,
   },
   inputContainer: {
     width: 320,
@@ -115,24 +142,21 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_400Regular",
     marginBottom: 5,
   },
-  inputGradient: {
-    borderRadius: 5,
-    padding: 2,
-  },
-  inputWrapper: {
-    backgroundColor: "transparent",
-    borderRadius: 5,
-  },
   input: {
-    background: 'transparent',
-    border: '2px solid',
-    borderImageSlice: 1,
-    borderWidth: '2px',
-    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
-    borderRadius: '8px',
-    padding: '10px',
-    color: '#fff',
-    outline: 'none',
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontFamily: "Roboto_300Light",
+    backgroundColor: "transparent",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 10,
+    fontFamily: "Roboto_400Regular",
+    marginTop: 5,
   },
   loginButton: {
     width: 320,

@@ -9,7 +9,7 @@ export default function SplashScreen({ navigation }) {
     setTimeout(async () => {
       await ExpoSplashScreen.hideAsync(); // Usamos el nombre renombrado aquí
       navigation.replace("Main"); // Navegamos a la pantalla principal
-    }, 10); // Mostrar el splash por 2 segundos
+    }, 2000); // Mostrar el splash por 2 segundos
   }, []);
 
   return (
