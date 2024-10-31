@@ -1,5 +1,3 @@
-// src/screens/Home.js
-
 import React from "react";
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import Header from "../components/Header";
