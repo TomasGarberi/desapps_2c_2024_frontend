@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
+import axios from 'axios'; // Asegúrate de importar axios
 
 export default function LoginScreen() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
+  const [username, setusername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // Estado para manejar la carga
 
   // Cargar fuentes
   let [fontsLoaded] = useFonts({
@@ -21,20 +23,18 @@ export default function LoginScreen() {
     return null;
   }
 
-  // Validación básica de email
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  // Validación básica de username
+  const isValidusername = (username) => {
+    const usernameRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return usernameRegex.test(username);
   };
 
   // Función para manejar el inicio de sesión
-  const handleLogin = () => {
+  const handleLogin = async () => {
     let validationErrors = {};
 
-    if (!email) {
-      validationErrors.email = "El campo de email es obligatorio.";
-    } else if (!isValidEmail(email)) {
-      validationErrors.email = "Por favor, ingrese un email válido.";
+    if (!username) {
+      validationErrors.username = "El campo de username es obligatorio.";
     }
 
     if (!password) {
@@ -43,10 +43,26 @@ export default function LoginScreen() {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-    } else {
-      setErrors({});
-      // Lógica de navegación a la pantalla principal después de validar
+      return; // Detener la ejecución si hay errores
+    }
+
+    setErrors({});
+    setLoading(true); // Comenzar el estado de carga
+
+    try {
+      const response = await axios.post('http://127.0.0.1:4002/auth/authenticate', {
+        username: username, // Asegúrate de que este nombre coincida con el del back-end
+        password: password
+      });
+
+      console.log(response.data); // Manejar la respuesta aquí
+      // Aquí puedes guardar el token de acceso, redirigir a la pantalla principal, etc.
       navigation.navigate('Home');
+    } catch (error) {
+      console.error(error);
+      setErrors({ server: "Error al iniciar sesión, por favor intenta nuevamente." });
+    } finally {
+      setLoading(false); // Detener el estado de carga
     }
   };
 
@@ -70,13 +86,13 @@ export default function LoginScreen() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Usuario</Text>
         <TextInput
-          placeholder="usuario@mail.com"
+          placeholder="username"
           placeholderTextColor="rgba(255, 255, 255, 0.5)"
           style={styles.input}
-          value={email}
-          onChangeText={setEmail}
+          value={username}
+          onChangeText={setusername}
         />
-        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
       </View>
 
       <View style={styles.inputContainer}>
@@ -93,7 +109,11 @@ export default function LoginScreen() {
       </View>
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginText}>Ingresar</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" /> // Muestra un indicador de carga
+        ) : (
+          <Text style={styles.loginText}>Ingresar</Text>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.registerContainer}>
