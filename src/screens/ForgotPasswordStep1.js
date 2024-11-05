@@ -2,20 +2,48 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 export default function ForgotPasswordStep1() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
 
-  // Validación básica de email
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Manejar el botón de "Recuperar Contraseña"
-  const handlePasswordReset = () => {
+  const checkEmailExists = async (email) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:4002/users/isEmailUsed`, {
+        params: { email },
+      });
+      return response.data; // true si existe, false si no
+    } catch (error) {
+      console.error("Error:", error);
+      return false;
+    }
+  };
+
+  const sendPasswordResetEmail = async (email) => {
+    try {
+      await axios.post("http://127.0.0.1:4002/pass/request-reset", null, {
+        params: { email },
+      });
+      Alert.alert(
+        "Recuperación de Contraseña",
+        "Se ha enviado un código de recuperación a tu correo electrónico."
+      );
+      navigation.navigate("ForgotPasswordStep2", { email });
+    } catch (error) {
+      console.error("Error al enviar el correo de recuperación:", error);
+      Alert.alert("Error", "Hubo un problema al enviar el correo de recuperación. Inténtalo de nuevo.");
+    }
+  };
+  
+
+  const handlePasswordReset = async () => {
     let validationErrors = {};
 
     if (!email) {
@@ -28,8 +56,12 @@ export default function ForgotPasswordStep1() {
       setErrors(validationErrors);
     } else {
       setErrors({});
-      Alert.alert("Recuperación de Contraseña", "Se ha enviado un código de recuperación a tu correo electrónico.");
-      navigation.navigate('ForgotPasswordStep2');
+      const exists = await checkEmailExists(email);
+      if (exists) {
+        await sendPasswordResetEmail(email);
+      } else {
+        setErrors({ email: "El correo electrónico no está registrado." });
+      }
     }
   };
 
@@ -40,15 +72,12 @@ export default function ForgotPasswordStep1() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      {/* Botón de regreso */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
+        <Image source={require("../assets/back-icon.png")} style={styles.backIcon} />
       </TouchableOpacity>
 
-      {/* Logo */}
-      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <Image source={require("../assets/logo.png")} style={styles.logo} />
 
-      {/* Campo de Email */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>E-Mail</Text>
         <View style={styles.inputWrapper}>
@@ -65,7 +94,6 @@ export default function ForgotPasswordStep1() {
         {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
       </View>
 
-      {/* Botón de Recuperar */}
       <TouchableOpacity
         style={styles.resetButton}
         onPress={handlePasswordReset}

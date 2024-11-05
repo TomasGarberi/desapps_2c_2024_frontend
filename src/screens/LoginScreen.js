@@ -51,15 +51,17 @@ export default function LoginScreen() {
 
     try {
       const response = await axios.post('http://127.0.0.1:4002/auth/authenticate', {
-        username: username, // Asegúrate de que este nombre coincida con el del back-end
+        username: username, 
         password: password
       });
 
       console.log(response.data); // Manejar la respuesta aquí
-      // Aquí puedes guardar el token de acceso, redirigir a la pantalla principal, etc.
+      // TODO guardar el token de acceso, redirigir a la pantalla principal, etc.
       navigation.navigate('Home');
     } catch (error) {
       console.error(error);
+      console.log(username);
+      console.log(password);
       setErrors({ server: "Error al iniciar sesión, por favor intenta nuevamente." });
     } finally {
       setLoading(false); // Detener el estado de carga
