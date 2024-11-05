@@ -1,21 +1,25 @@
-import React from "react";
-import { View, ScrollView, StyleSheet, Text } from "react-native";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import WelcomeHome from '../components/home/WelcomeHome';
+import Timeline from '../components/home/Timeline';
 
-export default function Home() {
+export default function HomeScreen() {
+  // Simulación de posts para decidir qué mostrar
+  const posts = []; // Vacío para mostrar WelcomeHome o lleno para Timeline
+
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Header fijo */}
       <Header />
-
-      {/* Main Content Area */}
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.text}>Bienvenido a la pantalla principal de Lattice</Text>
-        {/* Aquí puedes agregar más contenido según tus necesidades */}
-      </ScrollView>
-
-      {/* Footer */}
+      
+      {/* Contenido dinámico */}
+      <View style={styles.content}>
+        {posts.length === 0 ? <WelcomeHome /> : <Timeline posts={posts} />}
+      </View>
+      
+      {/* Footer fijo */}
       <Footer />
     </View>
   );
@@ -24,18 +28,9 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff", // Cambia el color de fondo si es necesario
+    backgroundColor: '#F0F0F0',
   },
-  contentContainer: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  text: {
-    fontSize: 18,
-    color: "#333",
-    textAlign: "center",
-    marginVertical: 20,
+  content: {
+    flex: 1,
   },
 });
