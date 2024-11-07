@@ -2,49 +2,67 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Modal, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { useRoute } from "@react-navigation/native";
 
 export default function ForgotPasswordStep3() {
-  const navigation = useNavigation();
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
-  const [errors, setErrors] = useState({});
+    const navigation = useNavigation();
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [modalVisible, setModalVisible] = useState(false);
+    const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+    const [errors, setErrors] = useState({});
+    const route = useRoute();
+    const user = route.params?.user || "";
 
-  // Validación de requisitos de la contraseña
-  const isValidPassword = (password) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    return passwordRegex.test(password);
-  };
+    const isValidPassword = (password) => {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      return passwordRegex.test(password);
+    };
 
-  // Manejar la validación y el guardado de la contraseña
-  const handleSavePassword = () => {
-    let validationErrors = {};
+    const handleSavePassword = async () => {
+      let validationErrors = {};
 
-    if (!password) {
-      validationErrors.password = "El campo de contraseña es obligatorio.";
-    } else if (!isValidPassword(password)) {
-      validationErrors.password = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.";
-    }
+      if (!password) {
+        validationErrors.password = "El campo de contraseña es obligatorio.";
+      } else if (!isValidPassword(password)) {
+        validationErrors.password = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.";
+      }
 
-    if (!confirmPassword) {
-      validationErrors.confirmPassword = "El campo de confirmación de contraseña es obligatorio.";
-    } else if (password !== confirmPassword) {
-      validationErrors.confirmPassword = "Las contraseñas no coinciden.";
-    }
+      if (!confirmPassword) {
+        validationErrors.confirmPassword = "El campo de confirmación de contraseña es obligatorio.";
+      } else if (password !== confirmPassword) {
+        validationErrors.confirmPassword = "Las contraseñas no coinciden.";
+      }
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
+      }
+
       setErrors({});
-      setModalVisible(true);
-    }
-  };
 
-  const handleContinue = () => {
-    setModalVisible(false);
-    navigation.navigate("Login");
-  };
+      try {
+        // Make the PUT request to change password
+        const response = await axios.put("http://127.0.0.1:4002/pass/change-password", {
+          username: user, // Replace with the actual username
+          password: password,
+        });
+
+        if (response.data) {
+          setModalVisible(true);
+        } else {
+          Alert.alert("Error", "No se pudo restablecer la contraseña.");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Hubo un problema al intentar cambiar la contraseña.");
+      }
+    };
+
+    const handleContinue = () => {
+      setModalVisible(false);
+      navigation.navigate("Login");
+    };
 
   return (
     <LinearGradient
@@ -120,7 +138,6 @@ export default function ForgotPasswordStep3() {
     </LinearGradient>
   );
 }
-
 const styles = StyleSheet.create({
   background: {
     flex: 1,

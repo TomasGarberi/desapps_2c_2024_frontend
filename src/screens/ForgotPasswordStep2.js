@@ -41,18 +41,29 @@ export default function ForgotPasswordStep2() {
       Alert.alert("Código Incorrecto", "Por favor, ingrese los cuatro dígitos del código.");
     } else {
       setErrors(false);
-      
+
       const isValid = await verifyTotpCode(email, code);
-      
+
       if (isValid) {
         Alert.alert("Código Verificado", "El código es correcto.");
-        navigation.navigate("ForgotPasswordStep3");
+        
+        try {
+          console.log(email);
+          const response = await axios.get("http://127.0.0.1:4002/users/email", {
+            params: { email }, 
+          });
+          const user = response.data.username;
+          navigation.navigate("ForgotPasswordStep3", {user});
+        } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+          Alert.alert("Error", "No se pudo obtener la información del usuario.");
+        }
       } else {
-        console.log("Sigue sin andar boludo")
         Alert.alert("Código Incorrecto", "El código ingresado no es válido. Inténtalo de nuevo.");
       }
     }
-  };
+};
+
 
   return (
     <LinearGradient
