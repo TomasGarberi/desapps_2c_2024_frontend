@@ -1,6 +1,6 @@
 #Lattice 
 
-![Logo](https://looka.com/s/197939071)
+![Logo](https://ibb.co/719MNxk)
 
 Trabajo Practico para la materia Desarrollo de Aplicaciones 1, UADE.
 
