@@ -50,12 +50,12 @@ export default function LoginScreen() {
     setLoading(true); // Comenzar el estado de carga
 
     try {
-      const response = await axios.post('http://127.0.0.1:4002/auth/authenticate', {
+/*       const response = await axios.post('http://127.0.0.1:4002/auth/authenticate', {
         username: username, 
         password: password
       });
-
-      console.log(response.data); // Manejar la respuesta aquí
+    
+      console.log(response.data); // Manejar la respuesta aquí */
       // TODO guardar el token de acceso, redirigir a la pantalla principal, etc.
       navigation.navigate('Home');
     } catch (error) {

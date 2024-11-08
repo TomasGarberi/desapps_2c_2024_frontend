@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import LottieView from 'lottie-react-native';
 
 export default function WelcomeHome() {
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../assets/animations/welcome_animation.gif')}
-        style={styles.image}
-        resizeMode="contain" 
-      />
+{/*       <LottieView
+        source={require('../../assets/animations/welcome_animation.json')}
+        autoPlay
+        loop
+        style={styles.animation}
+      /> */}
       <Text style={styles.welcomeText}>Bienvenido a Lattice</Text>
       <Text style={styles.instructions}>
         Comienza a seguir personas o haz tu primera publicación para ver contenido aquí.
@@ -26,8 +28,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   image: {
-    width: 180, 
-    height: 180,
+    width: 100, 
+    height: 100,
     marginBottom: 20,
   },
   welcomeText: {
