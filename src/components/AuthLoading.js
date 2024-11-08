@@ -12,7 +12,7 @@ export default function AuthLoading() {
     const checkAuthToken = async () => {
       try {
         // Verificar si hay un token almacenado
-        const userToken = await AsyncStorage.getItem('userToken');
+        const userToken = await AsyncStorage.getItem('authToken');
 
         // Redirigir basado en la existencia del token
         if (userToken) {

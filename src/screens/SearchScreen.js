@@ -55,9 +55,6 @@ export default function SearchScreen({ navigation }) {
         )}
         contentContainerStyle={styles.suggestionsContainer}
       />
-
-      {/* Footer */}
-      <Footer />
     </View>
   );
 }

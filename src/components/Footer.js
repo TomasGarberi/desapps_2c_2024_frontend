@@ -3,21 +3,22 @@ import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const Footer = ({ navigation, state }) => {
+  console.log(state)
   return (
     <View style={styles.footerContainer}>
-      <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Home' })}>
         <Icon name="home-outline" size={30} color={state.index === 0 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Search")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Search' })}>
         <Icon name="search-outline" size={30} color={state.index === 1 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Post")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Post' })}>
         <Icon name="add-circle-outline" size={30} color={state.index === 2 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Notifications' })}>
         <Icon name="heart-outline" size={30} color={state.index === 3 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Profile' })}>
         <Icon name="person-outline" size={30} color={state.index === 4 ? "#000" : "#888"} />
       </TouchableOpacity>
     </View>

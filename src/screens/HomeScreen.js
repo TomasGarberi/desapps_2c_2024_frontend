@@ -16,9 +16,6 @@ export default function HomeScreen({ navigation }) {  // Agrega navigation aquí
       <View style={styles.content}>
         {posts.length === 0 ? <WelcomeHome /> : <Text>No hay publicaciones</Text>}
       </View>
-
-      {/* Footer */}
-      <Footer navigation={navigation} /> {/* Pasa navigation al Footer */}
     </View>
   );
 }
@@ -26,7 +23,7 @@ export default function HomeScreen({ navigation }) {  // Agrega navigation aquí
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F0F0', // Fondo suave para una mejor experiencia visual
+    backgroundColor: '#fafafa', // Fondo suave para una mejor experiencia visual
   },
   content: {
     flex: 1,

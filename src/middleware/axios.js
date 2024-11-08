@@ -1,19 +1,20 @@
 import axios from 'axios';
+import { API_URL } from '@env';
 
 // Create an Axios instance
 const apiClient = axios.create({
-  baseURL: 'https://your-api-url.com', // Replace with your API URL
+  baseURL: API_URL, // Replace with your API URL
 });
 
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
     // Example: Add Authorization token
-    const token = 'your-auth-token'; // Replace with your token logic
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    console.log('Request:', config);
+    // const token = 'your-auth-token'; // Replace with your token logic
+    // if (token) {
+    //   config.headers.Authorization = `Bearer ${token}`;
+    // }
+    // console.log('Request:', config);
     return config;
   },
   (error) => {
