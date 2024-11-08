@@ -259,8 +259,15 @@ const styles = StyleSheet.create({
     borderBottomColor: "#FFFFFF",
   },
   input: {
-    height: 40,
-    color: "#FFFFFF",
+    background: 'transparent',
+    border: '2px solid',
+    borderImageSlice: 1,
+    borderWidth: '2px',
+    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
+    borderRadius: '8px',
+    padding: '10px',
+    color: '#fff',
+    outline: 'none',
   },
   errorText: {
     color: "red",
