@@ -3,24 +3,19 @@ import { View, StyleSheet } from 'react-native';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WelcomeHome from '../components/home/WelcomeHome';
-import Timeline from '../components/home/Timeline';
 
-export default function HomeScreen() {
-  // Simulación de posts para decidir qué mostrar
-  const posts = []; // Vacío para mostrar WelcomeHome o lleno para Timeline
+export default function HomeScreen({ navigation }) {  // Agrega navigation aquí
+  const posts = []; // Simulación de publicaciones (vacío para mostrar WelcomeHome)
 
   return (
     <View style={styles.container}>
-      {/* Header fijo */}
+      {/* Header */}
       <Header />
-      
-      {/* Contenido dinámico */}
+
+      {/* Main Content */}
       <View style={styles.content}>
-        {posts.length === 0 ? <WelcomeHome /> : <Timeline posts={posts} />}
+        {posts.length === 0 ? <WelcomeHome /> : <Text>No hay publicaciones</Text>}
       </View>
-      
-      {/* Footer fijo */}
-      <Footer />
     </View>
   );
 }
@@ -28,9 +23,11 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#fafafa', // Fondo suave para una mejor experiencia visual
   },
   content: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

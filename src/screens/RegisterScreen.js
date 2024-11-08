@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Switch, Mod
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
-import axios from 'axios';
+import axios from "../middleware/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Para almacenar el token
 
 export default function RegisterScreen() {
@@ -77,7 +77,7 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     console.log("Datos del formulario:", formData);
     let validationErrors = {};
-  
+
     if (!formData.name) {
       validationErrors.name = "El campo de name es obligatorio.";
       console.log("no hay name");
@@ -87,41 +87,43 @@ export default function RegisterScreen() {
       validationErrors.lastname = "El campo de apellido es obligatorio.";
       console.log("no hay lastname");
     }
-  
+
     if (!formData.username) {
       validationErrors.username = "El campo de username es obligatorio.";
       console.log("no hay user");
     }
-  
+
     if (!formData.email) {
       validationErrors.email = "El campo de email es obligatorio.";
       console.log("no hay mail");
     } else if (!isValidEmail(formData.email)) {
       validationErrors.email = "Por favor, ingrese un email válido.";
     }
-  
+
     if (!formData.password) {
       validationErrors.password = "El campo de contraseña es obligatorio.";
       console.log("no hay pass");
     } else if (!isValidPassword(formData.password)) {
       validationErrors.password = "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un número.";
     }
-  
-    if (!isTermsAccepted) {
-      Alert.alert("Términos y Condiciones", "Debe aceptar los términos y condiciones para registrarse.");
-      console.log("no hay terms");
-      return;
-    }
-  
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       console.log("hay errores");
       return;
-    } else {
+    }
+    
+    else if (!isTermsAccepted) {
+      Alert.alert("Términos y Condiciones", "Debe aceptar los términos y condiciones para registrarse.");
+      console.log("no hay terms");
+      return;
+    }
+
+    else {
       setErrors({});
       console.log("Se viene el try de register");
       try {
-        const response = await axios.post("http://127.0.0.1:4002/auth/register", {
+        const response = await axios.post("/auth/register", {
           name: formData.name,
           lastname: formData.lastname,
           username: formData.username,
@@ -129,12 +131,8 @@ export default function RegisterScreen() {
           password: formData.password,
           role: formData.role
         });
-  
+
         if (response.status === 200) {
-          console.log("Corrio bien");
-          const token = response.data.token; // Suponiendo que el token está en `data.token`
-          await AsyncStorage.setItem("authToken", token); // Guardar token
-  
           setIsModalVisible(true); // Mostrar mensaje de éxito
         } else if (response.status === 400) {
           // Mostrar error devuelto por el backend
@@ -173,8 +171,8 @@ export default function RegisterScreen() {
             <TextInput
               placeholder={
                 label === "Email" ? "username@mail.com" :
-                label === "Password" ? "************" :
-                `Escriba su ${label}`
+                  label === "Password" ? "************" :
+                    `Escriba su ${label}`
               }
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               style={styles.input}
@@ -261,8 +259,15 @@ const styles = StyleSheet.create({
     borderBottomColor: "#FFFFFF",
   },
   input: {
-    height: 40,
-    color: "#FFFFFF",
+    background: 'transparent',
+    border: '2px solid',
+    borderImageSlice: 1,
+    borderWidth: '2px',
+    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
+    borderRadius: '8px',
+    padding: '10px',
+    color: '#fff',
+    outline: 'none',
   },
   errorText: {
     color: "red",
