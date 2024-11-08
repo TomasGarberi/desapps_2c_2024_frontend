@@ -1,6 +1,6 @@
 #Lattice 
 
-![Logo](https://ibb.co/719MNxk)
+![Logo](https://github.com/TomasGarberi/desapps_2c_2024_frontend/blob/main/src/assets/icons/logo.png?raw=true)
 
 Trabajo Practico para la materia Desarrollo de Aplicaciones 1, UADE.
 
