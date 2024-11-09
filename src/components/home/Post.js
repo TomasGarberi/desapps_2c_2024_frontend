@@ -40,13 +40,19 @@ export default function Post({ post = examplePost }) {
           <Text style={styles.timeAgo}>{post.timeAgo}</Text>
           <View style={styles.actionIcons}>
             <TouchableOpacity>
-              <HeartIcon width={24} height={24} fill="#3B3F58" />
+              <View style={styles.icons}>
+                <HeartIcon width={24} height={24} />
+              </View>
             </TouchableOpacity>
             <TouchableOpacity>
-              <CommentIcon width={24} height={24} fill="#3B3F58" />
+              <View style={styles.icons}>
+                <CommentIcon width={24} height={24} />
+              </View>
             </TouchableOpacity>
             <TouchableOpacity>
-              <FavoriteIcon width={24} height={24} fill="#3B3F58" />
+              <View style={styles.icons}>
+                <FavoriteIcon width={24} height={24} />
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -57,46 +63,44 @@ export default function Post({ post = examplePost }) {
 
 const styles = StyleSheet.create({
   postContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    padding: 10,
+    borderRadius: 10,
     marginVertical: 10,
     marginHorizontal: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   profileImageWrapper: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    padding: 2,
     backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: 'linear-gradient(90deg, #902CA5, #00F0FF)',
+    borderRadius: '25%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
   },
   profileImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 20,
+    borderRadius: '23%',
   },
   userInfo: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    gap: 5,
     marginLeft: 10,
   },
   username: {
-    fontSize: 12,
-    fontFamily: 'Inter-Bold',
-    color: '#7C8089',
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#2e2e2e',
   },
   location: {
     fontSize: 10,
-    fontFamily: 'Inter-Regular',
     color: '#7C8089',
   },
   imageWrapper: {
@@ -105,12 +109,14 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     position: 'absolute',
-    top: 10,
-    left: 15,
-    right: 15,
+    backdropFilter: "blur(10px)",
+    zIndex: 999,
+    left: 30,
+    right: 30,
+    top: -5,
     padding: 5,
     backgroundColor: 'rgba(151, 151, 151, 0.4)',
-    borderRadius: 20,
+    borderRadius: "0.5rem",
   },
   descriptionText: {
     fontSize: 9,
@@ -120,7 +126,7 @@ const styles = StyleSheet.create({
   postImage: {
     width: 339,
     height: 331,
-    borderRadius: 20,
+    borderRadius: "1rem",
     marginVertical: 10,
   },
   actionContainer: {
@@ -128,24 +134,29 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: '15%',
     right: '15%',
-    height: 64,
-    borderRadius: 20,
+    borderRadius: "1.5rem",
+    padding: 5,
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    backdropFilter: "blur(10px)"
   },
   timeAgo: {
-    fontSize: 6,
-    fontFamily: 'Inter-Bold',
-    color: '#7C8089',
+    fontSize: 8,
+    fontWeight: "bold",
+    color: '#3B3F58',
     marginBottom: 5,
   },
   actionIcons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    paddingHorizontal: 15,
   },
+  icons: {
+    padding: "1rem",
+    borderRadius: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+  }
 });
 

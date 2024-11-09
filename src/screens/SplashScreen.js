@@ -2,14 +2,30 @@ import React, { useEffect } from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as ExpoSplashScreen from "expo-splash-screen"; // Renombramos la importación
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "../middleware/axios";
 
 export default function SplashScreen({ navigation }) {
   useEffect(() => {
     ExpoSplashScreen.preventAutoHideAsync(); // Usamos el nombre renombrado aquí
+
     setTimeout(async () => {
-      await ExpoSplashScreen.hideAsync(); // Usamos el nombre renombrado aquí
-      navigation.replace("Main"); // Navegamos a la pantalla principal
-    }, 2000); // Mostrar el splash por 2 segundos
+      const token = await AsyncStorage.getItem('authToken');
+      if (token) {
+
+        // try {
+        //   const response = await axios.post("/auth/refreshToken");
+        // } catch (error) {
+
+        // }
+        
+        await ExpoSplashScreen.hideAsync();
+        navigation.replace("MainTabs");
+      } else {
+        navigation.replace("Main");
+      }
+    }, 1000)
+
   }, []);
 
   return (

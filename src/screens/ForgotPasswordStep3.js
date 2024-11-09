@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Modal, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import axios from "../middleware/axios"
 
 export default function ForgotPasswordStep3() {
   const navigation = useNavigation();
@@ -10,6 +11,8 @@ export default function ForgotPasswordStep3() {
   const [modalVisible, setModalVisible] = useState(false);
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
   const [errors, setErrors] = useState({});
+  const route = useRoute();
+  const username = route.params?.user || ""; // Obtén el username pasado desde ForgotPasswordStep2
 
   // Validación de requisitos de la contraseña
   const isValidPassword = (password) => {
@@ -18,7 +21,7 @@ export default function ForgotPasswordStep3() {
   };
 
   // Manejar la validación y el guardado de la contraseña
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
     let validationErrors = {};
 
     if (!password) {
@@ -36,8 +39,16 @@ export default function ForgotPasswordStep3() {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      setErrors({});
-      setModalVisible(true);
+      try {
+        setErrors({});
+        await axios.put(`/pass/change-password`,
+          { username, password }
+        );
+        setModalVisible(true);
+      } catch (error) {
+        console.error("Error:", error);
+        return false;
+      }
     }
   };
 

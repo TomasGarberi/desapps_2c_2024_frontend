@@ -3,7 +3,8 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ActivityInd
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
-import axios from 'axios'; // Asegúrate de importar axios
+import axios from "../middleware/axios"; // Asegúrate de importar axios
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -50,18 +51,17 @@ export default function LoginScreen() {
     setLoading(true); // Comenzar el estado de carga
 
     try {
-      const response = await axios.post('http://127.0.0.1:4002/auth/authenticate', {
-        username: username, 
+      const response = await axios.post('/auth/authenticate', {
+        username: username,
         password: password
       });
 
-      console.log(response.data); // Manejar la respuesta aquí
-      // TODO guardar el token de acceso, redirigir a la pantalla principal, etc.
-      navigation.navigate('Home');
+      const token = response.data.accessToken; // Suponiendo que el token está en `data.token`
+      await AsyncStorage.setItem("authToken", token); // Guardar token
+
+      navigation.navigate('MainTabs');
     } catch (error) {
       console.error(error);
-      console.log(username);
-      console.log(password);
       setErrors({ server: "Error al iniciar sesión, por favor intenta nuevamente." });
     } finally {
       setLoading(false); // Detener el estado de carga
