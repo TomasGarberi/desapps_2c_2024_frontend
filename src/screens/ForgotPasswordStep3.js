@@ -41,20 +41,9 @@ export default function ForgotPasswordStep3() {
     } else {
       try {
         setErrors({});
-        await axios.put(`/pass/change-password`,
-          { username, password }
-        );
-        setModalVisible(true);
-      } catch (error) {
-        console.error("Error:", error);
-        return false;
-      }
-    }
-  };
-      try {
-        // Make the PUT request to change password
-        const response = await axios.put("http://127.0.0.1:4002/pass/change-password", {
-          username: user, // Replace with the actual username
+        // Realizar la solicitud PUT para cambiar la contraseña
+        const response = await axios.put("/pass/change-password", {
+          username: username, // Asegúrate de pasar 'username' correctamente
           password: password,
         });
 
@@ -64,14 +53,16 @@ export default function ForgotPasswordStep3() {
           Alert.alert("Error", "No se pudo restablecer la contraseña.");
         }
       } catch (error) {
+        console.error("Error:", error);
         Alert.alert("Error", "Hubo un problema al intentar cambiar la contraseña.");
       }
-    };
+    }
+  };
 
-    const handleContinue = () => {
-      setModalVisible(false);
-      navigation.navigate("Login");
-    };
+  const handleContinue = () => {
+    setModalVisible(false);
+    navigation.navigate("Login");
+  };
 
   return (
     <LinearGradient
@@ -147,6 +138,7 @@ export default function ForgotPasswordStep3() {
     </LinearGradient>
   );
 }
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
@@ -179,15 +171,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
-    background: 'transparent',
-    border: '2px solid',
-    borderImageSlice: 1,
-    borderWidth: '2px',
-    borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
-    borderRadius: '8px',
-    padding: '10px',
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: 'rgba(144, 44, 165, 1)',
+    borderRadius: 8,
+    padding: 10,
     color: '#fff',
-    outline: 'none',
   },
   errorText: {
     color: "red",
