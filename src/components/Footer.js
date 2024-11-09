@@ -6,19 +6,19 @@ const Footer = ({ navigation, state }) => {
   console.log(state)
   return (
     <View style={styles.footerContainer}>
-      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Home' })}>
+      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Home' })}>
         <Icon name="home-outline" size={30} color={state.index === 0 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Search' })}>
+      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Search' })}>
         <Icon name="search-outline" size={30} color={state.index === 1 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Post' })}>
+      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Post' })}>
         <Icon name="add-circle-outline" size={30} color={state.index === 2 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Notifications' })}>
+      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Notifications' })}>
         <Icon name="heart-outline" size={30} color={state.index === 3 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Main", { screen: 'Profile' })}>
+      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Profile' })}>
         <Icon name="person-outline" size={30} color={state.index === 4 ? "#000" : "#888"} />
       </TouchableOpacity>
     </View>

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -10,11 +11,11 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Example: Add Authorization token
-    // const token = 'your-auth-token'; // Replace with your token logic
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
-    // console.log('Request:', config);
+    const token = AsyncStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('Request:', config);
     return config;
   },
   (error) => {

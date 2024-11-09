@@ -56,10 +56,10 @@ export default function LoginScreen() {
         password: password
       });
 
-      const token = response.data.access_token; // Suponiendo que el token está en `data.token`
+      const token = response.data.accessToken; // Suponiendo que el token está en `data.token`
       await AsyncStorage.setItem("authToken", token); // Guardar token
 
-      navigation.navigate('Main');
+      navigation.navigate('MainTabs');
     } catch (error) {
       console.error(error);
       setErrors({ server: "Error al iniciar sesión, por favor intenta nuevamente." });

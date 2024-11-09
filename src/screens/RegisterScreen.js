@@ -51,7 +51,7 @@ export default function RegisterScreen() {
   // Verificar si el email ya está en uso
   const checkEmailExists = async (email) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:4002/users/isEmailUsed`, {
+      const response = await axios.get(`/users/isEmailUsed`, {
         params: { email }
       });
       return response.data;
@@ -64,7 +64,7 @@ export default function RegisterScreen() {
   // Verificar si el username ya está en uso
   const checkUsernameExists = async (username) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:4002/users/isUsernameUsed`, {
+      const response = await axios.get(`/users/isUsernameUsed`, {
         params: { username }
       });
       return response.data;

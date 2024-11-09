@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
+import axios from "../middleware/axios"
 import { useRoute } from "@react-navigation/native";
 
 export default function ForgotPasswordStep2() {
@@ -12,19 +12,17 @@ export default function ForgotPasswordStep2() {
   const route = useRoute();
   const email = route.params?.email || ""; // Obtén el email pasado desde ForgotPasswordStep1
 
-
-
   const handleChange = (text, index) => {
     const newCode = [...code];
     newCode[index] = text.replace(/[^0-9]/g, ""); // Asegura que solo se ingresen números
     setCode(newCode);
   };
-  
+
 
   // Función para verificar el TOTP
   const verifyTotpCode = async (email, code) => {
     try {
-      const response = await axios.post("http://127.0.0.1:4002/pass/verify-totp", null, {
+      const response = await axios.post("/pass/verify-totp", null, {
         params: { email, totpCode: code.join("") }, // Unimos el código de 4 dígitos en un string
       });
       return response.data.success;
@@ -41,14 +39,24 @@ export default function ForgotPasswordStep2() {
       Alert.alert("Código Incorrecto", "Por favor, ingrese los cuatro dígitos del código.");
     } else {
       setErrors(false);
-      
+
       const isValid = await verifyTotpCode(email, code);
-      
+
       if (isValid) {
         Alert.alert("Código Verificado", "El código es correcto.");
-        navigation.navigate("ForgotPasswordStep3");
+
+        try {
+          console.log(email);
+          const response = await axios.get("/users/email", {
+            params: { email },
+          });
+          const user = response.data.username;
+          navigation.navigate("ForgotPasswordStep3", { user });
+        } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+          Alert.alert("Error", "No se pudo obtener la información del usuario.");
+        }
       } else {
-        console.log("Sigue sin andar boludo")
         Alert.alert("Código Incorrecto", "El código ingresado no es válido. Inténtalo de nuevo.");
       }
     }

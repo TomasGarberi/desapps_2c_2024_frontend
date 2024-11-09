@@ -54,7 +54,13 @@ export default function App() {
         <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Main" component={MainTabNavigator} />
+        <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+        <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPasswordStep1" component={ForgotPasswordStep1} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPasswordStep2" component={ForgotPasswordStep2} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPasswordStep3" component={ForgotPasswordStep3} options={{ headerShown: false }} />
+        <Stack.Screen name="TermsScreen" component={TermsScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="AuthLoading" component={AuthLoading} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
 
