@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
-import axios from "../middleware/axios"
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import axios from "../middleware/axios";
 
 export default function ForgotPasswordStep2() {
   const navigation = useNavigation();
@@ -17,7 +16,6 @@ export default function ForgotPasswordStep2() {
     newCode[index] = text.replace(/[^0-9]/g, ""); // Asegura que solo se ingresen números
     setCode(newCode);
   };
-
 
   // Función para verificar el TOTP
   const verifyTotpCode = async (email, code) => {
@@ -46,7 +44,6 @@ export default function ForgotPasswordStep2() {
         Alert.alert("Código Verificado", "El código es correcto.");
         
         try {
-          console.log(email);
           const response = await axios.get("/users/email", {
             params: { email },
           });
@@ -61,17 +58,6 @@ export default function ForgotPasswordStep2() {
       }
     }
   };
-
-        } catch (error) {
-          console.error("Error al obtener el usuario:", error);
-          Alert.alert("Error", "No se pudo obtener la información del usuario.");
-        }
-      } else {
-        Alert.alert("Código Incorrecto", "El código ingresado no es válido. Inténtalo de nuevo.");
-      }
-    }
-};
-
 
   return (
     <LinearGradient
