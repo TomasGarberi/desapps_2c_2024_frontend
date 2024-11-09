@@ -44,7 +44,7 @@ export default function ForgotPasswordStep2() {
 
       if (isValid) {
         Alert.alert("Código Verificado", "El código es correcto.");
-
+        
         try {
           console.log(email);
           const response = await axios.get("/users/email", {
@@ -61,6 +61,17 @@ export default function ForgotPasswordStep2() {
       }
     }
   };
+
+        } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+          Alert.alert("Error", "No se pudo obtener la información del usuario.");
+        }
+      } else {
+        Alert.alert("Código Incorrecto", "El código ingresado no es válido. Inténtalo de nuevo.");
+      }
+    }
+};
+
 
   return (
     <LinearGradient

@@ -51,11 +51,27 @@ export default function ForgotPasswordStep3() {
       }
     }
   };
+      try {
+        // Make the PUT request to change password
+        const response = await axios.put("http://127.0.0.1:4002/pass/change-password", {
+          username: user, // Replace with the actual username
+          password: password,
+        });
 
-  const handleContinue = () => {
-    setModalVisible(false);
-    navigation.navigate("Login");
-  };
+        if (response.data) {
+          setModalVisible(true);
+        } else {
+          Alert.alert("Error", "No se pudo restablecer la contraseña.");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Hubo un problema al intentar cambiar la contraseña.");
+      }
+    };
+
+    const handleContinue = () => {
+      setModalVisible(false);
+      navigation.navigate("Login");
+    };
 
   return (
     <LinearGradient
@@ -131,7 +147,6 @@ export default function ForgotPasswordStep3() {
     </LinearGradient>
   );
 }
-
 const styles = StyleSheet.create({
   background: {
     flex: 1,
