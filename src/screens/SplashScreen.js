@@ -20,9 +20,9 @@ export default function SplashScreen({ navigation }) {
         // }
         
         await ExpoSplashScreen.hideAsync();
-        navigation.replace("Main");
+        navigation.replace("MainTabs");
       } else {
-        navigation.replace("Login");
+        navigation.replace("Main");
       }
     }, 1000)
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
+import axios from "../middleware/axios"
 
 export default function ForgotPasswordStep1() {
   const navigation = useNavigation();
@@ -16,7 +16,7 @@ export default function ForgotPasswordStep1() {
 
   const checkEmailExists = async (email) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:4002/users/isEmailUsed`, {
+      const response = await axios.get(`/users/isEmailUsed`, {
         params: { email },
       });
       return response.data; // true si existe, false si no
@@ -28,7 +28,7 @@ export default function ForgotPasswordStep1() {
 
   const sendPasswordResetEmail = async (email) => {
     try {
-      await axios.post("http://127.0.0.1:4002/pass/request-reset", null, {
+      await axios.post("/pass/request-reset", null, {
         params: { email },
       });
       Alert.alert(

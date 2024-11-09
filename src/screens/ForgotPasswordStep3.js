@@ -1,47 +1,56 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Modal, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import axios from "../middleware/axios"
 
 export default function ForgotPasswordStep3() {
-    const navigation = useNavigation();
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [modalVisible, setModalVisible] = useState(false);
-    const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
-    const [errors, setErrors] = useState({});
-    const route = useRoute();
-    const user = route.params?.user || "";
+  const navigation = useNavigation();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+  const [errors, setErrors] = useState({});
+  const route = useRoute();
+  const username = route.params?.user || ""; // Obtén el username pasado desde ForgotPasswordStep2
 
-    const isValidPassword = (password) => {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-      return passwordRegex.test(password);
-    };
+  // Validación de requisitos de la contraseña
+  const isValidPassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    return passwordRegex.test(password);
+  };
 
-    const handleSavePassword = async () => {
-      let validationErrors = {};
+  // Manejar la validación y el guardado de la contraseña
+  const handleSavePassword = async () => {
+    let validationErrors = {};
 
-      if (!password) {
-        validationErrors.password = "El campo de contraseña es obligatorio.";
-      } else if (!isValidPassword(password)) {
-        validationErrors.password = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.";
+    if (!password) {
+      validationErrors.password = "El campo de contraseña es obligatorio.";
+    } else if (!isValidPassword(password)) {
+      validationErrors.password = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.";
+    }
+
+    if (!confirmPassword) {
+      validationErrors.confirmPassword = "El campo de confirmación de contraseña es obligatorio.";
+    } else if (password !== confirmPassword) {
+      validationErrors.confirmPassword = "Las contraseñas no coinciden.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      try {
+        setErrors({});
+        await axios.put(`/pass/change-password`,
+          { username, password }
+        );
+        setModalVisible(true);
+      } catch (error) {
+        console.error("Error:", error);
+        return false;
       }
-
-      if (!confirmPassword) {
-        validationErrors.confirmPassword = "El campo de confirmación de contraseña es obligatorio.";
-      } else if (password !== confirmPassword) {
-        validationErrors.confirmPassword = "Las contraseñas no coinciden.";
-      }
-
-      if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        return;
-      }
-
-      setErrors({});
-
+    }
+  };
       try {
         // Make the PUT request to change password
         const response = await axios.put("http://127.0.0.1:4002/pass/change-password", {

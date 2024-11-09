@@ -17,14 +17,14 @@ export default function AuthLoading() {
         // Redirigir basado en la existencia del token
         if (userToken) {
           // Si existe un token válido, redirigir a la pantalla principal (Home)
-          navigation.navigate('Home');
+          navigation.navigate('MainTabs');
         } else {
           // Si no hay token o el token es inválido, redirigir a la pantalla de Login
-          navigation.navigate('Login');
+          navigation.navigate('Main');
         }
       } catch (error) {
         // Si hay algún error, redirigir a la pantalla de Login
-        navigation.navigate('Login');
+        navigation.navigate('Main');
       }
     };
 
