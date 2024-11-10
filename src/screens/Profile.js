@@ -9,7 +9,7 @@ import axios from "../middleware/axios";
 
 
 export default function ProfileScreen() {
-    const navigation = useNavigation();
+    
     const [menuVisible, setMenuVisible] = useState(false);
 
     return (

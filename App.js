@@ -20,6 +20,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
 import { Ionicons } from '@expo/vector-icons';
 import ProfileScreen from './src/screens/Profile';
+import NewPostScreen from './src/screens/NewPostScreen';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -31,9 +32,9 @@ function MainTabNavigator() {
     <Tab.Navigator tabBar={(props) => <Footer {...props} />}>
       <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
-      {/* <Tab.Screen name="Post" component={PostScreen} />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />*/}
-      <Tab.Screen name="Profile" component={ProfileScreen} /> 
+      <Tab.Screen name="NewPost" component={NewPostScreen} options={{ headerShown: false }}/>
+      {/*<Tab.Screen name="Notifications" component={NotificationsScreen} />*/}
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }}/> 
     </Tab.Navigator>
   );
 }
@@ -56,6 +57,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="NewPost" component={NewPostScreen} options={{ headerShown: false }} />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
         <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPasswordStep1" component={ForgotPasswordStep1} options={{ headerShown: false }} />

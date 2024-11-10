@@ -12,7 +12,7 @@ const Footer = ({ navigation, state }) => {
       <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Search' })}>
         <Icon name="search-outline" size={30} color={state.index === 1 ? "#000" : "#888"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Post' })}>
+      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'NewPost' })}>
         <Icon name="add-circle-outline" size={30} color={state.index === 2 ? "#000" : "#888"} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Notifications' })}>
