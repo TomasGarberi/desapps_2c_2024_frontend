@@ -1,16 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import Footer from '../components/Footer';
 import Icon from "react-native-vector-icons/Feather"; 
 import Icons from "react-native-vector-icons/AntDesign";
 import HamburgerMenu from '../components/HamburgerMenu';
-import axios from "../middleware/axios";
-
+//import axios from "../middleware/axios"; 
+import axios from 'axios';
 
 export default function ProfileScreen() {
-    
     const [menuVisible, setMenuVisible] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [posts, setPosts] = useState([]); // New state for storing posts
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetching user data and posts
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                // First, fetch the user ID using the token
+                const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMjcyNjk2LCJpZCI6OCwiZXhwIjoxNzMxMzU5MDk2fQ.Mh4ycpQndrXcct_IhMaihTRmLQcN45QfJP9Mk7PVukR6ztBYcHNGQEtIS6_4di-y7lR0xy_-ZIxKNSMT1j9v-g';  // TODO: Get token when user logs in
+                const idResponse = await axios.get('https://dai-g9eqemg8czd0caev.brazilsouth-01.azurewebsites.net/users/getId', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const userId = idResponse.data; // User ID
+
+                if (userId) {
+                    // Fetch user details
+                    const userResponse = await axios.get(`https://dai-g9eqemg8czd0caev.brazilsouth-01.azurewebsites.net/users/${userId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    setUserData(userResponse.data);
+
+                    // Fetch posts by user
+                    const postsResponse = await axios.get(`https://dai-g9eqemg8czd0caev.brazilsouth-01.azurewebsites.net/posts/user/${userId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    setPosts(postsResponse.data); // Set the posts data
+                    setLoading(false);
+                } else {
+                    setError("User ID not found");
+                    setLoading(false);
+                }
+            } catch (err) {
+                console.error(err);
+                setError("Failed to fetch user data");
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []); // Empty dependency array to run only once when the component mounts
+
+    if (loading) {
+        return <Text>Loading...</Text>; // Show loading while data is being fetched
+    }
+
+    if (error) {
+        return <Text>{error}</Text>; // Show error message if something goes wrong
+    }
 
     return (
         <View style={styles.container}>
@@ -18,7 +76,7 @@ export default function ProfileScreen() {
             <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.hamburgerButton}>
                 <Icon name="menu" size={30} color="#000" />
             </TouchableOpacity>
-            
+
             <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -29,31 +87,34 @@ export default function ProfileScreen() {
                 <View style={styles.profileContainer}>
                     {/* Left Side: Profile Picture and Name */}
                     <View style={styles.leftContainer}>
-                        <Image source={require('../assets/photo/perfil.jpg')} style={styles.profilePicture} />
-                        <Text style={styles.name}>Pedro Sanchez</Text>
+                        <Image source={{ uri: userData.urlImage }} style={styles.profilePicture} />
+                        <Text style={styles.name}>{userData.name} {userData.lastName}</Text>
                     </View>
 
                     {/* Right Side: Username and User Info */}
                     <View style={styles.rightContainer}>
                         <View style={styles.usernameContainer}>
-                            <Text style={styles.username}>@pedro.sanchez</Text>
+                            <Text style={styles.username}>@{userData.username}</Text>
                         </View>
 
                         {/* Follow Info Divided into Columns */}
                         <View style={styles.followInfo}>
                             <View style={styles.followColumn}>
-                                <Text style={styles.followCount}>600</Text>
+                                <Text style={styles.followCount}>
+                                    {Array.isArray(userData.followers) ? userData.followers.length : 0}
+                                </Text>
                                 <Text style={styles.followLabel}>Seguidores</Text>
                             </View>
                             <View style={styles.followColumn}>
-                                <Text style={styles.followCount}>475</Text>
+                                <Text style={styles.followCount}>
+                                    {Array.isArray(userData.following) ? userData.following.length : 0}
+                                </Text>
                                 <Text style={styles.followLabel}>Siguiendo</Text>
                             </View>
                         </View>
 
                         <Text style={styles.bio}>
-                            Apasionado por la tecnología, el diseño y las nuevas ideas. Explorando el mundo una aventura a la vez.
-                            ¡Conecta conmigo!
+                            {userData.description}
                         </Text>
                     </View>
                 </View>
@@ -70,15 +131,12 @@ export default function ProfileScreen() {
 
                 {/* Gallery */}
                 <View style={styles.galleryContainer}>
-                    <Image source={require('../assets/photo/2.jpg')} style={styles.galleryImage} />
-                    <Image source={require('../assets/photo/2.jpg')} style={styles.galleryImage} />
-                    <Image source={require('../assets/photo/2.jpg')} style={styles.galleryImage} />
-                    <Image source={require('../assets/photo/2.jpg')} style={styles.galleryImage} />
-                    <Image source={require('../assets/photo/2.jpg')} style={styles.galleryImage} />
-                    <Image source={require('../assets/photo/2.jpg')} style={styles.galleryImage} />
+                    {/* Display images from posts */}
+                    {posts.length > 0 ? posts.map((post) => (
+                        <Image key={post.postId} source={{ uri: post.image }} style={styles.galleryImage} />
+                    )) : <Text>No posts available</Text>}
                 </View>
             </ScrollView>
-
         </View>
     );
 }
@@ -92,14 +150,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         right: 20,
-        zIndex: 1, // Asegura que el botón esté encima de otros elementos
+        zIndex: 1, // Ensures the button is above other elements
     },
     scrollContent: {
-        paddingBottom: 80, // Espacio para el footer
+        paddingBottom: 80, // Space for the footer
     },
     backgroundImage: {
         width: '100%',
-        height: 275, // Aumenta el tamaño de la imagen de fondo
+        height: 275, // Larger background image
         resizeMode: 'cover',
     },
     profileContainer: {
@@ -115,7 +173,7 @@ const styles = StyleSheet.create({
     },
     profilePicture: {
         width: 140,
-        height: 150, // Tamaño rectangular
+        height: 150, // Rectangular size for the profile picture
         borderRadius: 10,
         borderWidth: 2,
         borderColor: '#fff',
@@ -124,13 +182,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
-        marginTop: 10, // Espacio entre la foto y el nombre
+        marginTop: 10, // Space between photo and name
     },
     rightContainer: {
         flex: 1,
     },
     usernameContainer: {
-        backgroundColor: '#d8d8d8', // Fondo gris claro para el nombre de usuario
+        backgroundColor: '#d8d8d8', // Light gray background for username
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 5,
@@ -170,7 +228,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     iconBox: {
-        marginHorizontal: 50, // Aumenta la separación entre iconos
+        marginHorizontal: 50, // Increased space between icons
     },
     galleryContainer: {
         flexDirection: 'row',

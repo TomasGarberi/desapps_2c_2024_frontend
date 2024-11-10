@@ -11,10 +11,16 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     try {
-      // Obtener el token de almacenamiento
-      const token = await AsyncStorage.getItem('authToken');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      // Rutas que no requieren auth
+      const noAuthRequired = ['/login', '/register', '/geo'];
+
+      // Verificar si la URL actual requiere el token de autorización
+      if (!noAuthRequired.some((url) => config.url.includes(url))) {
+        // Obtener el token de almacenamiento
+        const token = await AsyncStorage.getItem('authToken');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
       console.log('Request:', config);
       return config;
