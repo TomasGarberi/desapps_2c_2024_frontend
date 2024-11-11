@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import HeartIcon from '../../assets/icons/heart.svg';
 import CommentIcon from '../../assets/icons/comment.svg';
 import FavoriteIcon from '../../assets/icons/favorite.svg';
+import CommentsModal from './CommentsModal'; // Importa el modal de comentarios
 
 const examplePost = {
   userImage: 'https://picsum.photos/200/300',
@@ -14,6 +15,8 @@ const examplePost = {
 };
 
 export default function Post({ post = examplePost }) {
+  const [isCommentModalVisible, setCommentModalVisible] = useState(false);
+
   return (
     <View style={styles.postContainer}>
       {/* Header del Usuario */}
@@ -44,7 +47,7 @@ export default function Post({ post = examplePost }) {
                 <HeartIcon width={24} height={24} />
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setCommentModalVisible(true)}>
               <View style={styles.icons}>
                 <CommentIcon width={24} height={24} />
               </View>
@@ -57,6 +60,13 @@ export default function Post({ post = examplePost }) {
           </View>
         </View>
       </View>
+
+      {/* Modal de Comentarios */}
+      <CommentsModal
+        isVisible={isCommentModalVisible}
+        onClose={() => setCommentModalVisible(false)}
+        postId={post.id}
+      />
     </View>
   );
 }
@@ -83,9 +93,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   profileImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: '23%',
+      width: '100%',
+      height: '100%',
+      borderRadius: '23%',
   },
   userInfo: {
     display: "flex",
@@ -116,7 +126,7 @@ const styles = StyleSheet.create({
     top: -5,
     padding: 5,
     backgroundColor: 'rgba(151, 151, 151, 0.4)',
-    borderRadius: "0.5rem",
+    borderRadius: 10,
   },
   descriptionText: {
     fontSize: 9,
@@ -126,7 +136,7 @@ const styles = StyleSheet.create({
   postImage: {
     width: 339,
     height: 331,
-    borderRadius: "1rem",
+    borderRadius: 10,
     marginVertical: 10,
   },
   actionContainer: {
@@ -134,7 +144,7 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: '15%',
     right: '15%',
-    borderRadius: "1.5rem",
+    borderRadius: 15,
     padding: 5,
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
     flexDirection: 'column',
@@ -154,9 +164,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   icons: {
-    padding: "1rem",
-    borderRadius: "100%",
+    padding: 10,
+    borderRadius: 30,
     backgroundColor: "rgba(255, 255, 255, 0.4)",
   }
 });
-
