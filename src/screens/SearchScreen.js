@@ -1,28 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, FlatList } from 'react-native';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import UserSuggestion from '../components/search/UserSuggestion'; // Componente para cada usuario en la lista de sugerencias
 
 export default function SearchScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
-  // Función para cargar sugerencias aleatorias de usuarios
+  // Datos de ejemplo para sugerencias y resultados
+  const exampleSuggestedUsers = [
+    { id: 1, username: 'carlos.lopez', name: 'Carlos Lopez', profileImage: 'https://picsum.photos/50/50?1' },
+    { id: 2, username: 'ana.garcia', name: 'Ana Garcia', profileImage: 'https://picsum.photos/50/50?2' },
+    { id: 3, username: 'maria.fernandez', name: 'Maria Fernandez', profileImage: 'https://picsum.photos/50/50?3' },
+    { id: 4, username: 'luis.martinez', name: 'Luis Martinez', profileImage: 'https://picsum.photos/50/50?4' },
+    { id: 5, username: 'laura.sanchez', name: 'Laura Sanchez', profileImage: 'https://picsum.photos/50/50?5' },
+  ];
+
+  const exampleSearchResults = [
+    { id: 6, username: 'carla.mendoza', name: 'Carla Mendoza', profileImage: 'https://picsum.photos/50/50?6' },
+    { id: 7, username: 'carla.lopez.mendoza', name: 'Carla Lopez Mendoza', profileImage: 'https://picsum.photos/50/50?7' },
+    { id: 8, username: 'carl.mendoza', name: 'Carl Mendoza', profileImage: 'https://picsum.photos/50/50?8' },
+  ];
+
+  // Cargar sugerencias de ejemplo
   useEffect(() => {
-    // Aquí realizarías la llamada a la API para obtener usuarios sugeridos
-    const fetchSuggestedUsers = async () => {
-      try {
-        const response = await fetch('https://your-api-url.com/getSuggestedUsers');
-        const data = await response.json();
-        setSuggestedUsers(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchSuggestedUsers();
+    setSuggestedUsers(exampleSuggestedUsers);
   }, []);
+
+  // Actualizar resultados de búsqueda cuando cambia el query
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setSearchResults([]);
+    } else {
+      setSearchResults(
+        exampleSearchResults.filter(user =>
+          user.username.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    }
+  }, [searchQuery]);
 
   return (
     <View style={styles.container}>
@@ -40,12 +57,14 @@ export default function SearchScreen({ navigation }) {
         />
       </View>
 
-      {/* Título de Sugerencias */}
-      <Text style={styles.suggestionsTitle}>Sugerencias</Text>
+      {/* Título Dinámico */}
+      <Text style={styles.suggestionsTitle}>
+        {searchQuery.trim() === '' ? 'Sugerencias' : 'Resultados'}
+      </Text>
 
-      {/* Lista de usuarios sugeridos */}
+      {/* Lista de usuarios sugeridos o resultados de búsqueda */}
       <FlatList
-        data={suggestedUsers}
+        data={searchQuery.trim() === '' ? suggestedUsers : searchResults}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <UserSuggestion
