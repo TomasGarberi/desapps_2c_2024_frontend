@@ -5,8 +5,8 @@ import Footer from '../components/Footer';
 import Icon from "react-native-vector-icons/Feather"; 
 import Icons from "react-native-vector-icons/AntDesign";
 import HamburgerMenu from '../components/HamburgerMenu';
-//import axios from "../middleware/axios"; 
-import axios from 'axios';
+import axios from "../middleware/axios"; 
+//import axios from 'axios';
 
 export default function ProfileScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -20,31 +20,19 @@ export default function ProfileScreen() {
         const fetchUserData = async () => {
             try {
                 // First, fetch the user ID using the token
-                const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMjcyNjk2LCJpZCI6OCwiZXhwIjoxNzMxMzU5MDk2fQ.Mh4ycpQndrXcct_IhMaihTRmLQcN45QfJP9Mk7PVukR6ztBYcHNGQEtIS6_4di-y7lR0xy_-ZIxKNSMT1j9v-g';  // TODO: Get token when user logs in
-                const idResponse = await axios.get('https://dai-g9eqemg8czd0caev.brazilsouth-01.azurewebsites.net/users/getId', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                //const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMzY0NjExLCJpZCI6OCwiZXhwIjoxNzMxNDUxMDExfQ.mBZGVKgAvoHe-QjQufImWoULkjlHOGNoQvgBau82C2CqXRFNhgBYFp8j0WBdfXnXR_Y2OFun4Pl68WO44-axIQ';  // TODO: Get token when user logs in
+                const idResponse = await axios.get('/users/getId');
 
                 const userId = idResponse.data; // User ID
 
                 if (userId) {
                     // Fetch user details
-                    const userResponse = await axios.get(`https://dai-g9eqemg8czd0caev.brazilsouth-01.azurewebsites.net/users/${userId}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const userResponse = await axios.get(`/users/${userId}`);
 
                     setUserData(userResponse.data);
 
                     // Fetch posts by user
-                    const postsResponse = await axios.get(`https://dai-g9eqemg8czd0caev.brazilsouth-01.azurewebsites.net/posts/user/${userId}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const postsResponse = await axios.get(`/posts/user/${userId}`);
 
                     setPosts(postsResponse.data); // Set the posts data
                     setLoading(false);
@@ -63,11 +51,11 @@ export default function ProfileScreen() {
     }, []); // Empty dependency array to run only once when the component mounts
 
     if (loading) {
-        return <Text>Loading...</Text>; // Show loading while data is being fetched
+        return <Text style={styles.loadingText}>Loading...</Text>; // Show loading while data is being fetched
     }
 
     if (error) {
-        return <Text>{error}</Text>; // Show error message if something goes wrong
+        return <Text style={styles.loadingText}>{error}</Text>; // Show error message if something goes wrong
     }
 
     return (
@@ -145,6 +133,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    loadingText: {
+        fontSize: 20, // Aumenta el tamaño de la fuente en 4 puntos
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#333',
+        marginTop: '50%', // Centra verticalmente en la pantalla
     },
     hamburgerButton: {
         position: 'absolute',
