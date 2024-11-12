@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 
-const HamburgerMenu = ({ visible, onClose }) => {
+
+const HamburgerMenu = ({ visible, onClose, onLogout }) => {
     const slideAnim = useRef(new Animated.Value(300)).current;
 
     useEffect(() => {
@@ -50,7 +51,9 @@ const HamburgerMenu = ({ visible, onClose }) => {
                         <Text style={styles.menuItem}>MODO OSCURO</Text>
                         <Switch value={false} />
                     </View>
-                    <Text style={styles.menuItem}>CERRAR SESIÓN</Text>
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => onLogout()}>
+                        <Text style={styles.deleteButtonText}>CERRAR SESION</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.deleteButton}>
                         <Text style={styles.deleteButtonText}>ELIMINAR USUARIO</Text>
                     </TouchableOpacity>

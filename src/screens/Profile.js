@@ -7,6 +7,7 @@ import Icons from "react-native-vector-icons/AntDesign";
 import HamburgerMenu from '../components/HamburgerMenu';
 //import axios from "../middleware/axios"; 
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -15,12 +16,20 @@ export default function ProfileScreen() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const navigation = useNavigation();
+
+    const logout = () => {
+        AsyncStorage.clear()
+        setMenuVisible(false) 
+        navigation.navigate('Login')
+    }
+
     // Fetching user data and posts
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 // First, fetch the user ID using the token
-                const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMjcyNjk2LCJpZCI6OCwiZXhwIjoxNzMxMzU5MDk2fQ.Mh4ycpQndrXcct_IhMaihTRmLQcN45QfJP9Mk7PVukR6ztBYcHNGQEtIS6_4di-y7lR0xy_-ZIxKNSMT1j9v-g';  // TODO: Get token when user logs in
+                const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMzY0NjExLCJpZCI6OCwiZXhwIjoxNzMxNDUxMDExfQ.mBZGVKgAvoHe-QjQufImWoULkjlHOGNoQvgBau82C2CqXRFNhgBYFp8j0WBdfXnXR_Y2OFun4Pl68WO44-axIQ';  // TODO: Get token when user logs in
                 const idResponse = await axios.get('https://dai-g9eqemg8czd0caev.brazilsouth-01.azurewebsites.net/users/getId', {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -77,7 +86,7 @@ export default function ProfileScreen() {
                 <Icon name="menu" size={30} color="#000" />
             </TouchableOpacity>
 
-            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
+            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()}/>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Background Image */}
