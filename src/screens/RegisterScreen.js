@@ -112,7 +112,7 @@ export default function RegisterScreen() {
       console.log("hay errores");
       return;
     }
-    
+
     else if (!isTermsAccepted) {
       Alert.alert("Términos y Condiciones", "Debe aceptar los términos y condiciones para registrarse.");
       console.log("no hay terms");
@@ -151,6 +151,10 @@ export default function RegisterScreen() {
     navigation.navigate("Login");
   };
 
+  const translateFieldNames = {
+    "Name": "Nombre", "Lastname": "Apellido", "Username": "Usuario", "Email": "Email", "Password": "Contraseña"
+  }
+
   return (
     <LinearGradient
       colors={["#FF6F61", "#3B3F58"]}
@@ -166,13 +170,13 @@ export default function RegisterScreen() {
 
       {["Name", "Lastname", "Username", "Email", "Password"].map((label, index) => (
         <View key={index} style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>{label}</Text>
+          <Text style={styles.inputLabel}>{translateFieldNames[label]}</Text>
           <View style={styles.inputWrapper}>
             <TextInput
               placeholder={
                 label === "Email" ? "username@mail.com" :
                   label === "Password" ? "************" :
-                    `Escriba su ${label}`
+                    `Escriba su ${translateFieldNames[label]}`
               }
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               style={styles.input}
@@ -251,12 +255,8 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 8,
-  },
-  inputWrapper: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#FFFFFF",
   },
   input: {
     background: 'transparent',
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 14,
   },
   modalContainer: {
     flex: 1,
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   modalText: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 20,
   },
   modalButton: {
@@ -322,6 +322,6 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 14,
   },
 });

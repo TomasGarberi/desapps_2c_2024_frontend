@@ -51,12 +51,14 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
                         <Text style={styles.menuItem}>MODO OSCURO</Text>
                         <Switch value={false} />
                     </View>
-                    <TouchableOpacity style={styles.deleteButton} onPress={() => onLogout()}>
-                        <Text style={styles.deleteButtonText}>CERRAR SESION</Text>
+                    <TouchableOpacity onPress={() => onLogout()}>
+                        <Text style={styles.menuItem}>CERRAR SESION</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.deleteButton}>
-                        <Text style={styles.deleteButtonText}>ELIMINAR USUARIO</Text>
-                    </TouchableOpacity>
+                    <View style={styles.deleteButtonWrapper}>
+                        <TouchableOpacity style={styles.deleteButton}>
+                            <Text style={styles.deleteButtonText}>ELIMINAR USUARIO</Text>
+                        </TouchableOpacity>
+                    </View>
                 </LinearGradient>
             </Animated.View>
         </Modal>
@@ -65,7 +67,7 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     hamburgerButton: {
         position: 'absolute',
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
     menuItem: {
         fontSize: 14,
         color: '#fff',
-        marginVertical: 30,
+        marginVertical: 10,
         fontFamily: "Roboto_400Regular",
     },
     switchContainer: {
@@ -104,7 +106,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
-        marginVertical: 10,
     },
     deleteButton: {
         marginTop: 20,
@@ -113,9 +114,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5
     },
+    deleteButtonWrapper: {
+        flex: 1,
+        justifyContent: 'flex-end',
+    },
     deleteButtonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: "Roboto_400Regular"
     },
 });
