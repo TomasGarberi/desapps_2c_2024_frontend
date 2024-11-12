@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -7,13 +7,13 @@ import {
     Animated,
     StyleSheet,
     Switch,
-    Image
+    Image,
 } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 
-
 const HamburgerMenu = ({ visible, onClose, onLogout }) => {
     const slideAnim = useRef(new Animated.Value(300)).current;
+    const [confirmLogoutVisible, setConfirmLogoutVisible] = useState(false);
 
     useEffect(() => {
         if (visible) {
@@ -31,13 +31,17 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
         }
     }, [visible]);
 
+    const handleLogout = () => {
+        setConfirmLogoutVisible(false);
+        onLogout(); // Ejecuta la función de logout del padre (Profile.js)
+    };
+
     if (!visible) return null;
 
     return (
         <Modal transparent visible={visible} animationType="fade">
             <TouchableOpacity style={styles.overlay} onPress={onClose} />
             <Animated.View style={[styles.menuContainer, { transform: [{ translateX: slideAnim }] }]}>
-                {/* Envuelve todos los elementos dentro de LinearGradient */}
                 <LinearGradient
                     colors={["#FF6F61", "#3B3F58"]}
                     style={styles.background}
@@ -51,7 +55,7 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
                         <Text style={styles.menuItem}>MODO OSCURO</Text>
                         <Switch value={false} />
                     </View>
-                    <TouchableOpacity onPress={() => onLogout()}>
+                    <TouchableOpacity onPress={() => setConfirmLogoutVisible(true)}>
                         <Text style={styles.menuItem}>CERRAR SESION</Text>
                     </TouchableOpacity>
                     <View style={styles.deleteButtonWrapper}>
@@ -61,6 +65,30 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
                     </View>
                 </LinearGradient>
             </Animated.View>
+
+            {/* Confirmación de Cerrar Sesión */}
+            <Modal
+                transparent
+                visible={confirmLogoutVisible}
+                animationType="fade"
+                onRequestClose={() => setConfirmLogoutVisible(false)}
+            >
+                <View style={styles.confirmOverlay}>
+                    <View style={styles.confirmContainer}>
+                        <Text style={styles.confirmText}>
+                            ¿Estás seguro de que deseas cerrar sesión? Deberás iniciar sesión nuevamente para acceder a tu cuenta
+                        </Text>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.confirmButton} onPress={handleLogout}>
+                                <Text style={styles.confirmButtonText}>Cerrar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.cancelButton} onPress={() => setConfirmLogoutVisible(false)}>
+                                <Text style={styles.cancelButtonText}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </Modal>
     );
 };
@@ -69,13 +97,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    hamburgerButton: {
-        position: 'absolute',
-        top: 40,
-        right: 20,
-    },
     background: {
-        flex: 1, // Asegura que el gradiente ocupe todo el fondo
+        flex: 1,
         padding: 20,
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
@@ -91,7 +114,7 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     logo: {
-        width: 125, // Ajusta el tamaño del logo
+        width: 125,
         height: 75,
         marginBottom: 20,
     },
@@ -112,7 +135,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ff4d4f',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 5
+        borderRadius: 5,
     },
     deleteButtonWrapper: {
         flex: 1,
@@ -121,7 +144,58 @@ const styles = StyleSheet.create({
     deleteButtonText: {
         color: '#fff',
         fontSize: 14,
-        fontFamily: "Roboto_400Regular"
+        fontFamily: "Roboto_400Regular",
+    },
+    confirmOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    confirmContainer: {
+        backgroundColor: '#FFFFFF',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    confirmText: {
+        fontSize: 14,
+        color: '#000000',
+        textAlign: 'center',
+        marginBottom: 20,
+        fontFamily: "Roboto_400Regular",
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    confirmButton: {
+        backgroundColor: '#2B2B2B',
+        width: 91,
+        height: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
+    },
+    confirmButtonText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontFamily: "Roboto_300Light",
+    },
+    cancelButton: {
+        backgroundColor: '#2B2B2B',
+        width: 91,
+        height: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
+    },
+    cancelButtonText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontFamily: "Roboto_700Bold",
     },
 });
 
