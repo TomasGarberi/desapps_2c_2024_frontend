@@ -15,6 +15,7 @@ import SearchScreen from './src/screens/SearchScreen';
 import AuthLoading from './src/components/AuthLoading';
 import Footer from './src/components/Footer'; // Importa el Footer personalizado
 import LostConnectionScreen from './src/screens/LostConnectionScreen'; // Pantalla de conexión perdida
+import NotificationsScreen from './src/screens/NotificationsScreen'; // Importa la pantalla de notificaciones
 import NetInfo from '@react-native-community/netinfo';
 
 import * as Google from 'expo-auth-session/providers/google';
@@ -35,7 +36,7 @@ function MainTabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
       <Tab.Screen name="NewPost" component={NewPostScreen} options={{ headerShown: false }} />
-      {/* <Tab.Screen name="Notifications" component={NotificationsScreen} /> */}
+      <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
