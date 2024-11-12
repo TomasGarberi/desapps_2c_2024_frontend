@@ -11,9 +11,10 @@ export default function RegisterScreen() {
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState(""); // Nuevo estado para mensajes de error
   const [formData, setFormData] = useState({
     name: "",
-    lastname: "",  // Add lastname to formData
+    lastname: "",
     username: "",
     email: "",
     password: "",
@@ -46,102 +47,56 @@ export default function RegisterScreen() {
   // Manejar los cambios en los campos
   const handleInputChange = (name, value) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  // Verificar si el email ya está en uso
-  const checkEmailExists = async (email) => {
-    try {
-      const response = await axios.get(`/users/isEmailUsed`, {
-        params: { email }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error checking email:", error);
-      return false;
-    }
-  };
-
-  // Verificar si el username ya está en uso
-  const checkUsernameExists = async (username) => {
-    try {
-      const response = await axios.get(`/users/isUsernameUsed`, {
-        params: { username }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error checking username:", error);
-      return false;
-    }
+    setErrorMessage(""); // Limpiar mensaje de error cuando el usuario cambia el texto
   };
 
   const handleRegister = async () => {
-    console.log("Datos del formulario:", formData);
     let validationErrors = {};
 
-    if (!formData.name) {
-      validationErrors.name = "El campo de name es obligatorio.";
-      console.log("no hay name");
-    }
-
-    if (!formData.lastname) {  // Validate lastname
-      validationErrors.lastname = "El campo de apellido es obligatorio.";
-      console.log("no hay lastname");
-    }
-
-    if (!formData.username) {
-      validationErrors.username = "El campo de username es obligatorio.";
-      console.log("no hay user");
-    }
-
+    if (!formData.name) validationErrors.name = "El campo de nombre es obligatorio.";
+    if (!formData.lastname) validationErrors.lastname = "El campo de apellido es obligatorio.";
+    if (!formData.username) validationErrors.username = "El campo de usuario es obligatorio.";
     if (!formData.email) {
       validationErrors.email = "El campo de email es obligatorio.";
-      console.log("no hay mail");
     } else if (!isValidEmail(formData.email)) {
       validationErrors.email = "Por favor, ingrese un email válido.";
     }
 
     if (!formData.password) {
       validationErrors.password = "El campo de contraseña es obligatorio.";
-      console.log("no hay pass");
     } else if (!isValidPassword(formData.password)) {
       validationErrors.password = "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un número.";
     }
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      console.log("hay errores");
       return;
     }
-    
-    else if (!isTermsAccepted) {
+
+    if (!isTermsAccepted) {
       Alert.alert("Términos y Condiciones", "Debe aceptar los términos y condiciones para registrarse.");
-      console.log("no hay terms");
       return;
     }
 
-    else {
-      setErrors({});
-      console.log("Se viene el try de register");
-      try {
-        const response = await axios.post("/auth/register", {
-          name: formData.name,
-          lastname: formData.lastname,
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          role: formData.role
-        });
+    setErrors({});
+    try {
+      const response = await axios.post("/auth/register", {
+        name: formData.name,
+        lastname: formData.lastname,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role
+      });
 
-        if (response.status === 200) {
-          setIsModalVisible(true); // Mostrar mensaje de éxito
-        } else if (response.status === 400) {
-          // Mostrar error devuelto por el backend
-          console.log("Corrio mal");
-          Alert.alert("Error de Registro", response.data);
-        }
-      } catch (error) {
-        console.error("Error en registro:", error);
-        Alert.alert("Error de Registro", "Hubo un problema al registrar. Inténtelo de nuevo.");
+      if (response.status === 200) {
+        setIsModalVisible(true); // Mostrar mensaje de éxito
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setErrorMessage("El usuario o el correo electrónico ya están registrados.");
+      } else {
+        setErrorMessage("Hubo un problema al registrar. Inténtelo de nuevo.");
       }
     }
   };
@@ -150,6 +105,10 @@ export default function RegisterScreen() {
     setIsModalVisible(false);
     navigation.navigate("Login");
   };
+
+  const translateFieldNames = {
+    "Name": "Nombre", "Lastname": "Apellido", "Username": "Usuario", "Email": "Email", "Password": "Contraseña"
+  }
 
   return (
     <LinearGradient
@@ -166,24 +125,27 @@ export default function RegisterScreen() {
 
       {["Name", "Lastname", "Username", "Email", "Password"].map((label, index) => (
         <View key={index} style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>{label}</Text>
+          <Text style={styles.inputLabel}>{translateFieldNames[label]}</Text>
           <View style={styles.inputWrapper}>
             <TextInput
               placeholder={
                 label === "Email" ? "username@mail.com" :
                   label === "Password" ? "************" :
-                    `Escriba su ${label}`
+                    `Escriba su ${translateFieldNames[label]}`
               }
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               style={styles.input}
               secureTextEntry={label === "Password"}
-              value={formData[label.toLowerCase()] || ""} // Asegurarse de que `value` sea correcto
+              value={formData[label.toLowerCase()] || ""}
               onChangeText={(text) => handleInputChange(label.toLowerCase(), text)}
             />
           </View>
           {errors[label.toLowerCase()] && <Text style={styles.errorText}>{errors[label.toLowerCase()]}</Text>}
         </View>
       ))}
+
+      {/* Mostrar mensaje de error si existe */}
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       <View style={styles.termsContainer}>
         <Switch
@@ -213,7 +175,7 @@ export default function RegisterScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Tu username ha sido creado satisfactoriamente.</Text>
+            <Text style={styles.modalText}>Tu usuario ha sido creado satisfactoriamente.</Text>
             <TouchableOpacity style={styles.modalButton} onPress={handleContinue}>
               <Text style={styles.modalButtonText}>Continuar</Text>
             </TouchableOpacity>
@@ -251,12 +213,8 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 8,
-  },
-  inputWrapper: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#FFFFFF",
   },
   input: {
     background: 'transparent',
@@ -296,7 +254,7 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 14,
   },
   modalContainer: {
     flex: 1,
@@ -311,7 +269,7 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   modalText: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 20,
   },
   modalButton: {
@@ -322,6 +280,12 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 14,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    textAlign: "center",
+    marginBottom: 10,
   },
 });

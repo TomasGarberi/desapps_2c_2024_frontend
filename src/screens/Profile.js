@@ -15,6 +15,14 @@ export default function ProfileScreen() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const navigation = useNavigation();
+
+    const logout = () => {
+        AsyncStorage.clear()
+        setMenuVisible(false) 
+        navigation.navigate('Login')
+    }
+
     // Fetching user data and posts
     useEffect(() => {
         const fetchUserData = async () => {
@@ -65,7 +73,7 @@ export default function ProfileScreen() {
                 <Icon name="menu" size={30} color="#000" />
             </TouchableOpacity>
 
-            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
+            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()}/>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Background Image */}
