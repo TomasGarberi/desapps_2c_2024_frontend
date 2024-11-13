@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
-import { useNavigation } from '@react-navigation/native'; // Asegúrate de tener React Navigation configurado
+import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/AntDesign";
 import axios from "../middleware/axios";
 import * as ImagePicker from 'expo-image-picker';
+//import axios from 'axios';
 
 const NewPostScreen = () => {
-    const navigation = useNavigation(); // Para navegar a la pantalla de inicio
+    const navigation = useNavigation();
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -16,7 +17,6 @@ const NewPostScreen = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [errorMsg, setErrorMsg] = useState(null);
 
-    // Función para pedir permisos de la galería
     const requestPermissions = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
@@ -28,37 +28,31 @@ const NewPostScreen = () => {
         requestPermissions();
     }, []);
 
-    // Función para abrir la galería y seleccionar múltiples imágenes
     const pickImages = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsMultipleSelection: true, // Permite la selección múltiple
+            allowsMultipleSelection: true,
             quality: 1,
         });
 
         if (!result.canceled && result.assets) {
-            setImages(result.assets); // Guarda todas las imágenes seleccionadas
-            setCurrentImageIndex(0); // Inicia mostrando la primera imagen
+            setImages(result.assets);
+            setCurrentImageIndex(0);
         }
     };
 
-    // Función para cambiar a la siguiente imagen
     const nextImage = () => {
         if (images.length > 1) {
             setCurrentImageIndex((currentImageIndex + 1) % images.length);
         }
     };
 
-    // Función para cambiar a la imagen anterior
     const prevImage = () => {
         if (images.length > 1) {
-            setCurrentImageIndex(
-                (currentImageIndex - 1 + images.length) % images.length
-            );
+            setCurrentImageIndex((currentImageIndex - 1 + images.length) % images.length);
         }
     };
 
-    // Función para obtener la ubicación y autocompletar el campo de ubicación
     const getLocationAndAddress = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
@@ -66,20 +60,18 @@ const NewPostScreen = () => {
             return;
         }
 
-        // Obtiene la ubicación actual
         let currentLocation = await Location.getCurrentPositionAsync({});
         const { latitude, longitude } = currentLocation.coords;
 
-        // Realiza la solicitud a tu backend para obtener la dirección
         try {
+            //NO FUNCIONA AHORA PORQUE CAMBIE EL IMPORT DE AXIOS 
             const response = await axios.get(`/geo/coordinates`, {
                 params: { lat: latitude, lng: longitude },
             });
-        
+
             const data = response.data;
-        
             if (data) {
-                setLocation(data); // Autocompletar el campo de ubicación con la dirección
+                setLocation(data);
             } else {
                 setLocation('No se pudo obtener la dirección');
             }
@@ -87,7 +79,37 @@ const NewPostScreen = () => {
             setErrorMsg('Error al obtener la dirección');
             console.error(error);
         }
-        
+    };
+
+    const handlePublish = async () => {
+        try {
+            
+            // First, fetch the user ID using the token
+            //const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMzYxNjIxLCJpZCI6OCwiZXhwIjoxNzMxNDQ4MDIxfQ.YIr_GVTFtd5O73vhAYJvzmAtWDfEkh7lGoIqqGD9r-llw4EFhqcJUddUbDjyZauainGzsZRwXi8N5ZJGv13bfg';  // TODO: Get token when user logs in
+            const idResponse = await axios.get('/users/getId');
+
+            const userId = idResponse.data; // User ID
+            // Crea el objeto `Post` con los datos necesarios
+            const postData = {
+                description,
+                image: ["EJEMPLO"],// TODO cambiar por url de imagenes
+                userId: userId, 
+                usersLikes: [],
+                fecha: new Date().toISOString(),
+                direc: location,
+            };
+
+            // Envía la solicitud POST al backend
+            console.log(postData);
+            const response = await axios.post("/posts", postData);
+            if (response.status === 201) {
+                alert('Publicación creada con éxito');
+                navigation.goBack();
+            }
+        } catch (error) {
+            console.error("Error al publicar:", error);
+            alert("Error al publicar");
+        }
     };
 
     return (
@@ -131,12 +153,6 @@ const NewPostScreen = () => {
             </TouchableOpacity>
 
             <TextInput
-                style={styles.input}
-                placeholder="Título"
-                value={title}
-                onChangeText={setTitle}
-            />
-            <TextInput
                 style={[styles.input, styles.descriptionInput]}
                 placeholder="Descripción"
                 value={description}
@@ -158,7 +174,7 @@ const NewPostScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.publishButton}>
+            <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
                 <Text style={styles.publishButtonText}>Publicar</Text>
             </TouchableOpacity>
         </View>
@@ -183,8 +199,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     imageContainer: {
-        width: '80%', // Ajusta el ancho aquí
-        height: 200, // Ajusta la altura aquí
+        width: '80%',
+        height: 200,
         backgroundColor: '#f0f0f0',
         borderRadius: 10,
         justifyContent: 'center',
@@ -213,8 +229,8 @@ const styles = StyleSheet.create({
         transform: [{ translateY: -20 }],
         padding: 5,
     },
-    arrow:{
-        fontSize: 25
+    arrow: {
+        fontSize: 25,
     },
     input: {
         borderWidth: 1,
