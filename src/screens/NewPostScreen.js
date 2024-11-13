@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/AntDesign";
 import axios from "../middleware/axios";
 import * as ImagePicker from 'expo-image-picker';
-//import axios from 'axios';
+import axiosAlias from 'axios';
 
 const NewPostScreen = () => {
     const navigation = useNavigation();
@@ -64,7 +64,6 @@ const NewPostScreen = () => {
         const { latitude, longitude } = currentLocation.coords;
 
         try {
-            //NO FUNCIONA AHORA PORQUE CAMBIE EL IMPORT DE AXIOS 
             const response = await axios.get(`/geo/coordinates`, {
                 params: { lat: latitude, lng: longitude },
             });
@@ -83,25 +82,39 @@ const NewPostScreen = () => {
 
     const handlePublish = async () => {
         try {
-            
-            // First, fetch the user ID using the token
-            //const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMzYxNjIxLCJpZCI6OCwiZXhwIjoxNzMxNDQ4MDIxfQ.YIr_GVTFtd5O73vhAYJvzmAtWDfEkh7lGoIqqGD9r-llw4EFhqcJUddUbDjyZauainGzsZRwXi8N5ZJGv13bfg';  // TODO: Get token when user logs in
+            // Obtener el ID de usuario
             const idResponse = await axios.get('/users/getId');
-
-            const userId = idResponse.data; // User ID
-            // Crea el objeto `Post` con los datos necesarios
-            const postData = {
-                description,
-                image: ["EJEMPLO"],// TODO cambiar por url de imagenes
-                userId: userId, 
-                usersLikes: [],
-                fecha: new Date().toISOString(),
-                direc: location,
-            };
-
-            // Envía la solicitud POST al backend
-            console.log(postData);
-            const response = await axios.post("/posts", postData);
+            const userId = idResponse.data;
+    
+            // Crear el FormData y agregar los datos
+            const formData = new FormData();
+            formData.append("descripcion", description);
+            formData.append("direc", location);
+    
+            // Iterar sobre las imágenes seleccionadas y agregar las imágenes como Blob al FormData
+            images.forEach((image) => {
+                // Convertir la imagen base64 a un Blob
+                const imageBlob = base64ToBlob(image.uri);
+    
+                // Crear un objeto File para poder agregarlo al FormData
+                const file = new File([imageBlob], image.fileName, { type: image.mimeType });
+    
+                // Agregar la imagen al FormData
+                formData.append("imagesPost", file);
+            });
+    
+            // Verificar el contenido de formData
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ": " + pair[1]);
+            }
+    
+            // Enviar la solicitud POST al backend
+            const response = await axios.post("/posts", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data" // Necesario para subir archivos
+                },
+            });
+    
             if (response.status === 201) {
                 alert('Publicación creada con éxito');
                 navigation.goBack();
@@ -111,6 +124,21 @@ const NewPostScreen = () => {
             alert("Error al publicar");
         }
     };
+    
+    // Función para convertir base64 a Blob
+    const base64ToBlob = (base64Data) => {
+        const byteString = atob(base64Data.split(',')[1]);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+    
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+        }
+    
+        return new Blob([uint8Array], { type: 'image/jpeg' }); // Puedes cambiar el tipo MIME si es necesario
+    };
+    
+    
 
     return (
         <View style={styles.container}>
