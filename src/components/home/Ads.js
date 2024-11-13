@@ -11,7 +11,7 @@ const exampleAd = {
 
 export default function Ad({ ad = exampleAd }) {
   const handlePressLink = () => {
-    Linking.openURL(ad.websiteUrl);
+    Linking.openURL(ad.Url);
   };
 
   const handleShare = async () => {
@@ -31,10 +31,10 @@ export default function Ad({ ad = exampleAd }) {
       {/* Header del Usuario */}
       <View style={styles.header}>
         <View style={styles.profileImageWrapper}>
-          <Image source={{ uri: ad.userImage }} style={styles.profileImage} />
+          <Image source={{ uri: ad.imagePath[0].portraite }} style={styles.profileImage} />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.username}>@{ad.username}</Text>
+          <Text style={styles.username}>{ad.commerce}</Text>
           <Text style={styles.adLabel}>Publicidad</Text>
         </View>
       </View>
@@ -45,7 +45,7 @@ export default function Ad({ ad = exampleAd }) {
         <TouchableOpacity onPress={handlePressLink} style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>Visita nuestra página web para más detalles</Text>
         </TouchableOpacity>
-        <Image source={{ uri: ad.image }} style={styles.adImage} />
+        <Image source={{ uri: ad.imagePath[0].portraite }} style={styles.adImage} />
 
         {/* Botón de Compartir */}
         <View style={styles.actionContainer}>
