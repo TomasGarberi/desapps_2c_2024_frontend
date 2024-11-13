@@ -4,9 +4,11 @@ import { useNavigation } from "@react-navigation/native";
 import Footer from '../components/Footer';
 import Icon from "react-native-vector-icons/Feather"; 
 import Icons from "react-native-vector-icons/AntDesign";
-import HamburgerMenu from '../components/HamburgerMenu';
-import axios from "../middleware/axios"; 
-//import axios from 'axios';
+import HamburgerMenu from '../components/profile/HamburgerMenu';
+//import axios from "../middleware/axios"; 
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function ProfileScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
