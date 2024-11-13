@@ -1,26 +1,81 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Modal, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Alert } from 'react-native';
+import axios from '../../middleware/axios';
 
 export default function UserSuggestion({ user, onPress }) {
   const [isFollowing, setIsFollowing] = useState(false); // Estado para seguimiento
   const [showConfirmation, setShowConfirmation] = useState(false); // Estado para mostrar el popup
+  const [followedList, setFollowedList] = useState([]); // Estado para la lista de seguidos
 
-  // Función para manejar el seguimiento
-  const handleFollow = () => {
-    if (isFollowing) {
-      // Si ya está siguiendo, mostrar popup de confirmación para dejar de seguir
-      setShowConfirmation(true);
-    } else {
-      // Si no está siguiendo, empezar a seguir
-      setIsFollowing(true);
-      // Aquí iría la lógica para actualizar el feed del usuario
+  // Función para manejar el seguimiento o dejar de seguir
+  const handleFollowAction = async () => {
+    try {
+      // Obtener el ID del usuario autenticado
+      const idResponse = await axios.get('/users/getId');
+      const userId = idResponse.data;
+
+      if (userId) {
+        if (isFollowing) {
+          // Dejar de seguir
+          await axios.delete(`/users/${userId}/followed/${user.id}`);
+          setIsFollowing(false);
+        } else {
+          // Seguir al usuario
+          await axios.post(`/users/${userId}/follow/${user.id}`);
+          setIsFollowing(true);
+        }
+      } else {
+        console.error("User ID not found");
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
+  // Función para chequear si el usuario está siguiendo
+  const checkIfFollowing = async () => {
+    try {
+      // Obtener el ID del usuario autenticado
+      const idResponse = await axios.get('/users/getId');
+      const userId = idResponse.data;
+
+      if (userId) {
+        // Obtener lista de usuarios seguidos
+        const followedListResponse = await axios.get(`/users/${userId}/followed`);
+        const followedIds = followedListResponse.data.map(user => user.id); 
+        setFollowedList(followedIds);
+
+        // Verificar si el usuario recibido está en la lista de seguidos
+        const isUserFollowing = followedIds.includes(user.id);
+        setIsFollowing(isUserFollowing);
+      } else {
+        console.error("User ID not found");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    // Llamar a la función para verificar si el usuario está siguiendo al componente cuando cambia "user"
+    checkIfFollowing();
+  }, [user]);
+
   // Confirmar dejar de seguir
-  const confirmUnfollow = () => {
-    setIsFollowing(false);
-    setShowConfirmation(false);
+  const confirmUnfollow = async () => {
+    try {
+      // Lógica para dejar de seguir al usuario
+      const idResponse = await axios.get('/users/getId');
+      const userId = idResponse.data;
+      if (userId) {
+        // Aquí iría la lógica para eliminar el seguimiento
+        await axios.delete(`/users/${userId}/followed/${user.id}`);
+        setIsFollowing(false); // Actualizamos el estado para reflejar que ya no estamos siguiendo
+        setShowConfirmation(false);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -32,7 +87,7 @@ export default function UserSuggestion({ user, onPress }) {
       </View>
 
       <TouchableOpacity
-        onPress={handleFollow}
+        onPress={handleFollowAction} // Llama a handleFollowAction
         style={isFollowing ? styles.unfollowButton : styles.followButton}
       >
         <Text style={isFollowing ? styles.unfollowButtonText : styles.followButtonText}>
@@ -74,6 +129,7 @@ export default function UserSuggestion({ user, onPress }) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

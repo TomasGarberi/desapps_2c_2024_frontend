@@ -1,31 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, FlatList } from 'react-native';
 import Header from '../components/Header';
-import UserSuggestion from '../components/search/UserSuggestion'; // Componente para cada usuario en la lista de sugerencias
+import UserSuggestion from '../components/search/UserSuggestion';
+import axios from '../middleware/axios';
 
 export default function SearchScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const [error, setError] = useState(null); // Estado para manejar errores
 
-  // Datos de ejemplo para sugerencias y resultados
-  const exampleSuggestedUsers = [
-    { id: 1, username: 'carlos.lopez', name: 'Carlos Lopez', profileImage: 'https://picsum.photos/50/50?1' },
-    { id: 2, username: 'ana.garcia', name: 'Ana Garcia', profileImage: 'https://picsum.photos/50/50?2' },
-    { id: 3, username: 'maria.fernandez', name: 'Maria Fernandez', profileImage: 'https://picsum.photos/50/50?3' },
-    { id: 4, username: 'luis.martinez', name: 'Luis Martinez', profileImage: 'https://picsum.photos/50/50?4' },
-    { id: 5, username: 'laura.sanchez', name: 'Laura Sanchez', profileImage: 'https://picsum.photos/50/50?5' },
-  ];
-
-  const exampleSearchResults = [
-    { id: 6, username: 'carla.mendoza', name: 'Carla Mendoza', profileImage: 'https://picsum.photos/50/50?6' },
-    { id: 7, username: 'carla.lopez.mendoza', name: 'Carla Lopez Mendoza', profileImage: 'https://picsum.photos/50/50?7' },
-    { id: 8, username: 'carl.mendoza', name: 'Carl Mendoza', profileImage: 'https://picsum.photos/50/50?8' },
-  ];
-
-  // Cargar sugerencias de ejemplo
+  // Llamada al endpoint para obtener usuarios aleatorios
   useEffect(() => {
-    setSuggestedUsers(exampleSuggestedUsers);
+    const fetchSuggestedUsers = async () => {
+      try {
+        const response = await axios.get('/users/random');
+        setSuggestedUsers(response.data);
+        console.log(suggestedUsers);
+        setError(null); // Limpiar el error si la llamada fue exitosa
+      } catch (error) {
+        console.error('Error fetching suggested users:', error);
+        setError('No se pudieron obtener sugerencias. Intenta de nuevo más tarde.');
+      }
+    };
+
+    fetchSuggestedUsers();
   }, []);
 
   // Actualizar resultados de búsqueda cuando cambia el query
@@ -34,12 +33,12 @@ export default function SearchScreen({ navigation }) {
       setSearchResults([]);
     } else {
       setSearchResults(
-        exampleSearchResults.filter(user =>
+        suggestedUsers.filter(user =>
           user.username.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }
-  }, [searchQuery]);
+  }, [searchQuery, suggestedUsers]);
 
   return (
     <View style={styles.container}>
@@ -62,18 +61,23 @@ export default function SearchScreen({ navigation }) {
         {searchQuery.trim() === '' ? 'Sugerencias' : 'Resultados'}
       </Text>
 
-      {/* Lista de usuarios sugeridos o resultados de búsqueda */}
-      <FlatList
-        data={searchQuery.trim() === '' ? suggestedUsers : searchResults}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <UserSuggestion
-            user={item}
-            onPress={() => navigation.navigate('UserProfile', { userId: item.id })}
-          />
-        )}
-        contentContainerStyle={styles.suggestionsContainer}
-      />
+      {/* Mostrar error si ocurre algún problema */}
+      {error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        // Lista de usuarios sugeridos o resultados de búsqueda
+        <FlatList
+          data={searchQuery.trim() === '' ? suggestedUsers : searchResults}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <UserSuggestion
+              user={item}
+              onPress={() => navigation.navigate('UserProfile', { userId: item.id })}
+            />
+          )}
+          contentContainerStyle={styles.suggestionsContainer}
+        />
+      )}
     </View>
   );
 }
@@ -108,5 +112,11 @@ const styles = StyleSheet.create({
   },
   suggestionsContainer: {
     paddingHorizontal: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 20,
+    fontSize: 16,
   },
 });
