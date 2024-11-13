@@ -48,7 +48,7 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                 >
-                    <Image source={require('../assets/logo-header.png')} style={styles.logo} />
+                    <Image source={require('../../assets/logo-header.png')} style={styles.logo} />
                     <Text style={styles.menuItem}>INICIO</Text>
                     <Text style={styles.menuItem}>EDITAR PERFIL</Text>
                     <View style={styles.switchContainer}>
