@@ -11,7 +11,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function ProfileScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
     const [userData, setUserData] = useState(null);
-    const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -31,9 +30,6 @@ export default function ProfileScreen() {
                 if (userId) {
                     const userResponse = await axios.get(`/users/${userId}`);
                     setUserData(userResponse.data);
-
-                    const postsResponse = await axios.get(`/posts/user/${userId}`);
-                    setPosts(postsResponse.data);
                     setLoading(false);
                 } else {
                     setError("User ID not found");
@@ -122,18 +118,10 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Galería de Imágenes o Estado de Sin Imágenes */}
-                <View style={styles.galleryContainer}>
-                    {posts.length > 0 ? (
-                        posts.map((post) => (
-                            <Image key={post.postId} source={{ uri: post.image }} style={styles.galleryImage} />
-                        ))
-                    ) : (
-                        <View style={styles.noImagesContainer}>
-                            <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
-                            <Text style={styles.noImagesText}>Empieza a compartir tus momentos aquí.</Text>
-                        </View>
-                    )}
+                {/* Mokeado de Sin Imágenes */}
+                <View style={styles.noImagesContainer}>
+                    <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
+                    <Text style={styles.noImagesText}>Empieza a compartir tus momentos aquí.</Text>
                 </View>
             </ScrollView>
         </View>
@@ -261,12 +249,14 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     noImagesIcon: {
-        width: 100,
-        height: 100,
+        width: 50,
+        height: 56,
         marginBottom: 10,
     },
     noImagesText: {
         fontSize: 14,
         color: '#7C8089',
+        fontFamily: 'Roboto_400Regular', 
+        textAlign: 'center',
     },
 });

@@ -1,16 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import LottieView from 'lottie-react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
 export default function WelcomeHome() {
   return (
     <View style={styles.container}>
-{/*       <LottieView
+      {/*       <LottieView
         source={require('../../assets/animations/welcome_animation.json')}
         autoPlay
         loop
         style={styles.animation}
       /> */}
+      <Image
+        source={require('../../assets/animations/welcome_animation.gif')}
+        style={styles.image}
+        resizeMode="contain"
+      />
       <Text style={styles.welcomeText}>Bienvenido a Lattice</Text>
       <Text style={styles.instructions}>
         Comienza a seguir personas o haz tu primera publicación para ver contenido aquí.
@@ -26,22 +30,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fafafa',
     paddingHorizontal: 20,
+    paddingTop: 180, // Agrega un padding top adicional para mover el contenido hacia abajo
   },
   image: {
-    width: 100, 
-    height: 100,
-    marginBottom: 20,
+    width: 180,
+    height: 180,
+    marginBottom: 30,
   },
   welcomeText: {
     fontSize: 22,
     color: '#333',
     fontWeight: 'bold',
     marginVertical: 10,
+    textAlign: 'center',
   },
   instructions: {
     fontSize: 16,
     color: '#555',
     textAlign: 'center',
     paddingHorizontal: 10,
+    marginTop: 10,
   },
 });
