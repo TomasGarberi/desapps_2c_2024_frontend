@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/AntDesign";
@@ -15,6 +15,7 @@ const NewPostScreen = () => {
     const [images, setImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const requestPermissions = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -82,8 +83,16 @@ const NewPostScreen = () => {
     const handlePublish = async () => {
         try {
             // Lógica de publicación omitida para el ejemplo
-            alert('Publicación creada con éxito');
-            navigation.goBack();
+            setShowSuccessModal(true); // Mostrar modal de éxito
+
+            // Timeout para cerrar el modal y redirigir
+            setTimeout(() => {
+                setShowSuccessModal(false);
+                navigation.navigate('MainTabs', {
+                    screen: 'Home',
+                    params: { reload: true },
+                });
+            }, 2000);
         } catch (error) {
             console.error("Error al publicar:", error);
             alert("Error al publicar");
@@ -145,7 +154,7 @@ const NewPostScreen = () => {
                 value={description}
                 onChangeText={setDescription}
                 multiline
-                maxLength={120}  // Máximo de 120 caracteres para la descripción
+                maxLength={120}
             />
             <Text style={styles.charLimitText}>Máximo 120 Caracteres</Text>
 
@@ -165,6 +174,20 @@ const NewPostScreen = () => {
             <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
                 <Text style={styles.publishButtonText}>Publicar</Text>
             </TouchableOpacity>
+
+            {/* Modal de éxito */}
+            <Modal
+                transparent
+                visible={showSuccessModal}
+                animationType="fade"
+                onRequestClose={() => setShowSuccessModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>¡Publicación creada con éxito!</Text>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -269,6 +292,24 @@ const styles = StyleSheet.create({
     publishButtonText: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: 200,
+        padding: 20,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 16,
+        color: '#3B3F58',
+        textAlign: 'center',
     },
 });
 
