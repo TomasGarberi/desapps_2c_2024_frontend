@@ -9,9 +9,9 @@ import { SafeAreaView } from 'react-native-web';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import axios from '../middleware/axios';
 
-export default function HomeScreen({ navigation}) { 
+export default function HomeScreen({ navigation }) { 
   const [ads, setAds] = useState([]);
-  const [posts, setPosts] = useState([]); // Estado para almacenar las publicaciones del timeline
+  const [posts, setPosts] = useState([]);
 
   // Función para obtener anuncios
   const getAds = async () => {
@@ -33,12 +33,37 @@ export default function HomeScreen({ navigation}) {
     }
   };
 
-  useEffect(async () => {
-    const idResponse = await axios.get('/users/getId');
-    const userId = idResponse.data;
-    getAds();
-    getTimeline(userId);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const idResponse = await axios.get('/users/getId');
+        const userId = idResponse.data;
+        await getAds();
+        await getTimeline(userId);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchData();
   }, []);
+
+  // Función para renderizar contenido con anuncios intercalados
+  const renderContentWithAds = () => {
+    const content = [];
+    let adsIndex = 0;
+
+    posts.forEach((post, index) => {
+      content.push(<Post key={`post-${post.id}`} post={post} />);
+      // Insertar un anuncio después de cada 3 posts, si hay anuncios disponibles
+      if ((index + 1) % 3 === 0 && ads.length > 0) {
+        const ad = ads[adsIndex % ads.length]; // Usar los anuncios de forma cíclica
+        content.push(<Ad key={`ad-${ad.id}-${index}`} ad={ad} />);
+        adsIndex += 1;
+      }
+    });
+
+    return content;
+  };
 
   return (
     <View style={styles.container}>
@@ -46,12 +71,11 @@ export default function HomeScreen({ navigation}) {
       <SafeAreaProvider>
         <SafeAreaView style={styles.container} edges={['top']}>
           <ScrollView style={styles.scrollView}>
-            {posts.length === 0 ? <WelcomeHome /> : posts.map((post) => (
-              <Post key={post.id} post={post} />
-            ))}
-            {ads.map((ad) => (
-              <Ad key={ad.id} ad={ad} />
-            ))}
+            {posts.length === 0 ? (
+              <WelcomeHome />
+            ) : (
+              renderContentWithAds()
+            )}
           </ScrollView>
         </SafeAreaView>
       </SafeAreaProvider>
@@ -70,3 +94,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+

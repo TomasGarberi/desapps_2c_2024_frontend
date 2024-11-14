@@ -5,15 +5,13 @@ import Footer from '../components/Footer';
 import Icon from "react-native-vector-icons/Feather"; 
 import Icons from "react-native-vector-icons/AntDesign";
 import HamburgerMenu from '../components/profile/HamburgerMenu';
-//import axios from "../middleware/axios"; 
-import axios from 'axios';
+import axios from "../middleware/axios"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 export default function ProfileScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
     const [userData, setUserData] = useState(null);
-    const [posts, setPosts] = useState([]); // New state for storing posts
+    const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -23,28 +21,19 @@ export default function ProfileScreen() {
         AsyncStorage.clear()
         setMenuVisible(false) 
         navigation.navigate('Login')
-    }
+    };
 
-    // Fetching user data and posts
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // First, fetch the user ID using the token
-                //const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFucGVyZXoxMjM0IiwiaWF0IjoxNzMxMzY0NjExLCJpZCI6OCwiZXhwIjoxNzMxNDUxMDExfQ.mBZGVKgAvoHe-QjQufImWoULkjlHOGNoQvgBau82C2CqXRFNhgBYFp8j0WBdfXnXR_Y2OFun4Pl68WO44-axIQ';  // TODO: Get token when user logs in
                 const idResponse = await axios.get('/users/getId');
-
-                const userId = idResponse.data; // User ID
-
+                const userId = idResponse.data;
                 if (userId) {
-                    // Fetch user details
                     const userResponse = await axios.get(`/users/${userId}`);
-
                     setUserData(userResponse.data);
 
-                    // Fetch posts by user
                     const postsResponse = await axios.get(`/posts/user/${userId}`);
-
-                    setPosts(postsResponse.data); // Set the posts data
+                    setPosts(postsResponse.data);
                     setLoading(false);
                 } else {
                     setError("User ID not found");
@@ -56,68 +45,74 @@ export default function ProfileScreen() {
                 setLoading(false);
             }
         };
-
         fetchUserData();
-    }, []); // Empty dependency array to run only once when the component mounts
+    }, []);
 
     if (loading) {
-        return <Text style={styles.loadingText}>Loading...</Text>; // Show loading while data is being fetched
+        return <Text style={styles.loadingText}>Loading...</Text>;
     }
 
     if (error) {
-        return <Text style={styles.loadingText}>{error}</Text>; // Show error message if something goes wrong
+        return <Text style={styles.loadingText}>{error}</Text>;
     }
 
     return (
         <View style={styles.container}>
-            {/* Header with Hamburger Menu */}
             <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.hamburgerButton}>
                 <Icon name="menu" size={30} color="#000" />
             </TouchableOpacity>
 
-            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()}/>
+            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()} />
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* Background Image */}
-                <Image source={require('../assets/photo/perfil.jpg')} style={styles.backgroundImage} />
+                {/* Imagen de Portada con Sombra */}
+                <View style={styles.coverContainer}>
+                    <Image 
+                        source={require('../assets/cover.png')} 
+                        style={styles.backgroundImage} 
+                    />
+                    <View style={styles.coverOverlay} />
+                </View>
 
-                {/* Profile Info */}
+                {/* Información de Perfil */}
                 <View style={styles.profileContainer}>
-                    {/* Left Side: Profile Picture and Name */}
+                    {/* Foto de Perfil */}
                     <View style={styles.leftContainer}>
-                        <Image source={{ uri: userData.urlImage }} style={styles.profilePicture} />
+                        <Image 
+                            source={userData.urlImage ? { uri: userData.urlImage } : require('../assets/default-profile.png')} 
+                            style={styles.profilePicture} 
+                        />
                         <Text style={styles.name}>{userData.name} {userData.lastName}</Text>
                     </View>
 
-                    {/* Right Side: Username and User Info */}
+                    {/* Nombre de Usuario y Seguidores */}
                     <View style={styles.rightContainer}>
                         <View style={styles.usernameContainer}>
                             <Text style={styles.username}>@{userData.username}</Text>
                         </View>
 
-                        {/* Follow Info Divided into Columns */}
                         <View style={styles.followInfo}>
-                            <View style={styles.followColumn}>
+                            <TouchableOpacity style={styles.followColumn}>
                                 <Text style={styles.followCount}>
                                     {Array.isArray(userData.followers) ? userData.followers.length : 0}
                                 </Text>
                                 <Text style={styles.followLabel}>Seguidores</Text>
-                            </View>
-                            <View style={styles.followColumn}>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.followColumn}>
                                 <Text style={styles.followCount}>
                                     {Array.isArray(userData.following) ? userData.following.length : 0}
                                 </Text>
                                 <Text style={styles.followLabel}>Siguiendo</Text>
-                            </View>
+                            </TouchableOpacity>
                         </View>
 
                         <Text style={styles.bio}>
-                            {userData.description}
+                            {userData.description || "Añade una descripción para que los demás te conozcan mejor."}
                         </Text>
                     </View>
                 </View>
 
-                {/* Icons for grid and favorite sections */}
+                {/* Iconos de Post y Favoritos */}
                 <View style={styles.iconContainer}>
                     <TouchableOpacity style={styles.iconBox}>
                         <Icons name="appstore-o" size={30} color="#000" />
@@ -127,12 +122,18 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Gallery */}
+                {/* Galería de Imágenes o Estado de Sin Imágenes */}
                 <View style={styles.galleryContainer}>
-                    {/* Display images from posts */}
-                    {posts.length > 0 ? posts.map((post) => (
-                        <Image key={post.postId} source={{ uri: post.image }} style={styles.galleryImage} />
-                    )) : <Text>No posts available</Text>}
+                    {posts.length > 0 ? (
+                        posts.map((post) => (
+                            <Image key={post.postId} source={{ uri: post.image }} style={styles.galleryImage} />
+                        ))
+                    ) : (
+                        <View style={styles.noImagesContainer}>
+                            <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
+                            <Text style={styles.noImagesText}>Empieza a compartir tus momentos aquí.</Text>
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         </View>
@@ -145,25 +146,32 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     loadingText: {
-        fontSize: 20, // Aumenta el tamaño de la fuente en 4 puntos
+        fontSize: 20, 
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#333',
-        marginTop: '50%', // Centra verticalmente en la pantalla
+        marginTop: '50%',
     },
     hamburgerButton: {
         position: 'absolute',
         top: 40,
         right: 20,
-        zIndex: 1, // Ensures the button is above other elements
+        zIndex: 1,
     },
     scrollContent: {
-        paddingBottom: 80, // Space for the footer
+        paddingBottom: 80,
+    },
+    coverContainer: {
+        position: 'relative',
     },
     backgroundImage: {
         width: '100%',
-        height: 275, // Larger background image
+        height: 327,
         resizeMode: 'cover',
+    },
+    coverOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
     },
     profileContainer: {
         flexDirection: 'row',
@@ -177,23 +185,27 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     profilePicture: {
-        width: 140,
-        height: 150, // Rectangular size for the profile picture
+        width: 141,
+        height: 137,
         borderRadius: 10,
         borderWidth: 2,
         borderColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
     },
     name: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
-        marginTop: 10, // Space between photo and name
+        marginTop: 10,
     },
     rightContainer: {
         flex: 1,
     },
     usernameContainer: {
-        backgroundColor: '#d8d8d8', // Light gray background for username
+        backgroundColor: '#FDFFFF',
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 5,
@@ -201,8 +213,8 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
     },
     username: {
-        fontSize: 14,
-        color: '#333',
+        fontSize: 16,
+        color: '#7C8089',
     },
     followInfo: {
         flexDirection: 'row',
@@ -211,19 +223,21 @@ const styles = StyleSheet.create({
     },
     followColumn: {
         alignItems: 'center',
+        width: 87,
+        height: 38,
     },
     followCount: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#0C0F14',
     },
     followLabel: {
         fontSize: 12,
-        color: '#666',
+        color: '#0C0F14',
     },
     bio: {
-        fontSize: 12,
-        color: '#666',
+        fontSize: 11,
+        color: '#7C8089',
         textAlign: 'center',
         marginTop: 10,
     },
@@ -231,23 +245,28 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         marginVertical: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
     },
     iconBox: {
-        marginHorizontal: 50, // Increased space between icons
+        marginHorizontal: 50,
     },
     galleryContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
     },
-    galleryImage: {
-        width: '45%',
-        height: 100,
-        margin: 5,
+    noImagesContainer: {
+        alignItems: 'center',
+        marginTop: 20,
     },
-    footer: {
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
+    noImagesIcon: {
+        width: 100,
+        height: 100,
+        marginBottom: 10,
+    },
+    noImagesText: {
+        fontSize: 14,
+        color: '#7C8089',
     },
 });
