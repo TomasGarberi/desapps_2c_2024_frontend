@@ -6,7 +6,7 @@ const Footer = ({ navigation, state }) => {
   console.log(state)
   return (
     <View style={styles.footerContainer}>
-      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Home' })}>
+      <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Home', key: Date.now().toString() })}>
         <Icon name="home-outline" size={30} color={state.index === 0 ? "#000" : "#888"} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("MainTabs", { screen: 'Search' })}>
