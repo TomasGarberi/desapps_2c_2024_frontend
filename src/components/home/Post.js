@@ -4,10 +4,12 @@ import axios from '../../middleware/axios';
 import HeartIcon from '../../assets/icons/heart.svg';
 import CommentIcon from '../../assets/icons/comment.svg';
 import FavoriteIcon from '../../assets/icons/favorite.svg';
-import CommentsModal from './CommentsModal'; // Importa el modal de comentarios
+import CommentsModal from './CommentsModal';
+import ImageCarouselModal from '../ImageCarouselModal';
 
 export default function Post({ post }) {
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
+  const [isImageModalVisible, setImageModalVisible] = useState(false); // Estado para controlar el modal del carrusel
   const [username, setUsername] = useState('');
   const [profileImage, setProfileImage] = useState('');
 
@@ -33,11 +35,10 @@ export default function Post({ post }) {
       {/* Header del Usuario */}
       <View style={styles.header}>
         <View style={styles.profileImageWrapper}>
-          {/* Usar la URL de la imagen de perfil */}
           <Image source={{ uri: profileImage }} style={styles.profileImage} />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.username}>@{username}</Text> {/* Usa username aquí */}
+          <Text style={styles.username}>@{username}</Text>
           <Text style={styles.location}>{post.direc}</Text>
         </View>
       </View>
@@ -48,10 +49,12 @@ export default function Post({ post }) {
           <Text style={styles.descriptionText}>{post.description}</Text>
         </View>
 
-        {/* Mostrar la primera imagen de la lista */}
-        {post.image && post.image.length > 0 && (
-          <Image source={{ uri: post.image[0] }} style={styles.postImage} />
-        )}
+        {/* Abre el modal de imágenes al hacer clic en la imagen */}
+        <TouchableOpacity onPress={() => setImageModalVisible(true)}>
+          {post.image && post.image.length > 0 && (
+            <Image source={{ uri: post.image[0] }} style={styles.postImage} />
+          )}
+        </TouchableOpacity>
 
         {/* Botones de Acción */}
         <View style={styles.actionContainer}>
@@ -82,6 +85,13 @@ export default function Post({ post }) {
         onClose={() => setCommentModalVisible(false)}
         postId={post.postId}
         comments={post.comments}
+      />
+
+      {/* Modal de Carrusel de Imágenes */}
+      <ImageCarouselModal
+        isVisible={isImageModalVisible}
+        onClose={() => setImageModalVisible(false)}
+        images={post.image} // Pasa todas las imágenes al carrusel
       />
     </View>
   );
