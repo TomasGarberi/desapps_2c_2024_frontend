@@ -3,12 +3,13 @@ import { View, Text, TextInput, StyleSheet, FlatList } from 'react-native';
 import Header from '../components/Header';
 import UserSuggestion from '../components/search/UserSuggestion';
 import axios from '../middleware/axios';
+import axiosAlias from 'axios';
 
 export default function SearchScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestedUsers, setSuggestedUsers] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [suggestedUsers, setSuggestedUsers] = useState([]);  // Para mostrar sugerencias aleatorias
+  const [searchResults, setSearchResults] = useState([]);  // Para mostrar los resultados de la búsqueda
+  const [error, setError] = useState(null);  // Estado para manejar errores
 
   // Llamada al endpoint para obtener usuarios aleatorios
   useEffect(() => {
@@ -16,7 +17,6 @@ export default function SearchScreen({ navigation }) {
       try {
         const response = await axios.get('/users/random');
         setSuggestedUsers(response.data);
-        console.log(suggestedUsers);
         setError(null); // Limpiar el error si la llamada fue exitosa
       } catch (error) {
         console.error('Error fetching suggested users:', error);
@@ -27,18 +27,25 @@ export default function SearchScreen({ navigation }) {
     fetchSuggestedUsers();
   }, []);
 
-  // Actualizar resultados de búsqueda cuando cambia el query
+  // Llamada al endpoint de búsqueda por username cuando el searchQuery cambia
   useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setSearchResults([]);
-    } else {
-      setSearchResults(
-        suggestedUsers.filter(user =>
-          user.username.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      );
-    }
-  }, [searchQuery, suggestedUsers]);
+    const searchUsers = async () => {
+      if (searchQuery.trim() === '') {
+        setSearchResults([]);  // Limpiar resultados si no hay búsqueda
+      } else {
+        try {
+          const response = await axios.get(`/users/search/${searchQuery}`);
+          setSearchResults(response.data);
+          setError(null); // Limpiar el error si la búsqueda fue exitosa
+        } catch (error) {
+          console.error('Error searching users:', error);
+          setError('No se pudo realizar la búsqueda. Intenta de nuevo más tarde.');
+        }
+      }
+    };
+
+    searchUsers();
+  }, [searchQuery]);
 
   return (
     <View style={styles.container}>
