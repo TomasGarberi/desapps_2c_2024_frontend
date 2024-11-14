@@ -17,7 +17,7 @@ export default function UserSuggestion({ user, onPress }) {
       if (userId) {
         if (isFollowing) {
           // Dejar de seguir
-          await axios.delete(`/users/${userId}/followed/${user.id}`);
+          await axios.delete(`/users/${userId}/unfollow/${user.id}`);
           setIsFollowing(false);
         } else {
           // Seguir al usuario
@@ -69,7 +69,7 @@ export default function UserSuggestion({ user, onPress }) {
       const userId = idResponse.data;
       if (userId) {
         // Aquí iría la lógica para eliminar el seguimiento
-        await axios.delete(`/users/${userId}/followed/${user.id}`);
+        await axios.delete(`/users/${userId}/unfollow/${user.id}`);
         setIsFollowing(false); // Actualizamos el estado para reflejar que ya no estamos siguiendo
         setShowConfirmation(false);
       }

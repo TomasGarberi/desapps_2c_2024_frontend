@@ -1,46 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import axios from '../../middleware/axios';
 import HeartIcon from '../../assets/icons/heart.svg';
 import CommentIcon from '../../assets/icons/comment.svg';
 import FavoriteIcon from '../../assets/icons/favorite.svg';
 import CommentsModal from './CommentsModal'; // Importa el modal de comentarios
 
-const examplePost = {
-  userImage: 'https://picsum.photos/200/300',
-  username: 'ana.garcia',
-  location: 'Central Park, New York, NY, USA',
-  description: 'Paz y naturaleza en pleno Central Park 🌳. Un rincón perfecto en el corazón de NYC. #CentralPark',
-  image: 'https://picsum.photos/200/300',
-  timeAgo: 'Hace 7 horas',
-};
-
-export default function Post({ post = examplePost }) {
+export default function Post({ post }) {
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
+  const [username, setUsername] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const idResponse = await axios.get('/users/getId');
+        const userId = idResponse.data;
+
+        const userResponse = await axios.get(`/users/${userId}`);
+        setUsername(userResponse.data.username);
+        setProfileImage(userResponse.data.urlImage);
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   return (
     <View style={styles.postContainer}>
       {/* Header del Usuario */}
       <View style={styles.header}>
         <View style={styles.profileImageWrapper}>
-          <Image source={{ uri: post.userImage }} style={styles.profileImage} />
+          {/* Usar la URL de la imagen de perfil */}
+          <Image source={{ uri: profileImage }} style={styles.profileImage} />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.username}>@{post.username}</Text>
-          <Text style={styles.location}>{post.location}</Text>
+          <Text style={styles.username}>@{username}</Text> {/* Usa username aquí */}
+          <Text style={styles.location}>{post.direc}</Text>
         </View>
       </View>
 
       {/* Imagen de la Publicación */}
       <View style={styles.imageWrapper}>
-        {/* Descripción del Post */}
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>{post.description}</Text>
         </View>
-        <Image source={{ uri: post.image }} style={styles.postImage} />
+
+        {/* Mostrar la primera imagen de la lista */}
+        {post.image && post.image.length > 0 && (
+          <Image source={{ uri: post.image[0] }} style={styles.postImage} />
+        )}
 
         {/* Botones de Acción */}
         <View style={styles.actionContainer}>
-          <Text style={styles.timeAgo}>{post.timeAgo}</Text>
+          <Text style={styles.timeAgo}>{new Date(post.fecha).toLocaleString()}</Text>
           <View style={styles.actionIcons}>
             <TouchableOpacity>
               <View style={styles.icons}>
@@ -65,7 +80,8 @@ export default function Post({ post = examplePost }) {
       <CommentsModal
         isVisible={isCommentModalVisible}
         onClose={() => setCommentModalVisible(false)}
-        postId={post.id}
+        postId={post.postId}
+        comments={post.comments}
       />
     </View>
   );
@@ -85,23 +101,15 @@ const styles = StyleSheet.create({
   profileImageWrapper: {
     width: 40,
     height: 40,
-    backgroundColor: 'transparent',
     borderRadius: '25%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
   },
   profileImage: {
-      width: '100%',
-      height: '100%',
-      borderRadius: '23%',
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
   },
   userInfo: {
-    display: "flex",
     flexDirection: "column",
-    justifyContent: "space-around",
-    gap: 5,
     marginLeft: 10,
   },
   username: {
@@ -114,7 +122,6 @@ const styles = StyleSheet.create({
     color: '#7C8089',
   },
   imageWrapper: {
-    position: 'relative',
     alignItems: 'center',
   },
   descriptionContainer: {
