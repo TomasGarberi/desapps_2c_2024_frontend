@@ -58,19 +58,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: 20,
   },
   commentsCount: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#0C0F14',
     textAlign: 'center',
+    paddingTop: 30,
   },
   commentsLabel: {
     fontSize: 12,
     color: '#0C0F14',
     textAlign: 'center',
     marginBottom: 20,
+    paddingBottom: 30,
   },
   notificationsList: {
     paddingHorizontal: 20,

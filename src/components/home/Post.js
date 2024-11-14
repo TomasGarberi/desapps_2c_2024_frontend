@@ -6,10 +6,11 @@ import CommentIcon from '../../assets/icons/comment.svg';
 import FavoriteIcon from '../../assets/icons/favorite.svg';
 import CommentsModal from './CommentsModal';
 import ImageCarouselModal from '../ImageCarouselModal';
+import DefaultProfileImage from '../../assets/default-profile.png'; // Importa la imagen de perfil predeterminada
 
 export default function Post({ post }) {
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
-  const [isImageModalVisible, setImageModalVisible] = useState(false); // Estado para controlar el modal del carrusel
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [profileImage, setProfileImage] = useState('');
 
@@ -35,7 +36,10 @@ export default function Post({ post }) {
       {/* Header del Usuario */}
       <View style={styles.header}>
         <View style={styles.profileImageWrapper}>
-          <Image source={{ uri: profileImage }} style={styles.profileImage} />
+          <Image
+            source={profileImage ? { uri: profileImage } : DefaultProfileImage} // Usa la imagen predeterminada si profileImage está vacío
+            style={styles.profileImage}
+          />
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.username}>@{username}</Text>
@@ -43,20 +47,16 @@ export default function Post({ post }) {
         </View>
       </View>
 
-      {/* Imagen de la Publicación */}
+      {/* Resto del código permanece igual */}
       <View style={styles.imageWrapper}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>{post.description}</Text>
         </View>
-
-        {/* Abre el modal de imágenes al hacer clic en la imagen */}
         <TouchableOpacity onPress={() => setImageModalVisible(true)}>
           {post.image && post.image.length > 0 && (
             <Image source={{ uri: post.image[0] }} style={styles.postImage} />
           )}
         </TouchableOpacity>
-
-        {/* Botones de Acción */}
         <View style={styles.actionContainer}>
           <Text style={styles.timeAgo}>{new Date(post.fecha).toLocaleString()}</Text>
           <View style={styles.actionIcons}>
@@ -91,7 +91,7 @@ export default function Post({ post }) {
       <ImageCarouselModal
         isVisible={isImageModalVisible}
         onClose={() => setImageModalVisible(false)}
-        images={post.image} // Pasa todas las imágenes al carrusel
+        images={post.image}
       />
     </View>
   );
@@ -111,12 +111,17 @@ const styles = StyleSheet.create({
   profileImageWrapper: {
     width: 40,
     height: 40,
+    backgroundColor: 'transparent',
     borderRadius: '25%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
   },
   profileImage: {
     width: '100%',
     height: '100%',
-    borderRadius: '50%',
+    borderRadius: '23%',
   },
   userInfo: {
     flexDirection: "column",
