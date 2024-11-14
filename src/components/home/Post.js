@@ -6,13 +6,15 @@ import CommentIcon from '../../assets/icons/comment.svg';
 import FavoriteIcon from '../../assets/icons/favorite.svg';
 import CommentsModal from './CommentsModal';
 import ImageCarouselModal from '../ImageCarouselModal';
-import DefaultProfileImage from '../../assets/default-profile.png'; // Importa la imagen de perfil predeterminada
+import DefaultProfileImage from '../../assets/default-profile.png';
 
 export default function Post({ post }) {
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
   const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [profileImage, setProfileImage] = useState('');
+  const [isLiked, setIsLiked] = useState(false); // Estado para el corazón
+  const [isFavorited, setIsFavorited] = useState(false); // Estado para el favorito
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -31,13 +33,19 @@ export default function Post({ post }) {
     fetchUserInfo();
   }, []);
 
+  // Función para alternar el estado de "me gusta"
+  const toggleLike = () => setIsLiked(!isLiked);
+
+  // Función para alternar el estado de "favorito"
+  const toggleFavorite = () => setIsFavorited(!isFavorited);
+
   return (
     <View style={styles.postContainer}>
       {/* Header del Usuario */}
       <View style={styles.header}>
         <View style={styles.profileImageWrapper}>
           <Image
-            source={profileImage ? { uri: profileImage } : DefaultProfileImage} // Usa la imagen predeterminada si profileImage está vacío
+            source={profileImage ? { uri: profileImage } : DefaultProfileImage}
             style={styles.profileImage}
           />
         </View>
@@ -47,7 +55,7 @@ export default function Post({ post }) {
         </View>
       </View>
 
-      {/* Resto del código permanece igual */}
+      {/* Imagen de la Publicación */}
       <View style={styles.imageWrapper}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>{post.description}</Text>
@@ -60,9 +68,9 @@ export default function Post({ post }) {
         <View style={styles.actionContainer}>
           <Text style={styles.timeAgo}>{new Date(post.fecha).toLocaleString()}</Text>
           <View style={styles.actionIcons}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleLike}>
               <View style={styles.icons}>
-                <HeartIcon width={24} height={24} />
+                <HeartIcon width={24} height={24} fill={isLiked ? '#3B3F58' : 'none'} />
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setCommentModalVisible(true)}>
@@ -70,9 +78,9 @@ export default function Post({ post }) {
                 <CommentIcon width={24} height={24} />
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleFavorite}>
               <View style={styles.icons}>
-                <FavoriteIcon width={24} height={24} />
+                <FavoriteIcon width={24} height={24} fill={isFavorited ? '#3B3F58' : 'none'} />
               </View>
             </TouchableOpacity>
           </View>
@@ -124,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: '23%',
   },
   userInfo: {
-    flexDirection: "column",
+    flexDirection: 'column',
     marginLeft: 10,
   },
   username: {
@@ -141,7 +149,7 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     position: 'absolute',
-    backdropFilter: "blur(10px)",
+    backdropFilter: 'blur(10px)',
     zIndex: 999,
     left: 30,
     right: 30,
@@ -172,11 +180,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backdropFilter: "blur(10px)"
+    backdropFilter: 'blur(10px)',
   },
   timeAgo: {
     fontSize: 8,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: '#3B3F58',
     marginBottom: 5,
   },
@@ -188,6 +196,6 @@ const styles = StyleSheet.create({
   icons: {
     padding: 10,
     borderRadius: 30,
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-  }
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+  },
 });

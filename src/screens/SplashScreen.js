@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import * as ExpoSplashScreen from "expo-splash-screen"; // Renombramos la importación
+import * as ExpoSplashScreen from "expo-splash-screen"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../middleware/axios";
 
 export default function SplashScreen({ navigation }) {
   useEffect(() => {
-    ExpoSplashScreen.preventAutoHideAsync(); // Usamos el nombre renombrado aquí
+    ExpoSplashScreen.preventAutoHideAsync(); 
 
     setTimeout(async () => {
       const token = await AsyncStorage.getItem('authToken');
