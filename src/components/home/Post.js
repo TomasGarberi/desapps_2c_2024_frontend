@@ -20,7 +20,7 @@ export default function Post({ post }) {
         const idResponse = await axios.get('/users/getId');
         const userId = idResponse.data;
 
-        const userResponse = await axios.get(`/users/${userId}`);
+        const userResponse = await axios.get(`/users/${post.userId}`);
         setUsername(userResponse.data.username);
         setProfileImage(userResponse.data.urlImage);
       } catch (error) {
