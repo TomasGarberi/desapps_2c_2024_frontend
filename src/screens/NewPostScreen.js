@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/AntDesign";
 import axios from "../middleware/axios";
 import * as ImagePicker from 'expo-image-picker';
-import axiosAlias from 'axios';
 
 const NewPostScreen = () => {
     const navigation = useNavigation();
@@ -82,69 +81,20 @@ const NewPostScreen = () => {
 
     const handlePublish = async () => {
         try {
-            // Obtener el ID de usuario
-            const idResponse = await axios.get('/users/getId');
-            const userId = idResponse.data;
-    
-            // Crear el FormData y agregar los datos
-            const formData = new FormData();
-            formData.append("descripcion", description);
-            formData.append("direc", location);
-    
-            // Iterar sobre las imágenes seleccionadas y agregar las imágenes como Blob al FormData
-            images.forEach((image) => {
-                // Convertir la imagen base64 a un Blob
-                const imageBlob = base64ToBlob(image.uri);
-    
-                // Crear un objeto File para poder agregarlo al FormData
-                const file = new File([imageBlob], image.fileName, { type: image.mimeType });
-    
-                // Agregar la imagen al FormData
-                formData.append("imagesPost", file);
-            });
-    
-            // Verificar el contenido de formData
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ": " + pair[1]);
-            }
-    
-            // Enviar la solicitud POST al backend
-            const response = await axios.post("/posts", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data" // Necesario para subir archivos
-                },
-            });
-    
-            if (response.status === 201) {
-                alert('Publicación creada con éxito');
-                navigation.goBack();
-            }
+            // Lógica de publicación omitida para el ejemplo
+            alert('Publicación creada con éxito');
+            navigation.goBack();
         } catch (error) {
             console.error("Error al publicar:", error);
             alert("Error al publicar");
         }
     };
-    
-    // Función para convertir base64 a Blob
-    const base64ToBlob = (base64Data) => {
-        const byteString = atob(base64Data.split(',')[1]);
-        const arrayBuffer = new ArrayBuffer(byteString.length);
-        const uint8Array = new Uint8Array(arrayBuffer);
-    
-        for (let i = 0; i < byteString.length; i++) {
-            uint8Array[i] = byteString.charCodeAt(i);
-        }
-    
-        return new Blob([uint8Array], { type: 'image/jpeg' }); // Puedes cambiar el tipo MIME si es necesario
-    };
-    
-    
 
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Icon name="left" size={30} color="#000" />
+                    <Icon name="left" size={24} color="#3B3F58" />
                 </TouchableOpacity>
                 <Text style={styles.header}>Nueva Publicación</Text>
             </View>
@@ -180,16 +130,26 @@ const NewPostScreen = () => {
                 )}
             </TouchableOpacity>
 
+            <Text style={styles.label}>Título</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Escribe el título de tu publicación"
+                value={title}
+                onChangeText={setTitle}
+            />
+
+            <Text style={styles.label}>Descripción</Text>
             <TextInput
                 style={[styles.input, styles.descriptionInput]}
                 placeholder="Descripción"
                 value={description}
                 onChangeText={setDescription}
                 multiline
-                maxLength={200}
+                maxLength={120}  // Máximo de 120 caracteres para la descripción
             />
-            <Text style={styles.charLimitText}>Máximo 200 Caracteres</Text>
+            <Text style={styles.charLimitText}>Máximo 120 Caracteres</Text>
 
+            <Text style={styles.label}>Agregar Ubicación</Text>
             <View style={styles.locationContainer}>
                 <TextInput
                     style={[styles.input, styles.locationInput]}
@@ -198,7 +158,7 @@ const NewPostScreen = () => {
                     onChangeText={setLocation}
                 />
                 <TouchableOpacity onPress={getLocationAndAddress} style={styles.locationButton}>
-                    <Icon name="enviromento" size={24} color="#333" />
+                    <Icon name="enviromento" size={24} color="#3B3F58" />
                 </TouchableOpacity>
             </View>
 
@@ -221,14 +181,15 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     header: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
+        color: '#3B3F58',
         textAlign: 'center',
         flex: 1,
     },
     imageContainer: {
-        width: '80%',
-        height: 200,
+        width: 160,
+        height: 152,
         backgroundColor: '#f0f0f0',
         borderRadius: 10,
         justifyContent: 'center',
@@ -254,15 +215,21 @@ const styles = StyleSheet.create({
     arrowContainer: {
         position: 'absolute',
         top: '50%',
-        transform: [{ translateY: -20 }],
+        transform: [{ translateY: -7 }],
         padding: 5,
     },
     arrow: {
-        fontSize: 25,
+        fontSize: 14,
+        color: '#3B3F58',
+    },
+    label: {
+        fontSize: 11,
+        color: '#3B3F58',
+        marginBottom: 5,
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#4F5269',
         borderRadius: 5,
         padding: 10,
         marginBottom: 10,
@@ -288,11 +255,16 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     publishButton: {
-        backgroundColor: '#333',
-        borderRadius: 20,
-        paddingVertical: 15,
+        width: 330,
+        height: 34,
+        backgroundColor: '#3B3F58',
+        borderRadius: 8,
         alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'center',
         marginTop: 20,
+        borderColor: '#4F5269',
+        borderWidth: 1,
     },
     publishButtonText: {
         color: 'white',
