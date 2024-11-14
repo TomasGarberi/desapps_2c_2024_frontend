@@ -80,7 +80,10 @@ export default function UserSuggestion({ user, onPress }) {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: user.profileImage }} style={styles.profileImage} />
+      <Image 
+        source={user.profileImage ? { uri: user.profileImage } : require('../../assets/default-profile.png')} 
+        style={styles.profileImage} 
+      />
       <View style={styles.textContainer}>
         <Text style={styles.username}>@{user.username}</Text>
         <Text style={styles.name}>{user.name}</Text>
@@ -161,7 +164,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 12,
-    color: '#902CA5',
+    color: '#2e2e2e',
     fontWeight: 'bold',
   },
   name: {

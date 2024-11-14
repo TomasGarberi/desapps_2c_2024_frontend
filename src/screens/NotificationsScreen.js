@@ -8,14 +8,14 @@ export default function NotificationsScreen() {
 
   // Datos mockeados de notificaciones
   const exampleNotifications = [
-    { id: 1, username: 'carla.mendoza', timeAgo: 'Hace 3 min', postId: 101 },
-    { id: 2, username: 'carlos.lopez', timeAgo: 'Hace 25 min', postId: 102 },
-    { id: 3, username: 'ana.garcia', timeAgo: 'Hace 30 min', postId: 103 },
-    { id: 4, username: 'maria.fernandez', timeAgo: 'Hace 2 horas', postId: 104 },
-    { id: 5, username: 'laura.sanchez', timeAgo: 'Hace 6 horas', postId: 105 },
-    { id: 6, username: 'laura.gonzales', timeAgo: 'Hace 12 horas', postId: 106 },
-    { id: 7, username: 'martin.torres', timeAgo: 'Hace 1 día', postId: 107 },
-    { id: 8, username: 'diego.lopez', timeAgo: 'Hace 1 semana', postId: 108 },
+    { id: 1, username: '@carla.mendoza', timeAgo: 'Hace 3 min', postId: 101 },
+    { id: 2, username: '@carlos.lopez', timeAgo: 'Hace 25 min', postId: 102 },
+    { id: 3, username: '@ana.garcia', timeAgo: 'Hace 30 min', postId: 103 },
+    { id: 4, username: '@maria.fernandez', timeAgo: 'Hace 2 horas', postId: 104 },
+    { id: 5, username: '@laura.sanchez', timeAgo: 'Hace 6 horas', postId: 105 },
+    { id: 6, username: '@laura.gonzales', timeAgo: 'Hace 12 horas', postId: 106 },
+    { id: 7, username: '@martin.torres', timeAgo: 'Hace 1 día', postId: 107 },
+    { id: 8, username: '@diego.lopez', timeAgo: 'Hace 1 semana', postId: 108 },
   ];
 
   // Contador de comentarios basados en las notificaciones mockeadas
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#7C8089',
+    color: '#2e2e2e',
   },
   timeAgo: {
     fontSize: 12,
