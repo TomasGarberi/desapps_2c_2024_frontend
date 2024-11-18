@@ -11,6 +11,7 @@ export default function ProfileScreen() {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [postData, setPostData] = useState(null);
 
     const navigation = useNavigation();
 
@@ -28,9 +29,11 @@ export default function ProfileScreen() {
                 if (userId) {
                     const userResponse = await axios.get(`/users/${userId}`);
                     setUserData(userResponse.data);
+                    const postResponse = await axios.get(`/posts/user/${userId}`);
+                    setPostData(postResponse.data);
                     setLoading(false);
                 } else {
-                    setError("User ID not found");
+                    setError("User ID not found");  
                     setLoading(false);
                 }
             } catch (err) {
@@ -84,17 +87,16 @@ export default function ProfileScreen() {
                         <View style={styles.usernameContainer}>
                             <Text style={styles.username}>@{userData.username}</Text>
                         </View>
-
                         <View style={styles.followInfo}>
                             <TouchableOpacity style={styles.followColumn}>
                                 <Text style={styles.followCount}>
-                                    {Array.isArray(userData.followers) ? userData.followers.length : 0}
+                                    {Array.isArray(userData.followersIds) ? userData.followersIds.length : 0}
                                 </Text>
                                 <Text style={styles.followLabel}>Seguidores</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.followColumn}>
                                 <Text style={styles.followCount}>
-                                    {Array.isArray(userData.following) ? userData.following.length : 0}
+                                    {Array.isArray(userData.followedIds) ? userData.followedIds.length : 0}
                                 </Text>
                                 <Text style={styles.followLabel}>Siguiendo</Text>
                             </TouchableOpacity>
@@ -116,11 +118,30 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Mokeado de Sin Imágenes */}
-                <View style={styles.noImagesContainer}>
-                    <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
-                    <Text style={styles.noImagesText}>Empieza a compartir tus momentos aquí.</Text>
+                {/* Componente de la galería o mensaje "sin imágenes" */}
+                {console.log(postData)}
+                {postData && postData.length > 0 ? (
+                    <View style={styles.galleryContainer}>
+                    {postData.map((post) => (
+                        <TouchableOpacity
+                            key={post.postId}
+                            style={styles.imageWrapper}
+                            onPress={() => navigation.navigate('FullPostScreen', { post })}
+                        >
+                            <Image
+                                source={{ uri: post.image[0] }}
+                                style={styles.galleryImage}
+                            />
+                        </TouchableOpacity>
+                    ))}
                 </View>
+                ) : (
+                    <View style={styles.noImagesContainer}>
+                        <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
+                        <Text style={styles.noImagesText}>Empieza a compartir tus momentos aquí.</Text>
+                    </View>
+                )}
+
             </ScrollView>
         </View>
     );
@@ -237,11 +258,6 @@ const styles = StyleSheet.create({
     iconBox: {
         marginHorizontal: 50,
     },
-    galleryContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-    },
     noImagesContainer: {
         alignItems: 'center',
         marginTop: 20,
@@ -257,4 +273,24 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto_400Regular', 
         textAlign: 'center',
     },
+    galleryContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+    },
+    imageWrapper: {
+        width: '48%', // Dos imágenes por fila
+        aspectRatio: 1, // Cuadrado perfecto
+        marginBottom: 10, // Espaciado vertical entre filas
+        backgroundColor: '#f0f0f0', // Color de fondo para pruebas
+        borderRadius: 10,
+    },
+    galleryImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+        borderRadius: 10,
+    },
+    
 });

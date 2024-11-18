@@ -20,6 +20,7 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@e
 import ProfileScreen from './src/screens/Profile';
 import NewPostScreen from './src/screens/NewPostScreen';
 import NetInfo from '@react-native-community/netinfo';
+import FullPostScreen from './src/screens/FullPostScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,6 +33,8 @@ function MainTabNavigator() {
       <Tab.Screen name="NewPost" component={NewPostScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="FullPost" component={FullPostScreen} options={{ headerShown: false }} />
+      
     </Tab.Navigator>
   );
 }
@@ -75,6 +78,7 @@ export default function App() {
             <Stack.Screen name="ForgotPasswordStep3" component={ForgotPasswordStep3} options={{ headerShown: false }} />
             <Stack.Screen name="TermsScreen" component={TermsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="AuthLoading" component={AuthLoading} options={{ headerShown: false }} />
+            <Stack.Screen name="FullPostScreen" component={FullPostScreen} options={{ headerShown: false }} />
           </>
         ) : (
           <Stack.Screen name="LostConnection" component={LostConnectionScreen} options={{ headerShown: false }} />
