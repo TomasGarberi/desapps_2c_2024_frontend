@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import WelcomeHome from '../components/home/WelcomeHome';
 import Post from '../components/home/Post';
 import Ad from '../components/home/Ads';
-import { SafeAreaView } from 'react-native-web';
+import { SafeAreaView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import axios from '../middleware/axios';
 import { useFocusEffect } from '@react-navigation/native'; // Importa el hook
@@ -54,15 +54,15 @@ export default function HomeScreen({ navigation }) {
   );
 
   // Función para renderizar contenido con anuncios intercalados
-  const renderContentWithAds = () => {
+  const RenderContentWithAds = () => {
     const content = [];
     let adsIndex = 0;
 
     posts.forEach((post, index) => {
-      content.push(<Post key={`post-${post.id}`} post={post} />);
+      content.push(<Post key={`post-${post.postId}`} post={post} />);
       if ((index + 1) % 3 === 0 && ads.length > 0) {
         const ad = ads[adsIndex % ads.length];
-        content.push(<Ad key={`ad-${ad.id}-${index}`} ad={ad} />);
+        content.push(<Ad key={`ad-${ad}-${index}`} ad={ad} />);
         adsIndex += 1;
       }
     });
@@ -81,7 +81,7 @@ export default function HomeScreen({ navigation }) {
             ) : posts.length === 0 ? (
               <WelcomeHome />
             ) : (
-              renderContentWithAds()
+              RenderContentWithAds()
             )}
           </ScrollView>
         </SafeAreaView>

@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 40,
     height: 40,
-    borderRadius: "25%",
+    borderRadius: 25,
     borderColor: 'transparent',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },

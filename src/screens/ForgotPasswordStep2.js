@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderImageSlice: 1,
-    borderWidth: '2px',
+    borderWidth: 2,
     borderImageSource: 'linear-gradient(45deg, #902CA5, #00F0FF)',
   },
   errorBorder: {

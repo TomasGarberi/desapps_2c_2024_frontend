@@ -16,16 +16,10 @@ import AuthLoading from './src/components/AuthLoading';
 import Footer from './src/components/Footer'; // Importa el Footer personalizado
 import LostConnectionScreen from './src/screens/LostConnectionScreen'; // Pantalla de conexión perdida
 import NotificationsScreen from './src/screens/NotificationsScreen'; // Importa la pantalla de notificaciones
-import NetInfo from '@react-native-community/netinfo';
-
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
-import { Ionicons } from '@expo/vector-icons';
 import ProfileScreen from './src/screens/Profile';
 import NewPostScreen from './src/screens/NewPostScreen';
-
-WebBrowser.maybeCompleteAuthSession();
+import NetInfo from '@react-native-community/netinfo';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -87,24 +81,5 @@ export default function App() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
-
-    // <NavigationContainer>
-    //   <Tab.Navigator tabBar={(props) => <Footer {...props} />}>
-    //     <Tab.Screen name="Home" component={HomeScreen} />
-    //     <Tab.Screen name="Search" component={SearchScreen} />
-    //   </Tab.Navigator>
-    //   <Stack.Navigator initialRouteName="Splash">
-    //     {/* <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
-    //     <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} /> */}
-    //     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-    //     {/* <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-    //     <Stack.Screen name="ForgotPasswordStep1" component={ForgotPasswordStep1} options={{ headerShown: false }} />
-    //     <Stack.Screen name="ForgotPasswordStep2" component={ForgotPasswordStep2} options={{ headerShown: false }} />
-    //     <Stack.Screen name="ForgotPasswordStep3" component={ForgotPasswordStep3} options={{ headerShown: false }} />
-    //     <Stack.Screen name="TermsScreen" component={TermsScreen} options={{ headerShown: false }} />
-    //     <Stack.Screen name="AuthLoading" component={AuthLoading} options={{ headerShown: false }} /> */}
-
-    //   </Stack.Navigator>
-    // </NavigationContainer>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Image } from 'expo-image';
 import { LinearGradient } from "expo-linear-gradient";
 import * as ExpoSplashScreen from "expo-splash-screen"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,11 +20,12 @@ export default function SplashScreen({ navigation }) {
 
         // }
         
-        await ExpoSplashScreen.hideAsync();
         navigation.replace("MainTabs");
       } else {
         navigation.replace("Main");
       }
+
+      ExpoSplashScreen.hideAsync();
     }, 1000)
 
   }, []);
@@ -55,7 +57,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 212,
     height: 215,
-    resizeMode: "contain",
   },
 });
 

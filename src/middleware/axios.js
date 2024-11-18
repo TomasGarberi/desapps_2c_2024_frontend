@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Crear una instancia de Axios
 const apiClient = axios.create({
-  baseURL: API_URL, // Asegúrate de que API_URL esté bien configurado en tu archivo .env
+  baseURL: process.env.EXPO_PUBLIC_API_URL, 
 });
 
 // Interceptor de solicitud

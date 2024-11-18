@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from '../../middleware/axios';
-import HeartIcon from '../../assets/icons/heart.svg';
-import CommentIcon from '../../assets/icons/comment.svg';
-import FavoriteIcon from '../../assets/icons/favorite.svg';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import CommentsModal from './CommentsModal';
 import ImageCarouselModal from '../ImageCarouselModal';
 import DefaultProfileImage from '../../assets/default-profile.png';
@@ -70,17 +68,17 @@ export default function Post({ post }) {
           <View style={styles.actionIcons}>
             <TouchableOpacity onPress={toggleLike}>
               <View style={styles.icons}>
-                <HeartIcon width={24} height={24} fill={isLiked ? '#3B3F58' : 'none'} />
+                <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={24} />
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setCommentModalVisible(true)}>
               <View style={styles.icons}>
-                <CommentIcon width={24} height={24} />
+                <Ionicons name="chatbubble-outline" size={24} />
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={toggleFavorite}>
               <View style={styles.icons}>
-                <FavoriteIcon width={24} height={24} fill={isFavorited ? '#3B3F58' : 'none'} />
+                <Ionicons name={isFavorited ? 'star' : 'star-outline'} size={24} />
               </View>
             </TouchableOpacity>
           </View>
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     backgroundColor: 'transparent',
-    borderRadius: '25%',
+    borderRadius: 25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -129,7 +127,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: '100%',
     height: '100%',
-    borderRadius: '23%',
+    borderRadius: 23,
   },
   userInfo: {
     flexDirection: 'column',

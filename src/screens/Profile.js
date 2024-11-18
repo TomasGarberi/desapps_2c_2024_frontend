@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import Footer from '../components/Footer';
-import Icon from "react-native-vector-icons/Feather"; 
-import Icons from "react-native-vector-icons/AntDesign";
+import Ionicons from '@expo/vector-icons/Ionicons';
 import HamburgerMenu from '../components/profile/HamburgerMenu';
 import axios from "../middleware/axios"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -55,7 +53,7 @@ export default function ProfileScreen() {
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.hamburgerButton}>
-                <Icon name="menu" size={30} color="#000" />
+                <Ionicons name="menu-outline" size={30} color="#000" />
             </TouchableOpacity>
 
             <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()} />
@@ -111,10 +109,10 @@ export default function ProfileScreen() {
                 {/* Iconos de Post y Favoritos */}
                 <View style={styles.iconContainer}>
                     <TouchableOpacity style={styles.iconBox}>
-                        <Icons name="appstore-o" size={30} color="#000" />
+                        <Ionicons name="grid-outline" size={30} color="#000" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.iconBox}>
-                        <Icon name="star" size={30} color="#000" />
+                        <Ionicons name="star-outline" size={30} color="#000" />
                     </TouchableOpacity>
                 </View>
 
@@ -155,7 +153,7 @@ const styles = StyleSheet.create({
     backgroundImage: {
         width: '100%',
         height: 327,
-        resizeMode: 'cover',
+        contentFit: 'cover',
     },
     coverOverlay: {
         ...StyleSheet.absoluteFillObject,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking, Share } from 'react-native';
-import ShareIcon from '../../assets/icons/share.svg';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const exampleAd = {
   userImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Logo_Mercado_Libre.png/800px-Logo_Mercado_Libre.png',
@@ -50,7 +50,7 @@ export default function Ad({ ad = exampleAd }) {
         {/* Botón de Compartir */}
         <View style={styles.actionContainer}>
           <TouchableOpacity onPress={handleShare} style={styles.shareIcon}>
-            <ShareIcon width={24} height={24} />
+            <Ionicons name="share-social-outline" size={24} />
           </TouchableOpacity>
         </View>
       </View>
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     backgroundColor: 'transparent',
-    borderRadius: '25%',
+    borderRadius: 25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: '100%',
     height: '100%',
-    borderRadius: '23%',
+    borderRadius: 23,
   },
   userInfo: {
     marginLeft: 10,
