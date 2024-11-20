@@ -10,8 +10,9 @@ import {
     Image,
 } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
+import EditProfile from '../../screens/EditProfile';
 
-const HamburgerMenu = ({ visible, onClose, onLogout }) => {
+const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
     const slideAnim = useRef(new Animated.Value(300)).current;
     const [confirmLogoutVisible, setConfirmLogoutVisible] = useState(false);
 
@@ -36,6 +37,7 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
         onLogout(); // Ejecuta la función de logout del padre (Profile.js)
     };
 
+
     if (!visible) return null;
 
     return (
@@ -50,7 +52,9 @@ const HamburgerMenu = ({ visible, onClose, onLogout }) => {
                 >
                     <Image source={require('../../assets/logo-header.png')} style={styles.logo} />
                     <Text style={styles.menuItem}>INICIO</Text>
-                    <Text style={styles.menuItem}>EDITAR PERFIL</Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate('EditProfile'); onClose();} }>
+                        <Text style={styles.menuItem}>EDITAR PERFIL</Text>
+                    </TouchableOpacity>
                     <View style={styles.switchContainer}>
                         <Text style={styles.menuItem}>MODO OSCURO</Text>
                         <Switch value={false} />

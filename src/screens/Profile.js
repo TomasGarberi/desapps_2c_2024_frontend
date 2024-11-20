@@ -59,7 +59,7 @@ export default function ProfileScreen() {
                 <Ionicons name="menu-outline" size={30} color="#000" />
             </TouchableOpacity>
 
-            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()} />
+            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()} navigation={navigation}/>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Imagen de Portada con Sombra */}
