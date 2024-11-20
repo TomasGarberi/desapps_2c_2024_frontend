@@ -15,7 +15,9 @@ export default function SearchScreen({ navigation }) {
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
-        const response = await axios.get('/users/random');
+        const idResponse = await axios.get('/users/getId');
+        const userId = idResponse.data;
+        const response = await axios.get(`/users/random/${userId}`);
         setSuggestedUsers(response.data);
         setError(null); // Limpiar el error si la llamada fue exitosa
       } catch (error) {

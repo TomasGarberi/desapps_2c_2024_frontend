@@ -5,6 +5,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import CommentsModal from './CommentsModal';
 import ImageCarouselModal from '../ImageCarouselModal';
 import DefaultProfileImage from '../../assets/default-profile.png';
+import axiosAlias from 'axios';
+
 
 export default function Post({ post }) {
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
@@ -13,27 +15,40 @@ export default function Post({ post }) {
   const [profileImage, setProfileImage] = useState('');
   const [isLiked, setIsLiked] = useState(false); // Estado para el corazón
   const [isFavorited, setIsFavorited] = useState(false); // Estado para el favorito
+  const [userId, setUserId]= useState('');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const idResponse = await axios.get('/users/getId');
         const userId = idResponse.data;
-
+        setUserId(userId);
         const userResponse = await axios.get(`/users/${post.userId}`);
         setUsername(userResponse.data.username);
         setProfileImage(userResponse.data.urlImage);
+        // Comprueba si el usuario actual ha dado like al post
+        if (post.usersLikes.includes(userId)) {
+          setIsLiked(true);
+        }
       } catch (error) {
         console.error('Error fetching user information:', error);
       }
     };
 
     fetchUserInfo();
-  }, []);
+  }, [post.userId, post.usersLikes]);
 
   // Función para alternar el estado de "me gusta"
-  const toggleLike = () => setIsLiked(!isLiked);
-
+  const toggleLike = async () => {
+    console.log(userId);
+    if(isLiked){
+      await axios.delete(`/posts/${post.postId}/like?userId=${userId}`);
+    }else{
+      await axios.post(`/posts/${post.postId}/like?userId=${userId}`
+      );
+    }
+    setIsLiked(!isLiked);
+  }
   // Función para alternar el estado de "favorito"
   const toggleFavorite = () => setIsFavorited(!isFavorited);
 
