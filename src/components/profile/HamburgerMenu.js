@@ -7,14 +7,19 @@ import {
     Animated,
     StyleSheet,
     Switch,
+    TextInput,
     Image,
 } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
-import EditProfile from '../../screens/EditProfile';
+import axios from '../../middleware/axios'
 
 const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
     const slideAnim = useRef(new Animated.Value(300)).current;
     const [confirmLogoutVisible, setConfirmLogoutVisible] = useState(false);
+    const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
+    const [authModalVisible, setAuthModalVisible] = useState(false);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
     useEffect(() => {
         if (visible) {
@@ -32,11 +37,38 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
         }
     }, [visible]);
 
-    const handleLogout = () => {
-        setConfirmLogoutVisible(false);
-        onLogout(); // Ejecuta la función de logout del padre (Profile.js)
+    const handleDeleteUser =  () => {
+        
+        setConfirmDeleteVisible(false);
+        setAuthModalVisible(true); // Mostrar el modal de autenticación
     };
 
+    const handleAuthSubmit = async () => {
+        // Aquí puedes agregar la lógica para eliminar al usuario con username y password
+        console.log('Usuario:', username);
+        console.log('Contraseña:', password);
+        try {
+            const response = await axios.post('/auth/authenticate', {
+                username: username,
+                password: password
+            });
+            const idResponse = await axios.get('/users/getId');
+            const userId = idResponse.data;
+            if (userId) {
+                await axios.delete(`/users/${userId}`);
+                navigation.navigate('Login');
+            } else {
+                setError("User ID not found");  
+            }
+        } catch (error) {
+            console.error(error);
+            setErrors({ server: "Error al Autenticar, por favor intenta nuevamente." });
+        }
+        // Cerrar el modal después de enviar
+        setAuthModalVisible(false);
+        setUsername('');
+        setPassword('');
+    };
 
     if (!visible) return null;
 
@@ -52,7 +84,7 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
                 >
                     <Image source={require('../../assets/logo-header.png')} style={styles.logo} />
                     <Text style={styles.menuItem}>INICIO</Text>
-                    <TouchableOpacity onPress={() => { navigation.navigate('EditProfile'); onClose();} }>
+                    <TouchableOpacity onPress={() => { navigation.navigate('EditProfile'); onClose(); }}>
                         <Text style={styles.menuItem}>EDITAR PERFIL</Text>
                     </TouchableOpacity>
                     <View style={styles.switchContainer}>
@@ -60,34 +92,86 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
                         <Switch value={false} />
                     </View>
                     <TouchableOpacity onPress={() => setConfirmLogoutVisible(true)}>
-                        <Text style={styles.menuItem}>CERRAR SESION</Text>
+                        <Text style={styles.menuItem}>CERRAR SESIÓN</Text>
                     </TouchableOpacity>
                     <View style={styles.deleteButtonWrapper}>
-                        <TouchableOpacity style={styles.deleteButton}>
+                        <TouchableOpacity
+                            style={styles.deleteButton}
+                            onPress={() => setConfirmDeleteVisible(true)}
+                        >
                             <Text style={styles.deleteButtonText}>ELIMINAR USUARIO</Text>
                         </TouchableOpacity>
                     </View>
                 </LinearGradient>
             </Animated.View>
 
-            {/* Confirmación de Cerrar Sesión */}
+            {/* Modal de Confirmación de Eliminar Usuario */}
             <Modal
                 transparent
-                visible={confirmLogoutVisible}
+                visible={confirmDeleteVisible}
                 animationType="fade"
-                onRequestClose={() => setConfirmLogoutVisible(false)}
+                onRequestClose={() => setConfirmDeleteVisible(false)}
             >
                 <View style={styles.confirmOverlay}>
                     <View style={styles.confirmContainer}>
                         <Text style={styles.confirmText}>
-                            ¿Estás seguro de que deseas cerrar sesión? Deberás iniciar sesión nuevamente para acceder a tu cuenta
+                            ¿Estás seguro de que deseas eliminar tu usuario? Esta acción es irreversible.
                         </Text>
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.confirmButton} onPress={handleLogout}>
-                                <Text style={styles.confirmButtonText}>Cerrar</Text>
+                            <TouchableOpacity
+                                style={styles.confirmButton}
+                                onPress={handleDeleteUser}
+                            >
+                                <Text style={styles.confirmButtonText}>Sí</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.cancelButton} onPress={() => setConfirmLogoutVisible(false)}>
-                                <Text style={styles.cancelButtonText}>No</Text>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setConfirmDeleteVisible(false)}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Modal de Autenticación */}
+            <Modal
+                transparent
+                visible={authModalVisible}
+                animationType="fade"
+                onRequestClose={() => setAuthModalVisible(false)}
+            >
+                <View style={styles.confirmOverlay}>
+                    <View style={styles.confirmContainer}>
+                        <Text style={styles.confirmText}>
+                            Por favor, ingresa tus credenciales para confirmar.
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Usuario"
+                            value={username}
+                            onChangeText={setUsername}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Contraseña"
+                            secureTextEntry
+                            value={password}
+                            onChangeText={setPassword}
+                        />
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                style={styles.confirmButton}
+                                onPress={handleAuthSubmit}
+                            >
+                                <Text style={styles.confirmButtonText}>Aceptar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setAuthModalVisible(false)}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancelar</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -98,6 +182,15 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    input: {
+        width: '100%',
+        height: 40,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 15,
+    },
     container: {
         flex: 1,
     },

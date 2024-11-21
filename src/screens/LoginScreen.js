@@ -33,40 +33,44 @@ export default function LoginScreen() {
   // Función para manejar el inicio de sesión
   const handleLogin = async () => {
     let validationErrors = {};
-
+  
     if (!username) {
       validationErrors.username = "El campo de username es obligatorio.";
     }
-
+  
     if (!password) {
       validationErrors.password = "El campo de contraseña es obligatorio.";
     }
-
+  
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return; // Detener la ejecución si hay errores
     }
-
+  
     setErrors({});
     setLoading(true); // Comenzar el estado de carga
-
+  
     try {
       const response = await axios.post('/auth/authenticate', {
         username: username,
         password: password
       });
-
+  
       const token = response.data.accessToken; // Suponiendo que el token está en `data.token`
       await AsyncStorage.setItem("authToken", token); // Guardar token
-
+  
       navigation.navigate('MainTabs');
     } catch (error) {
-      console.error(error);
-      setErrors({ server: "Error al iniciar sesión, por favor intenta nuevamente." });
+      if (error.response && error.response.status === 403) {
+        setErrors({ password: "Credenciales incorrectas" });
+      } else {
+        setErrors({ server: "Error al iniciar sesión, por favor intenta nuevamente." });
+      }
     } finally {
       setLoading(false); // Detener el estado de carga
     }
   };
+  
 
   return (
     <LinearGradient
