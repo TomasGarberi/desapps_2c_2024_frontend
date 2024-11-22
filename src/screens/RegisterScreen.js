@@ -81,7 +81,7 @@ export default function RegisterScreen() {
     setErrors({});
 
     try {
-      const response = await axios.post("/pass/request-reset", null, {
+      const response = await axios.post("/pass/verify-email", null, {
         params: { email: formData.email },
       });
       Alert.alert(
