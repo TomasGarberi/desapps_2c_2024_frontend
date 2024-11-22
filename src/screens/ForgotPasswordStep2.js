@@ -8,6 +8,8 @@ export default function ForgotPasswordStep2() {
   const navigation = useNavigation();
   const [code, setCode] = useState(["", "", "", ""]);
   const [errors, setErrors] = useState(false);
+  const [attempts, setAttempts] = useState(0); // Estado para contar los intentos
+  const [showError, setShowError] = useState(false); // Estado para mostrar mensaje de error
   const route = useRoute();
   const email = route.params?.email || ""; // Obtén el email pasado desde ForgotPasswordStep1
 
@@ -54,7 +56,13 @@ export default function ForgotPasswordStep2() {
           Alert.alert("Error", "No se pudo obtener la información del usuario.");
         }
       } else {
-        Alert.alert("Código Incorrecto", "El código ingresado no es válido. Inténtalo de nuevo.");
+        setAttempts((prevAttempts) => prevAttempts + 1);
+        setShowError(true);
+        if (attempts >= 2) { // Si el número de intentos llega a 3
+          Alert.alert("Intentos agotados", "Has alcanzado el número máximo de intentos.");
+        } else {
+          Alert.alert("Código Incorrecto", "El código ingresado no es válido. Inténtalo de nuevo.");
+        }
       }
     }
   };
@@ -93,10 +101,18 @@ export default function ForgotPasswordStep2() {
         Completa con el código de cuatro dígitos que te enviamos por mail
       </Text>
 
+      {/* Mostrar mensaje de error si los intentos fallaron */}
+      {showError && attempts < 3 && (
+        <Text style={styles.errorText}>
+          Error validando. Intentos restantes: {3 - attempts}
+        </Text>
+      )}
+
       {/* Botón de Validar */}
       <TouchableOpacity
-        style={styles.validateButton}
+        style={[styles.validateButton, { opacity: attempts >= 3 ? 0.5 : 1 }]} // Deshabilitar el botón después de 3 intentos
         onPress={handleValidation}
+        disabled={attempts >= 3} // Deshabilitar el botón si ya se alcanzaron los 3 intentos
       >
         <Text style={styles.validateText}>Validar</Text>
       </TouchableOpacity>
@@ -154,6 +170,13 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_400Regular",
     textAlign: "center",
     marginBottom: 30,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    fontFamily: "Roboto_400Regular",
+    textAlign: "center",
+    marginBottom: 10,
   },
   validateButton: {
     width: 320,
