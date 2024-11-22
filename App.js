@@ -22,6 +22,7 @@ import NewPostScreen from './src/screens/NewPostScreen';
 import NetInfo from '@react-native-community/netinfo';
 import FullPostScreen from './src/screens/FullPostScreen';
 import EditProfile from './src/screens/EditProfile';
+import RegisterVerifyScreen from './src/screens/RegisterVerifyScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,6 +37,7 @@ function MainTabNavigator() {
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
       <Tab.Screen name="FullPost" component={FullPostScreen} options={{ headerShown: false }} />
       <Tab.Screen name="EditProfile" component={EditProfile} options={{ headerShown: false }} />
+      <Tab.Screen name="RegisterVerify" component={RegisterVerifyScreen} options={{ headerShown: false }} />
       
     </Tab.Navigator>
   );
@@ -82,6 +84,7 @@ export default function App() {
             <Stack.Screen name="AuthLoading" component={AuthLoading} options={{ headerShown: false }} />
             <Stack.Screen name="FullPostScreen" component={FullPostScreen} options={{ headerShown: false }} />
             <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerShown: false }} />
+            <Stack.Screen name="RegisterVerify" component={RegisterVerifyScreen} options={{ headerShown: false }} />
           </>
         ) : (
           <Stack.Screen name="LostConnection" component={LostConnectionScreen} options={{ headerShown: false }} />

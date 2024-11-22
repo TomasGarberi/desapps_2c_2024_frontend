@@ -79,31 +79,31 @@ export default function RegisterScreen() {
     }
 
     setErrors({});
-    try {
-      const response = await axios.post("/auth/register", {
-        name: formData.name,
-        lastname: formData.lastname,
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role
-      });
 
+    try {
+      const response = await axios.post("/pass/request-reset", null, {
+        params: { email: formData.email },
+      });
+      Alert.alert(
+        "Recuperación de Contraseña",
+        "Se ha enviado un código de recuperación a tu correo electrónico."
+      );
+      
       if (response.status === 200) {
         setIsModalVisible(true); // Mostrar mensaje de éxito
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrorMessage("El usuario o el correo electrónico ya están registrados.");
-      } else {
-        setErrorMessage("Hubo un problema al registrar. Inténtelo de nuevo.");
-      }
+      console.error("Error al enviar el correo de recuperación:", error);
+      Alert.alert("Error", "Hubo un problema al enviar el correo de recuperación. Inténtalo de nuevo.");
     }
-  };
+    };
+
+
 
   const handleContinue = () => {
     setIsModalVisible(false);
-    navigation.navigate("Login");
+    console.log(formData);
+    navigation.navigate("RegisterVerify", {formData});
   };
 
   const translateFieldNames = {
@@ -117,7 +117,7 @@ export default function RegisterScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Main")}>
         <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
       </TouchableOpacity>
 
@@ -175,7 +175,7 @@ export default function RegisterScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Tu usuario ha sido creado satisfactoriamente.</Text>
+            <Text style={styles.modalText}>Se ha enviado un mail para verificar tu cuenta.</Text>
             <TouchableOpacity style={styles.modalButton} onPress={handleContinue}>
               <Text style={styles.modalButtonText}>Continuar</Text>
             </TouchableOpacity>
