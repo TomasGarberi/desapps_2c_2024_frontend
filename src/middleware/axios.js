@@ -11,7 +11,7 @@ apiClient.interceptors.request.use(
   async (config) => {
     try {
       // Rutas que no requieren auth
-      const noAuthRequired = ['/login', '/register', '/geo', '/auth'];
+      const noAuthRequired = ['/login', '/register', '/geo', '/auth', '/pass'];
 
       // Verificar si la URL actual requiere el token de autorización
       if (!noAuthRequired.some((url) => config.url.includes(url))) {

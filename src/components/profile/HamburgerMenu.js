@@ -37,6 +37,11 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
         }
     }, [visible]);
 
+    const handleLogout = () => {
+        setConfirmLogoutVisible(false);
+        onLogout(); // Ejecuta la función de logout del padre (Profile.js)
+    };
+
     const handleDeleteUser =  () => {
         
         setConfirmDeleteVisible(false);
@@ -65,6 +70,7 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
             setErrors({ server: "Error al Autenticar, por favor intenta nuevamente." });
         }
         // Cerrar el modal después de enviar
+        onLogout();
         setAuthModalVisible(false);
         setUsername('');
         setPassword('');
@@ -172,6 +178,30 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
                                 onPress={() => setAuthModalVisible(false)}
                             >
                                 <Text style={styles.cancelButtonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Confirmación de Cerrar Sesión */}
+            <Modal
+                transparent
+                visible={confirmLogoutVisible}
+                animationType="fade"
+                onRequestClose={() => setConfirmLogoutVisible(false)}
+            >
+                <View style={styles.confirmOverlay}>
+                    <View style={styles.confirmContainer}>
+                        <Text style={styles.confirmText}>
+                            ¿Estás seguro de que deseas cerrar sesión? Deberás iniciar sesión nuevamente para acceder a tu cuenta
+                        </Text>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.confirmButton} onPress={handleLogout}>
+                                <Text style={styles.confirmButtonText}>Cerrar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.cancelButton} onPress={() => setConfirmLogoutVisible(false)}>
+                                <Text style={styles.cancelButtonText}>No</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
