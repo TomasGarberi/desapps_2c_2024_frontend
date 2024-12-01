@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, FlatList } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -16,6 +16,8 @@ const NewPostScreen = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [errorMsg, setErrorMsg] = useState(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showLocationModal, setShowLocationModal] = useState(false);
+    const [places, setPlaces] = useState([]);
 
     const requestPermissions = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -56,7 +58,7 @@ const NewPostScreen = () => {
     const getLocationAndAddress = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-            setErrorMsg('Permission to access location was denied');
+            alert('Permission to access location was denied');
             return;
         }
 
@@ -64,20 +66,25 @@ const NewPostScreen = () => {
         const { latitude, longitude } = currentLocation.coords;
 
         try {
-            const response = await axios.get(`/geo/coordinates`, {
-                params: { lat: latitude, lng: longitude },
+            const response = await axios.get(`/geo/places/nearby`, {
+                params: { lat: latitude, lng: longitude, radius: 100 },
             });
 
-            const data = response.data;
-            if (data) {
-                setLocation(data);
+            if (response.data) {
+                setPlaces(response.data);
+                setShowLocationModal(true);
             } else {
-                setLocation('No se pudo obtener la dirección');
+                alert("No se encontraron lugares cercanos");
             }
         } catch (error) {
-            setErrorMsg('Error al obtener la dirección');
-            console.error(error);
+            console.error("Error al obtener lugares cercanos:", error);
+            alert("Error al obtener lugares cercanos");
         }
+    };
+
+    const handlePlaceSelect = (place) => {
+        setLocation(`${place.name}, ${place.vicinity}`);
+        setShowLocationModal(false);
     };
 
     const handlePublish = async () => {
@@ -208,11 +215,92 @@ const NewPostScreen = () => {
                     </View>
                 </View>
             </Modal>
+
+            
+{/* Location Modal */}
+<Modal
+    transparent
+    visible={showLocationModal}
+    animationType="slide"
+    onRequestClose={() => setShowLocationModal(false)}
+>
+    <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Lugares Cercanos</Text>
+            <FlatList
+                style={styles.modalContent}
+                data={places.slice(0, 5)}
+                keyExtractor={(item, index) => `${item.name}-${index}`}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        style={styles.placeItem}
+                        onPress={() => handlePlaceSelect(item)}
+                    >
+                        <Text style={styles.placeName}>{item.name}</Text>
+                        <Text style={styles.placeVicinity}>{item.vicinity}</Text>
+                    </TouchableOpacity>
+                )}
+            />
+            <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowLocationModal(false)}
+            >
+                <Text style={styles.closeButtonText}>Cerrar</Text>
+            </TouchableOpacity>
+        </View>
+    </View>
+</Modal>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    
+modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center', // Centra verticalmente el modal
+    alignItems: 'center', // Centra horizontalmente el modal
+},
+modalContainer: {
+    width: '100%',
+    maxHeight: '50%', // Limita la altura máxima del modal
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+},
+modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+},
+modalContent: { // Evita que la lista expanda el modal
+    maxHeight: '60%', // Limita la altura de la lista
+},
+placeItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+},
+placeName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+},
+placeVicinity: {
+    fontSize: 14,
+    color: 'gray',
+},
+closeButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#3B3F58',
+    borderRadius: 5,
+    alignItems: 'center',
+},
+closeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+},
     container: {
         flex: 1,
         padding: 20,
