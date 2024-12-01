@@ -88,13 +88,13 @@ export default function ProfileScreen() {
                             <Text style={styles.username}>@{userData.username}</Text>
                         </View>
                         <View style={styles.followInfo}>
-                            <TouchableOpacity style={styles.followColumn}>
+                            <TouchableOpacity style={styles.followColumn} onPress={() => navigation.navigate("MainTabs", { screen: 'FollowersScreen' ,params: { reload: true }})} >
                                 <Text style={styles.followCount}>
                                     {Array.isArray(userData.followersIds) ? userData.followersIds.length : 0}
                                 </Text>
                                 <Text style={styles.followLabel}>Seguidores</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.followColumn}>
+                            <TouchableOpacity style={styles.followColumn} onPress={() => navigation.navigate("MainTabs", { screen: 'FollowsScreen' ,params: { reload: true }})}>
                                 <Text style={styles.followCount}>
                                     {Array.isArray(userData.followedIds) ? userData.followedIds.length : 0}
                                 </Text>

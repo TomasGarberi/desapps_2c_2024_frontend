@@ -23,6 +23,8 @@ import NetInfo from '@react-native-community/netinfo';
 import FullPostScreen from './src/screens/FullPostScreen';
 import EditProfile from './src/screens/EditProfile';
 import RegisterVerifyScreen from './src/screens/RegisterVerifyScreen';
+import FollowsScreen from './src/screens/FollowsScreen'
+import FollowersScreen from './src/screens/FollowersScreen'
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,7 +40,8 @@ function MainTabNavigator() {
       <Tab.Screen name="FullPost" component={FullPostScreen} options={{ headerShown: false }} />
       <Tab.Screen name="EditProfile" component={EditProfile} options={{ headerShown: false }} />
       <Tab.Screen name="RegisterVerify" component={RegisterVerifyScreen} options={{ headerShown: false }} />
-      
+      <Tab.Screen name="FollowsScreen" component={FollowsScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="FollowersScreen" component={FollowersScreen} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 }
@@ -85,6 +88,8 @@ export default function App() {
             <Stack.Screen name="FullPostScreen" component={FullPostScreen} options={{ headerShown: false }} />
             <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerShown: false }} />
             <Stack.Screen name="RegisterVerify" component={RegisterVerifyScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Follows" component={FollowsScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Followers" component={FollowersScreen} options={{ headerShown: false }} />
           </>
         ) : (
           <Stack.Screen name="LostConnection" component={LostConnectionScreen} options={{ headerShown: false }} />
