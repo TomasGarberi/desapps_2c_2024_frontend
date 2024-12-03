@@ -10,13 +10,14 @@ export default function SearchScreen({ navigation }) {
   const [suggestedUsers, setSuggestedUsers] = useState([]);  // Para mostrar sugerencias aleatorias
   const [searchResults, setSearchResults] = useState([]);  // Para mostrar los resultados de la búsqueda
   const [error, setError] = useState(null);  // Estado para manejar errores
-
+  const [userId, setUserId]= useState(null);  
   // Llamada al endpoint para obtener usuarios aleatorios
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
         const idResponse = await axios.get('/users/getId');
         const userId = idResponse.data;
+        setUserId(idResponse.data);
         const response = await axios.get(`/users/random/${userId}`);
         setSuggestedUsers(response.data);
         setError(null); // Limpiar el error si la llamada fue exitosa
@@ -37,7 +38,8 @@ export default function SearchScreen({ navigation }) {
       } else {
         try {
           const response = await axios.get(`/users/search/${searchQuery}`);
-          setSearchResults(response.data);
+          const filteredResults = response.data.filter(user => user.id !== userId);
+          setSearchResults(filteredResults);
           setError(null); // Limpiar el error si la búsqueda fue exitosa
         } catch (error) {
           console.error('Error searching users:', error);
