@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,11 @@ import {
   Modal,
   StyleSheet,
 } from 'react-native';
+import axios from '../../middleware/axios';
 
 export default function CommentsModal({ isVisible, onClose, postId }) {
   const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState([
-    { id: '1', username: 'carla.mendoza', timeAgo: 'Hace 3 minutos', text: '¡Qué hermoso lugar! Central Park siempre es mágico en cualquier época del año. 🌳🍂' },
-    { id: '2', username: 'laura.sanchez', timeAgo: 'Hace 1 hora', text: 'Increíble vista de Central Park, ¡es el lugar perfecto para relajarse y disfrutar de la naturaleza! 🌿😊' },
-    { id: '3', username: 'luis.martinez', timeAgo: 'Hace 2 horas', text: 'Central Park 🌳 siempre es una buena idea. Qué vista más espectacular ✨' },
-  ]);
+  const [comments, setComments] = useState([]);
 
   const handleAddComment = () => {
     if (commentText.trim()) {
@@ -30,6 +27,29 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
       setCommentText('');
     }
   };
+
+  const getComments = async () => {
+    try {
+      const res = await axios.get(`/posts/${postId}/comments`);
+      setComments(res.data);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const sendComment = async () => {
+    try {
+      const res = await axios.post(`/posts/${postId}/comments`, commentText.trim());
+      getComments();
+      setCommentText('');
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getComments();
+  }, [])
 
   const renderComment = ({ item }) => (
     <View style={styles.commentContainer}>
@@ -68,7 +88,7 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
             value={commentText}
             onChangeText={setCommentText}
           />
-          <Button title="Enviar" onPress={handleAddComment} />
+          <Button title="Enviar" onPress={sendComment} />
         </View>
       </View>
     </Modal>

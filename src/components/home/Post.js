@@ -8,7 +8,7 @@ import DefaultProfileImage from '../../assets/default-profile.png';
 import axiosAlias from 'axios';
 
 
-export default function Post({ post }) {
+export default function Post({ post, onLikeUpdate }) {
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
   const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [username, setUsername] = useState('');
@@ -38,6 +38,8 @@ export default function Post({ post }) {
     fetchUserInfo();
   }, [post.userId, post.usersLikes]);
 
+  
+
   // Función para alternar el estado de "me gusta"
   const toggleLike = async () => {
     console.log(userId);
@@ -48,6 +50,7 @@ export default function Post({ post }) {
       );
     }
     setIsLiked(!isLiked);
+    onLikeUpdate();
   }
   // Función para alternar el estado de "favorito"
   const toggleFavorite = () => setIsFavorited(!isFavorited);
@@ -105,7 +108,6 @@ export default function Post({ post }) {
         isVisible={isCommentModalVisible}
         onClose={() => setCommentModalVisible(false)}
         postId={post.postId}
-        comments={post.comments}
       />
 
       {/* Modal de Carrusel de Imágenes */}

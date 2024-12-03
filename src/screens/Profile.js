@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import HamburgerMenu from '../components/profile/HamburgerMenu';
-import axios from "../middleware/axios"; 
+import axios from "../middleware/axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen() {
@@ -12,38 +12,63 @@ export default function ProfileScreen() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [postData, setPostData] = useState(null);
+    const [favPosts, setFavPosts] = useState(null);
+    const [activeTab, setActiveTab] = useState('posts');
 
     const navigation = useNavigation();
 
     const logout = () => {
         AsyncStorage.clear()
-        setMenuVisible(false) 
+        setMenuVisible(false)
         navigation.navigate('Login')
     };
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const idResponse = await axios.get('/users/getId');
-                const userId = idResponse.data;
-                if (userId) {
-                    const userResponse = await axios.get(`/users/${userId}`);
-                    setUserData(userResponse.data);
-                    const postResponse = await axios.get(`/posts/user/${userId}`);
-                    setPostData(postResponse.data);
-                    setLoading(false);
-                } else {
-                    setError("User ID not found");  
-                    setLoading(false);
-                }
-            } catch (err) {
-                console.error(err);
-                setError("Failed to fetch user data");
-                setLoading(false);
+    const fetchUserData = async () => {
+        try {
+            const idResponse = await axios.get('/users/getId');
+            const userId = idResponse.data;
+            if (userId) {
+                const userResponse = await axios.get(`/users/${userId}`);
+                setUserData(userResponse.data);
+                const postResponse = await axios.get(`/posts/user/${userId}`);
+                setPostData(postResponse.data);
+            } else {
+                setError("User ID not found");
             }
-        };
-        fetchUserData();
-    }, []);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to fetch user data");
+            setLoading(false);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getPosts = async () => {
+        try {
+            const res = await axios.get(`/posts/user/${userId}`);
+            setPostData(res.data);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const getFavs = async () => {
+        try {
+            const res = await axios.get(`/favorites/user/${userId}`);
+            setFavPosts(res.data);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchUserData()
+
+            return () => { };
+        }, [])
+    );
 
     if (loading) {
         return <Text style={styles.loadingText}>Loading...</Text>;
@@ -59,14 +84,14 @@ export default function ProfileScreen() {
                 <Ionicons name="menu-outline" size={30} color="#000" />
             </TouchableOpacity>
 
-            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()} navigation={navigation}/>
+            <HamburgerMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onLogout={() => logout()} navigation={navigation} />
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Imagen de Portada con Sombra */}
                 <View style={styles.coverContainer}>
-                    <Image 
-                        source={require('../assets/cover.png')} 
-                        style={styles.backgroundImage} 
+                    <Image
+                        source={require('../assets/cover.png')}
+                        style={styles.backgroundImage}
                     />
                     <View style={styles.coverOverlay} />
                 </View>
@@ -75,9 +100,9 @@ export default function ProfileScreen() {
                 <View style={styles.profileContainer}>
                     {/* Foto de Perfil */}
                     <View style={styles.leftContainer}>
-                        <Image 
-                            source={userData.urlImage ? { uri: userData.urlImage } : require('../assets/default-profile.png')} 
-                            style={styles.profilePicture} 
+                        <Image
+                            source={userData.urlImage ? { uri: userData.urlImage } : require('../assets/default-profile.png')}
+                            style={styles.profilePicture}
                         />
                         <Text style={styles.name}>{userData.name} {userData.lastName}</Text>
                     </View>
@@ -88,13 +113,13 @@ export default function ProfileScreen() {
                             <Text style={styles.username}>@{userData.username}</Text>
                         </View>
                         <View style={styles.followInfo}>
-                            <TouchableOpacity style={styles.followColumn} onPress={() => navigation.navigate("MainTabs", { screen: 'FollowersScreen' ,params: { reload: true }})} >
+                            <TouchableOpacity style={styles.followColumn} onPress={() => navigation.navigate("MainTabs", { screen: 'FollowersScreen', params: { reload: true } })} >
                                 <Text style={styles.followCount}>
                                     {Array.isArray(userData.followersIds) ? userData.followersIds.length : 0}
                                 </Text>
                                 <Text style={styles.followLabel}>Seguidores</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.followColumn} onPress={() => navigation.navigate("MainTabs", { screen: 'FollowsScreen' ,params: { reload: true }})}>
+                            <TouchableOpacity style={styles.followColumn} onPress={() => navigation.navigate("MainTabs", { screen: 'FollowsScreen', params: { reload: true } })}>
                                 <Text style={styles.followCount}>
                                     {Array.isArray(userData.followedIds) ? userData.followedIds.length : 0}
                                 </Text>
@@ -110,37 +135,62 @@ export default function ProfileScreen() {
 
                 {/* Iconos de Post y Favoritos */}
                 <View style={styles.iconContainer}>
-                    <TouchableOpacity style={styles.iconBox}>
-                        <Ionicons name="grid-outline" size={30} color="#000" />
+                    <TouchableOpacity style={[styles.iconBox]} onPress={() => { setActiveTab('posts'); fetchUserData() }}>
+                        <Ionicons name={activeTab == 'posts' ? "grid" : "grid-outline"} size={30} color="#000" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconBox}>
-                        <Ionicons name="star-outline" size={30} color="#000" />
+                    <TouchableOpacity style={styles.iconBox} onPress={() => { setActiveTab('favs'); getFavs() }}>
+                        <Ionicons name={activeTab == 'favs' ? "star" : "star-outline"} size={30} color="#000" />
                     </TouchableOpacity>
                 </View>
 
                 {/* Componente de la galería o mensaje "sin imágenes" */}
-                {console.log(postData)}
-                {postData && postData.length > 0 ? (
-                    <View style={styles.galleryContainer}>
-                    {postData.map((post) => (
-                        <TouchableOpacity
-                            key={post.postId}
-                            style={styles.imageWrapper}
-                            onPress={() => navigation.navigate('FullPostScreen', { post })}
-                        >
-                            <Image
-                                source={{ uri: post.image[0] }}
-                                style={styles.galleryImage}
-                            />
-                        </TouchableOpacity>
-                    ))}
-                </View>
-                ) : (
-                    <View style={styles.noImagesContainer}>
-                        <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
-                        <Text style={styles.noImagesText}>Empieza a compartir tus momentos aquí.</Text>
-                    </View>
-                )}
+                {activeTab == 'posts' ?
+                    (postData && postData.length > 0 ? (
+                        <View style={styles.galleryContainer}>
+                            {postData.map((post) => (
+                                <TouchableOpacity
+                                    key={post.postId}
+                                    style={styles.imageWrapper}
+                                    onPress={() => navigation.navigate('FullPostScreen', { postId: post.postId })}
+                                >
+                                    <Image
+                                        source={{ uri: post.image[0] }}
+                                        style={styles.galleryImage}
+                                    />
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    ) : (
+                        <View style={styles.noImagesContainer}>
+                            <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
+                            <Text style={styles.noImagesText}>Empieza a compartir tus momentos aquí.</Text>
+                        </View>
+                    )) : ""}
+
+                {/* Componente de la galería o mensaje "sin imágenes" */}
+                {activeTab == 'favs' ?
+                    (
+                        favPosts && favPosts.length > 0 ? (
+                            <View style={styles.galleryContainer}>
+                                {favPosts.map((post) => (
+                                    <TouchableOpacity
+                                        key={post.postId}
+                                        style={styles.imageWrapper}
+                                        onPress={() => navigation.navigate('FullPostScreen', { postId: post.postId })}
+                                    >
+                                        <Image
+                                            source={{ uri: post.image[0] }}
+                                            style={styles.galleryImage}
+                                        />
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        ) : (
+                            <View style={styles.noImagesContainer}>
+                                <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
+                            </View>
+                        ))
+                    : ""}
 
             </ScrollView>
         </View>
@@ -153,7 +203,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     loadingText: {
-        fontSize: 20, 
+        fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#333',
@@ -270,7 +320,7 @@ const styles = StyleSheet.create({
     noImagesText: {
         fontSize: 14,
         color: '#7C8089',
-        fontFamily: 'Roboto_400Regular', 
+        fontFamily: 'Roboto_400Regular',
         textAlign: 'center',
     },
     galleryContainer: {
@@ -292,5 +342,5 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         borderRadius: 10,
     },
-    
+
 });

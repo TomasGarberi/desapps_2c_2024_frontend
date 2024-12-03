@@ -114,7 +114,7 @@ const EditProfile = () => {
         });
             // Realizar la solicitud POST con FormData
     
-            const response = await axiosAlias.post(`http://127.0.0.1:4002/users/${userData.id}`, formData, {
+            const response = await axios.put(`/users/${userData.id}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     "Authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnbWFuZGFyaW5vIiwiaWF0IjoxNzMyMTE0MjQwLCJpZCI6MiwiZXhwIjoxNzMyMjAwNjQwfQ.tsmJSI4mX_OmJ2Pu5XDJF8SYaQphO9bbfY2GfoQlkFauPW1hVDkQlxDKXJxVdtIKodt0Q3lcnrESFAoj1Vhe0Q"
