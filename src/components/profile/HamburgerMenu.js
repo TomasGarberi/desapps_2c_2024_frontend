@@ -20,7 +20,7 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
     const [authModalVisible, setAuthModalVisible] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+    const [userLevel, setUserLevel]= useState('');
     useEffect(() => {
         if (visible) {
             Animated.timing(slideAnim, {
@@ -35,7 +35,26 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
                 useNativeDriver: true,
             }).start();
         }
+        fetchUserLevel();
     }, [visible]);
+
+
+    const fetchUserLevel = async () => {
+        try{
+            const idResponse = await axios.get('/users/getId');
+            const userId = idResponse.data;
+            if (userId) {
+                const response = await axios.get(`/users/${userId}/score`);
+                setUserLevel(response.data.score);
+            } else {
+                setError("User ID not found");  
+            }
+        }catch (error) {
+            console.error(error);
+            setErrors({ server: "Error al conectar con el servidor, por favor intenta nuevamente." });
+        }
+    }
+
 
     const handleLogout = () => {
         setConfirmLogoutVisible(false);
@@ -100,6 +119,10 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
                     <TouchableOpacity onPress={() => setConfirmLogoutVisible(true)}>
                         <Text style={styles.menuItem}>CERRAR SESIÓN</Text>
                     </TouchableOpacity>
+                    {/* Texto para mostrar el nivel del usuario */}
+                    <Text style={styles.userLevel}>
+                        NIVEL: {userLevel || "Cargando..."}
+                    </Text>
                     <View style={styles.deleteButtonWrapper}>
                         <TouchableOpacity
                             style={styles.deleteButton}
@@ -212,6 +235,13 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    userLevel: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: 'bold',
+        marginVertical: 10,
+        fontFamily: "Roboto_400Regular", // Cambia si tienes otra fuente configurada
+    },
     input: {
         width: '100%',
         height: 40,
