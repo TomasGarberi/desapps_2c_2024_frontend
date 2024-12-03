@@ -90,7 +90,7 @@ export default function ProfileScreen() {
                 {/* Imagen de Portada con Sombra */}
                 <View style={styles.coverContainer}>
                     <Image
-                        source={require('../assets/cover.png')}
+                        source={userData.backgroundImage ? { uri: userData.backgroundImage } :require('../assets/cover.png')}
                         style={styles.backgroundImage}
                     />
                     <View style={styles.coverOverlay} />
