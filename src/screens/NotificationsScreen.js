@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from '../middleware/axios';
 import Header from '../components/Header'; // Importa el Header
 
 export default function NotificationsScreen() {
   const navigation = useNavigation();
+  const [commentsCount, setCommentsCount] = useState(0); // Estado para el contador de comentarios
 
   // Datos mockeados de notificaciones
   const exampleNotifications = [
@@ -18,8 +20,23 @@ export default function NotificationsScreen() {
     { id: 8, username: '@diego.lopez', timeAgo: 'Hace 1 semana', postId: 108 },
   ];
 
-  // Contador de comentarios basados en las notificaciones mockeadas
-  const commentsCount = exampleNotifications.length;
+  // Función para obtener el número de comentarios
+  const fetchCommentsCount = async () => {
+    try {
+      const idResponse = await axios.get('/users/getId');
+      const userId = idResponse.data;
+      const response = await axios.get(`users/${userId}/cant/comments`);
+      setCommentsCount(response.data); // Actualiza el estado con el valor recibido
+    } catch (error) {
+      console.error('Error al obtener el número de comentarios:', error);
+      setCommentsCount(0); // Valor predeterminado en caso de error
+    }
+  };
+
+  // Efecto para obtener los comentarios al entrar en la pantalla
+  useEffect(() => {
+    fetchCommentsCount();
+  }, []);
 
   const renderNotificationItem = ({ item }) => (
     <TouchableOpacity
