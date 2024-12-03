@@ -16,6 +16,7 @@ export default function Post({ post, onLikeUpdate }) {
   const [isLiked, setIsLiked] = useState(false); // Estado para el corazón
   const [isFavorited, setIsFavorited] = useState(false); // Estado para el favorito
   const [userId, setUserId]= useState('');
+  
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -26,6 +27,9 @@ export default function Post({ post, onLikeUpdate }) {
         const userResponse = await axios.get(`/users/${post.userId}`);
         setUsername(userResponse.data.username);
         setProfileImage(userResponse.data.urlImage);
+        const favsResponse = await axios.get(`favorites/user/${userId}`)
+        const favPosts = favsResponse.data;
+        setIsFavorited(favPosts.some(fav => fav.postId === post.postId));
         // Comprueba si el usuario actual ha dado like al post
         if (post.usersLikes.includes(userId)) {
           setIsLiked(true);
@@ -53,8 +57,14 @@ export default function Post({ post, onLikeUpdate }) {
     onLikeUpdate();
   }
   // Función para alternar el estado de "favorito"
-  const toggleFavorite = () => setIsFavorited(!isFavorited);
-
+  const toggleFavorite = async () => {
+    if (isFavorited){
+      await axios.delete(`/favorites/delete`,{userId: userId, postId: post.postId});
+    }else{
+      await axios.post(`/favorites/add`,{userId: userId, postId: post.postId});
+    }
+    setIsFavorited(!isFavorited);
+  }
   return (
     <View style={styles.postContainer}>
       {/* Header del Usuario */}

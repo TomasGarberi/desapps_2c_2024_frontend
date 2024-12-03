@@ -14,7 +14,7 @@ export default function ProfileScreen() {
     const [postData, setPostData] = useState(null);
     const [favPosts, setFavPosts] = useState(null);
     const [activeTab, setActiveTab] = useState('posts');
-
+    const [userId, setUserId] = useState(null);
     const navigation = useNavigation();
 
     const logout = () => {
@@ -28,6 +28,7 @@ export default function ProfileScreen() {
             const idResponse = await axios.get('/users/getId');
             const userId = idResponse.data;
             if (userId) {
+                setUserId(userId);
                 const userResponse = await axios.get(`/users/${userId}`);
                 setUserData(userResponse.data);
                 const postResponse = await axios.get(`/posts/user/${userId}`);

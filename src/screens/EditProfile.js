@@ -116,9 +116,7 @@ const EditProfile = () => {
     
             const response = await axios.put(`/users/${userData.id}`, formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnbWFuZGFyaW5vIiwiaWF0IjoxNzMyMTE0MjQwLCJpZCI6MiwiZXhwIjoxNzMyMjAwNjQwfQ.tsmJSI4mX_OmJ2Pu5XDJF8SYaQphO9bbfY2GfoQlkFauPW1hVDkQlxDKXJxVdtIKodt0Q3lcnrESFAoj1Vhe0Q"
-                },
+                    "Content-Type": "multipart/form-data"},
             });
             
     
