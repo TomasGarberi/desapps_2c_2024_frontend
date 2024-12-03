@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import LottieView from 'lottie-react-native';
 
 export default function LostConnectionScreen({ onRetry }) {
   return (
     <View style={styles.container}>
-      {/* GIF de conexión perdida */}
-      <Image
-        source={require('../assets/animations/lost-connection.gif')}
-        style={styles.gif}
-        resizeMode="contain"
+      {/* Animación de conexión perdida */}
+      <LottieView
+        source={require('../assets/animations/lost-connection.json')}
+        autoPlay
+        loop
+        style={styles.animation}
       />
 
       {/* Mensaje de Conexión Perdida */}
@@ -32,9 +34,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
   },
-  gif: {
-    width: 150,
-    height: 150,
+  animation: {
+    width: 200, // Ajusta el tamaño según sea necesario
+    height: 200,
     marginBottom: 20,
   },
   message: {
@@ -56,3 +58,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
