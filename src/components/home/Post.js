@@ -59,7 +59,7 @@ export default function Post({ post, onLikeUpdate }) {
   // Función para alternar el estado de "favorito"
   const toggleFavorite = async () => {
     if (isFavorited){
-      await axios.delete(`/favorites/delete`,{userId: userId, postId: post.postId});
+      await axios.delete(`/favorites/delete`,{data:{userId: userId, postId: post.postId}});
     }else{
       await axios.post(`/favorites/add`,{userId: userId, postId: post.postId});
     }
