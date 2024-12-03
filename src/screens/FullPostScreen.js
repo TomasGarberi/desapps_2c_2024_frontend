@@ -1,31 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Post from '../components/home/Post';
 import CommentsPanel from '../components/CommentsPanel';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import axios from '../middleware/axios';
 
 export default function FullPostScreen({ route, navigation }) {
-    const { post } = route.params;
+    const { postId } = route.params;
+
+    const [post, setPost] = useState(null);
+
+    const getPost = async () => {
+        try {
+            setLoading(true)
+            const res = await axios.get(`/posts/${postId}`);
+            setPost(res.data);
+        } catch (error) {
+            console.log(error)
+        } finally{
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        getPost()
+    }, [])
 
     return (
-        <View style={styles.container}>
-            {/* Botón para cerrar */}
-            <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
-                <Ionicons name="close" size={24} color="#3B3F58" />
-            </TouchableOpacity>
+        <View>
+            {!post ? (<Text> Loading...</Text >) :
+                <View style={styles.container}>
+                    {/* Botón para cerrar */}
+                    <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
+                        <Ionicons name="close" size={24} color="#3B3F58" />
+                    </TouchableOpacity>
 
-            {/* Post */}
-            <Post key={`post-${post.postId}`} post={post} />
+                    {/* Post */}
+                    <Post key={`post-${post.postId}`} post={post} onLikeUpdate={() => getPost()} />
 
-            {/* Likes */}
-            <View style={styles.icon}>
-                <Ionicons name="heart-outline" size={20} color="#3B3F58">
-                    {` ${post.usersLikes.length}`}
-                </Ionicons>
-            </View>
+                    {/* Likes */}
+                    <View style={styles.icon}>
+                        <Ionicons name="heart-outline" size={20} color="#3B3F58">
+                            {` ${post?.usersLikes?.length}`}
+                        </Ionicons>
+                    </View>
 
-            {/* Panel de comentarios */}
-            <CommentsPanel postId={post.postId} />
+                    {/* Panel de comentarios */}
+                    <CommentsPanel postId={post.postId} />
+                </View>
+            }
         </View>
     );
 }

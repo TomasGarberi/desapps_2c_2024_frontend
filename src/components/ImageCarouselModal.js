@@ -1,56 +1,57 @@
 import React, { useState } from 'react';
 import { Modal, View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function ImageCarouselModal({ isVisible, images, onClose }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const nextImage = () => {
         if (images.length > 1) {
-        setCurrentImageIndex((currentImageIndex + 1) % images.length);
+            setCurrentImageIndex((currentImageIndex + 1) % images.length);
         }
     };
 
     const prevImage = () => {
         if (images.length > 1) {
-        setCurrentImageIndex((currentImageIndex - 1 + images.length) % images.length);
+            setCurrentImageIndex((currentImageIndex - 1 + images.length) % images.length);
         }
     };
 
     return (
         <Modal visible={isVisible} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Cerrar</Text>
-            </TouchableOpacity>
+            <View style={styles.modalContainer}>
+                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                    <Text style={styles.closeButtonText}>Cerrar</Text>
+                </TouchableOpacity>
 
-            {images.length > 0 && (
-            <View style={styles.imageWrapper}>
-                <Image source={{ uri: images[currentImageIndex] }} style={styles.image} />
-                
-                {images.length > 1 && (
-                <>
-                    <TouchableOpacity
-                    style={[styles.arrowContainer, { left: -25 }]}
-                    onPress={prevImage}
-                    >
-                    <Text style={styles.arrow}>{"<"}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    style={[styles.arrowContainer, { right: -25 }]}
-                    onPress={nextImage}
-                    >
-                    <Text style={styles.arrow}>{">"}</Text>
-                    </TouchableOpacity>
-                </>
+                {images.length > 0 && (
+                    <View style={styles.imageWrapper}>
+                        <Image source={{ uri: images[currentImageIndex] }} style={styles.image} />
+
+                        {images.length > 1 && (
+                            <>
+                                <TouchableOpacity
+                                    style={[styles.arrowContainer, { left: -25 }]}
+                                    onPress={prevImage}
+                                >
+                                    <Ionicons style={styles.navigationArrow} name='arrow-back-outline' size={24} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.arrowContainer, { right: -25 }]}
+                                    onPress={nextImage}
+                                >
+                                    <Ionicons style={styles.navigationArrow} name='arrow-forward-outline' size={24} />
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
                 )}
             </View>
-            )}
-        </View>
         </Modal>
     );
-    }
+}
 
-    const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -87,4 +88,8 @@ export default function ImageCarouselModal({ isVisible, images, onClose }) {
         color: '#fff',
         fontSize: 24,
     },
-    });
+    navigationArrow: {
+        color: '#fff',
+        fontSize: 24,
+    },
+});

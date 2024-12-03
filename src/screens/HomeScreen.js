@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -35,24 +35,26 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const idResponse = await axios.get('/users/getId');
+      const userId = idResponse.data;
+      await getAds();
+      await getTimeline(userId);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setLoading(false);
+    }
+  };
+
   useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const idResponse = await axios.get('/users/getId');
-          const userId = idResponse.data;
-          await getAds();
-          await getTimeline(userId);
-          setLoading(false);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-          setLoading(false);
-        }
-      };
-      fetchData();
+    useCallback(() => {
+      fetchData()
+
+      return () => { };
     }, [])
   );
-
   // Función para renderizar contenido con anuncios intercalados
   const RenderContentWithAds = () => {
     const content = [];
