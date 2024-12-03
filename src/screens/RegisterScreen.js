@@ -85,16 +85,16 @@ export default function RegisterScreen() {
         params: { email: formData.email },
       });
       Alert.alert(
-        "Recuperación de Contraseña",
-        "Se ha enviado un código de recuperación a tu correo electrónico."
+        "Validacion de Cuenta",
+        "Se ha enviado un código de autenticacion a tu correo electrónico."
       );
       
       if (response.status === 200) {
         setIsModalVisible(true); // Mostrar mensaje de éxito
       }
     } catch (error) {
-      console.error("Error al enviar el correo de recuperación:", error);
-      Alert.alert("Error", "Hubo un problema al enviar el correo de recuperación. Inténtalo de nuevo.");
+      console.error("Error al enviar el correo de autenticacion:", error);
+      Alert.alert("Error", "Hubo un problema al enviar el correo de autenticacion. Inténtalo de nuevo.");
     }
     };
 
