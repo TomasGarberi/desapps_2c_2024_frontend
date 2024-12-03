@@ -25,6 +25,7 @@ import EditProfile from './src/screens/EditProfile';
 import RegisterVerifyScreen from './src/screens/RegisterVerifyScreen';
 import FollowsScreen from './src/screens/FollowsScreen'
 import FollowersScreen from './src/screens/FollowersScreen'
+import OtherUserProfile from './src/screens/OtherUserProfile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -90,6 +91,7 @@ export default function App() {
             <Stack.Screen name="RegisterVerify" component={RegisterVerifyScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Follows" component={FollowsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Followers" component={FollowersScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="OtherUserProfile" component={OtherUserProfile} />
           </>
         ) : (
           <Stack.Screen name="LostConnection" component={LostConnectionScreen} options={{ headerShown: false }} />

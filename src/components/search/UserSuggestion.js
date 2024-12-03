@@ -5,84 +5,65 @@ import axios from '../../middleware/axios';
 export default function UserSuggestion({ user, onPress }) {
   const [isFollowing, setIsFollowing] = useState(false); // Estado para seguimiento
   const [showConfirmation, setShowConfirmation] = useState(false); // Estado para mostrar el popup
-  const [followedList, setFollowedList] = useState([]); // Estado para la lista de seguidos
+  const [userId, setUserId] = useState(null); // ID del usuario autenticado
+
+  useEffect(() => {
+    // Obtener el ID del usuario autenticado y verificar seguimiento
+    const initialize = async () => {
+      try {
+        const idResponse = await axios.get('/users/getId');
+        const userId = idResponse.data;
+        setUserId(userId);
+
+        if (userId) {
+          const followedListResponse = await axios.get(`/users/${userId}/followed`);
+          const followedIds = followedListResponse.data.map((followedUser) => followedUser.id);
+          setIsFollowing(followedIds.includes(user.id));
+        }
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+      }
+    };
+
+    initialize();
+  }, [user]);
 
   // Función para manejar el seguimiento o dejar de seguir
   const handleFollowAction = async () => {
-    try {
-      // Obtener el ID del usuario autenticado
-      const idResponse = await axios.get('/users/getId');
-      const userId = idResponse.data;
+    if (!userId) {
+      console.error('User ID not found');
+      return;
+    }
 
-      if (userId) {
-        if (isFollowing) {
-          // Dejar de seguir
-          await axios.delete(`/users/${userId}/unfollow/${user.id}`);
-          setIsFollowing(false);
-        } else {
-          // Seguir al usuario
-          await axios.post(`/users/${userId}/follow/${user.id}`);
-          setIsFollowing(true);
-        }
+    try {
+      if (isFollowing) {
+        // Mostrar confirmación antes de dejar de seguir
+        setShowConfirmation(true);
       } else {
-        console.error("User ID not found");
+        await axios.post(`/users/${userId}/follow/${user.id}`);
+        setIsFollowing(true);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error al seguir/deshacer seguimiento:', err);
     }
   };
-
-  // Función para chequear si el usuario está siguiendo
-  const checkIfFollowing = async () => {
-    try {
-      // Obtener el ID del usuario autenticado
-      const idResponse = await axios.get('/users/getId');
-      const userId = idResponse.data;
-
-      if (userId) {
-        // Obtener lista de usuarios seguidos
-        const followedListResponse = await axios.get(`/users/${userId}/followed`);
-        const followedIds = followedListResponse.data.map(user => user.id); 
-        setFollowedList(followedIds);
-
-        // Verificar si el usuario recibido está en la lista de seguidos
-        const isUserFollowing = followedIds.includes(user.id);
-        setIsFollowing(isUserFollowing);
-      } else {
-        console.error("User ID not found");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    // Llamar a la función para verificar si el usuario está siguiendo al componente cuando cambia "user"
-    checkIfFollowing();
-  }, [user]);
 
   // Confirmar dejar de seguir
   const confirmUnfollow = async () => {
     try {
-      // Lógica para dejar de seguir al usuario
-      const idResponse = await axios.get('/users/getId');
-      const userId = idResponse.data;
-      if (userId) {
-        // Aquí iría la lógica para eliminar el seguimiento
-        await axios.delete(`/users/${userId}/unfollow/${user.id}`);
-        setIsFollowing(false); // Actualizamos el estado para reflejar que ya no estamos siguiendo
-        setShowConfirmation(false);
-      }
+      await axios.delete(`/users/${userId}/unfollow/${user.id}`);
+      setIsFollowing(false);
+      setShowConfirmation(false);
     } catch (err) {
-      console.error(err);
+      console.error('Error al dejar de seguir:', err);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Image 
-        source={user.profileImage ? { uri: user.profileImage } : require('../../assets/default-profile.png')} 
-        style={styles.profileImage} 
+      <Image
+        source={user.profileImage ? { uri: user.profileImage } : require('../../assets/default-profile.png')}
+        style={styles.profileImage}
       />
       <View style={styles.textContainer}>
         <Text style={styles.username}>@{user.username}</Text>
@@ -90,7 +71,7 @@ export default function UserSuggestion({ user, onPress }) {
       </View>
 
       <TouchableOpacity
-        onPress={handleFollowAction} // Llama a handleFollowAction
+        onPress={handleFollowAction}
         style={isFollowing ? styles.unfollowButton : styles.followButton}
       >
         <Text style={isFollowing ? styles.unfollowButtonText : styles.followButtonText}>
@@ -133,7 +114,6 @@ export default function UserSuggestion({ user, onPress }) {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -150,12 +130,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 25,
-    borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    borderImage: 'linear-gradient(to right, #902CA5, #00F0FF) 1',
     marginRight: 10,
   },
   textContainer: {
@@ -245,3 +219,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+

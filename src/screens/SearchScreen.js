@@ -3,21 +3,21 @@ import { View, Text, TextInput, StyleSheet, FlatList } from 'react-native';
 import Header from '../components/Header';
 import UserSuggestion from '../components/search/UserSuggestion';
 import axios from '../middleware/axios';
-import axiosAlias from 'axios';
 
 export default function SearchScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestedUsers, setSuggestedUsers] = useState([]);  // Para mostrar sugerencias aleatorias
   const [searchResults, setSearchResults] = useState([]);  // Para mostrar los resultados de la búsqueda
   const [error, setError] = useState(null);  // Estado para manejar errores
-  const [userId, setUserId]= useState(null);  
+  const [userId, setUserId] = useState(null);
+
   // Llamada al endpoint para obtener usuarios aleatorios
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
         const idResponse = await axios.get('/users/getId');
         const userId = idResponse.data;
-        setUserId(idResponse.data);
+        setUserId(userId);
         const response = await axios.get(`/users/random/${userId}`);
         setSuggestedUsers(response.data);
         setError(null); // Limpiar el error si la llamada fue exitosa
@@ -83,7 +83,7 @@ export default function SearchScreen({ navigation }) {
           renderItem={({ item }) => (
             <UserSuggestion
               user={item}
-              onPress={() => navigation.navigate('UserProfile', { userId: item.id })}
+              onPress={() => navigation.navigate('OtherUserProfile', { userId: item.id })}
             />
           )}
           contentContainerStyle={styles.suggestionsContainer}
