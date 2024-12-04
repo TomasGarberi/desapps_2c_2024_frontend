@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Alert } from 'react-native';
+import { useNavigation } from "@react-navigation/native";
 import axios from '../../middleware/axios';
 
 export default function UserSuggestion({ user, onPress }) {
   const [isFollowing, setIsFollowing] = useState(false); // Estado para seguimiento
   const [showConfirmation, setShowConfirmation] = useState(false); // Estado para mostrar el popup
   const [userId, setUserId] = useState(null); // ID del usuario autenticado
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     // Obtener el ID del usuario autenticado y verificar seguimiento
@@ -61,15 +64,19 @@ export default function UserSuggestion({ user, onPress }) {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={user.profileImage ? { uri: user.profileImage } : require('../../assets/default-profile.png')}
-        style={styles.profileImage}
-      />
-      <View style={styles.textContainer}>
-        <Text style={styles.username}>@{user.username}</Text>
-        <Text style={styles.name}>{user.name}</Text>
-      </View>
-
+      <TouchableOpacity
+        onPress={() => navigation.navigate('OtherUserProfile', { userId: user.id })}
+        style={styles.userDataContainer}>
+        <Image
+          source={user.profileImage ? { uri: user.profileImage } : require('../../assets/default-profile.png')}
+          style={styles.profileImage}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.username}>@{user.username}</Text>
+          <Text style={styles.name}>{user.name}</Text>
+        </View>
+      </TouchableOpacity>
+      
       <TouchableOpacity
         onPress={handleFollowAction}
         style={isFollowing ? styles.unfollowButton : styles.followButton}
@@ -117,7 +124,9 @@ export default function UserSuggestion({ user, onPress }) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    width: "85%",
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 15,
     padding: 5,
     borderRadius: 6,
@@ -126,11 +135,15 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 2 },
   },
+  userDataContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   profileImage: {
     width: 40,
     height: 40,
     borderRadius: 25,
-    marginRight: 10,
   },
   textContainer: {
     justifyContent: 'center',

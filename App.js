@@ -43,6 +43,7 @@ function MainTabNavigator() {
       <Tab.Screen name="RegisterVerify" component={RegisterVerifyScreen} options={{ headerShown: false }} />
       <Tab.Screen name="FollowsScreen" component={FollowsScreen} options={{ headerShown: false }} />
       <Tab.Screen name="FollowersScreen" component={FollowersScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="OtherUserProfile" component={OtherUserProfile} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 }

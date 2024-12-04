@@ -41,7 +41,7 @@ export default function ForgotPasswordStep1() {
       Alert.alert("Error", "Hubo un problema al enviar el correo de recuperación. Inténtalo de nuevo.");
     }
   };
-  
+
 
   const handlePasswordReset = async () => {
     let validationErrors = {};
@@ -76,9 +76,10 @@ export default function ForgotPasswordStep1() {
         <Image source={require("../assets/back-icon.png")} style={styles.backIcon} />
       </TouchableOpacity>
 
-      <Image source={require("../assets/logo.png")} style={styles.logo} />
-
       <View style={styles.inputContainer}>
+
+        <Image source={require("../assets/logo.png")} style={styles.logo} />
+
         <Text style={styles.inputLabel}>E-Mail</Text>
         <View style={styles.inputWrapper}>
           <TextInput
@@ -109,7 +110,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
   },
   backButton: {
     position: "absolute",
@@ -124,12 +124,14 @@ const styles = StyleSheet.create({
     width: 168,
     height: 150,
     position: 'absolute',
-    top: 166,
-    left: 112,
+    top: -150,
+    left: 78
   },
   inputContainer: {
+    position: 'relative',
     width: 320,
     marginBottom: 20,
+    marginTop: 100
   },
   inputLabel: {
     color: "#FFFFFF",
@@ -166,7 +168,6 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 30,
   },
   resetText: {
     color: "#FFFFFF",

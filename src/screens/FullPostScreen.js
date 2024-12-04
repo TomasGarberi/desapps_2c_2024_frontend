@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import Post from '../components/home/Post';
 import CommentsPanel from '../components/CommentsPanel';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -9,6 +9,7 @@ export default function FullPostScreen({ route, navigation }) {
     const { postId } = route.params;
 
     const [post, setPost] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const getPost = async () => {
         try {
@@ -17,7 +18,7 @@ export default function FullPostScreen({ route, navigation }) {
             setPost(res.data);
         } catch (error) {
             console.log(error)
-        } finally{
+        } finally {
             setLoading(false)
         }
     }
@@ -27,9 +28,9 @@ export default function FullPostScreen({ route, navigation }) {
     }, [])
 
     return (
-        <View>
+        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             {!post ? (<Text> Loading...</Text >) :
-                <View style={styles.container}>
+                <View style={styles.content}>
                     {/* Botón para cerrar */}
                     <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
                         <Ionicons name="close" size={24} color="#3B3F58" />
@@ -49,39 +50,29 @@ export default function FullPostScreen({ route, navigation }) {
                     <CommentsPanel postId={post.postId} />
                 </View>
             }
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         padding: 16,
+        paddingTop: 64,
+        flex: 1,
+        flexDirection: 'column',
         backgroundColor: '#fff',
+    },
+    content: {
+        flex: 1,
     },
     closeButton: {
         position: 'absolute',
-        top: 16,
-        right: 16,
+        top: -16,
+        right: 0,
         zIndex: 1, // Asegura que el botón esté encima de otros elementos
         backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo semitransparente (opcional)
         borderRadius: 16,
         padding: 8,
-    },
-    postImage: {
-        width: '100%',
-        height: 200,
-        borderRadius: 10,
-        marginBottom: 16,
-    },
-    postTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    postDescription: {
-        fontSize: 16,
-        color: '#666',
     },
     icon: {
         fontSize: 18,

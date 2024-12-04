@@ -21,7 +21,6 @@ apiClient.interceptors.request.use(
           config.headers.Authorization = `Bearer ${token}`;
         }
       }
-      console.log('Request:', config);
       return config;
     } catch (error) {
       console.error('Error obteniendo el token:', error);
@@ -39,7 +38,6 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     // Log de la respuesta
-    console.log('Response:', response);
     return response;
   },
   (error) => {

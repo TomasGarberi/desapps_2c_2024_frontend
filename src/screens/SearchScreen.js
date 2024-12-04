@@ -83,7 +83,6 @@ export default function SearchScreen({ navigation }) {
           renderItem={({ item }) => (
             <UserSuggestion
               user={item}
-              onPress={() => navigation.navigate('OtherUserProfile', { userId: item.id })}
             />
           )}
           contentContainerStyle={styles.suggestionsContainer}

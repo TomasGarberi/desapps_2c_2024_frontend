@@ -15,31 +15,31 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
 
-  const handleAddComment = () => {
-    if (commentText.trim()) {
-      const newComment = {
-        id: (comments.length + 1).toString(),
-        username: 'tu.usuario', // Cambiar por el usuario actual
-        timeAgo: 'Justo ahora',
-        text: commentText,
-      };
-      setComments([newComment, ...comments]); // Agregar el nuevo comentario al inicio
-      setCommentText('');
-    }
-  };
-
   const getComments = async () => {
     try {
       const res = await axios.get(`/posts/${postId}/comments`);
-      setComments(res.data);
+
+      if (res.data) {
+        const parsedComments = await Promise.allSettled(
+          res.data.map(async (comment) => {
+            const user = await getUser(comment.userId);
+            comment.user = user
+            return comment
+          })
+        );
+
+        setComments(parsedComments.map((comment) => comment.value));
+      } else {
+        setComments([]);
+      }
     } catch (error) {
-      console.log(error)
+      console.log(error.response.data)
     }
   }
 
   const sendComment = async () => {
     try {
-      const res = await axios.post(`/posts/${postId}/comments`, commentText.trim());
+      const res = await axios.post(`/posts/${postId}/comments`, { comment: commentText.trim() });
       getComments();
       setCommentText('');
     } catch (error) {
@@ -47,17 +47,28 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
     }
   }
 
+  const getUser = async (id) => {
+    try {
+      const res = await axios.get(`/users/${id}`);
+      return res.data
+    } catch (error) {
+      console.log(error.response.data)
+    }
+  }
+
   useEffect(() => {
     getComments();
   }, [])
 
-  const renderComment = ({ item }) => (
-    <View style={styles.commentContainer}>
-      <Text style={styles.username}>@{item.username}</Text>
-      <Text style={styles.timeAgo}>{item.timeAgo}</Text>
-      <Text style={styles.commentText}>{item.text}</Text>
-    </View>
-  );
+  const renderComment = async ({ item }) => {
+    return (
+      <View style={styles.commentContainer}>
+        <Text style={styles.username}>@{item.user.username}</Text>
+        <Text style={styles.timeAgo}>{item.timeAgo}</Text>
+        <Text style={styles.commentText}>{item.comment}</Text>
+      </View>
+    );
+  }
 
   return (
     <Modal visible={isVisible} animationType="slide" transparent>
@@ -71,9 +82,10 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
         </View>
 
         {/* Lista de comentarios */}
+
         <FlatList
           data={comments}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.commentId}
           renderItem={renderComment}
           style={styles.commentsList}
           contentContainerStyle={styles.commentsContainer}

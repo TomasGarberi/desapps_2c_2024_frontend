@@ -216,91 +216,89 @@ const NewPostScreen = () => {
                 </View>
             </Modal>
 
-            
-{/* Location Modal */}
-<Modal
-    transparent
-    visible={showLocationModal}
-    animationType="slide"
-    onRequestClose={() => setShowLocationModal(false)}
->
-    <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Lugares Cercanos</Text>
-            <FlatList
-                style={styles.modalContent}
-                data={places.slice(0, 5)}
-                keyExtractor={(item, index) => `${item.name}-${index}`}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={styles.placeItem}
-                        onPress={() => handlePlaceSelect(item)}
-                    >
-                        <Text style={styles.placeName}>{item.name}</Text>
-                        <Text style={styles.placeVicinity}>{item.vicinity}</Text>
-                    </TouchableOpacity>
-                )}
-            />
-            <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setShowLocationModal(false)}
+
+            {/* Location Modal */}
+            <Modal
+                transparent
+                visible={showLocationModal}
+                animationType="slide"
+                onRequestClose={() => setShowLocationModal(false)}
             >
-                <Text style={styles.closeButtonText}>Cerrar</Text>
-            </TouchableOpacity>
-        </View>
-    </View>
-</Modal>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>Lugares Cercanos</Text>
+                        <FlatList
+                            style={styles.modalContent}
+                            data={places.slice(0, 5)}
+                            keyExtractor={(item, index) => `${item.name}-${index}`}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={styles.placeItem}
+                                    onPress={() => handlePlaceSelect(item)}
+                                >
+                                    <Text style={styles.placeName}>{item.name}</Text>
+                                    <Text style={styles.placeVicinity}>{item.vicinity}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => setShowLocationModal(false)}
+                        >
+                            <Text style={styles.closeButtonText}>Cerrar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    
-modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center', // Centra verticalmente el modal
-    alignItems: 'center', // Centra horizontalmente el modal
-},
-modalContainer: {
-    width: '100%',
-    maxHeight: '50%', // Limita la altura máxima del modal
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-},
-modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-},
-modalContent: { // Evita que la lista expanda el modal
-    maxHeight: '60%', // Limita la altura de la lista
-},
-placeItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-},
-placeName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-},
-placeVicinity: {
-    fontSize: 14,
-    color: 'gray',
-},
-closeButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#3B3F58',
-    borderRadius: 5,
-    alignItems: 'center',
-},
-closeButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-},
+
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center', // Centra verticalmente el modal
+        alignItems: 'center', // Centra horizontalmente el modal
+        padding: 20,
+    },
+    modalContainer: {
+        padding: 20,
+        width: '80vw',
+        maxHeight: '50%', // Limita la altura máxima del modal
+        backgroundColor: 'white',
+        borderRadius: 10,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    placeItem: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+    },
+    placeName: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    placeVicinity: {
+        fontSize: 14,
+        color: 'gray',
+    },
+    closeButton: {
+        marginTop: 10,
+        padding: 10,
+        backgroundColor: '#3B3F58',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    closeButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
     container: {
         flex: 1,
         padding: 20,
@@ -354,8 +352,9 @@ closeButtonText: {
         color: '#3B3F58',
     },
     label: {
-        fontSize: 11,
+        fontSize: 14,
         color: '#3B3F58',
+        marginTop: 10,
         marginBottom: 5,
     },
     input: {
@@ -363,7 +362,6 @@ closeButtonText: {
         borderColor: '#4F5269',
         borderRadius: 5,
         padding: 10,
-        marginBottom: 10,
     },
     descriptionInput: {
         height: 80,
@@ -372,8 +370,8 @@ closeButtonText: {
     charLimitText: {
         fontSize: 12,
         color: 'gray',
-        alignSelf: 'flex-end',
-        marginBottom: 10,
+        alignSelf: 'flex-start',
+        marginTop: 5,
     },
     locationContainer: {
         flexDirection: 'row',
@@ -386,8 +384,8 @@ closeButtonText: {
         padding: 10,
     },
     publishButton: {
-        width: 330,
-        height: 34,
+        width: "100%",
+        padding: 10,
         backgroundColor: '#3B3F58',
         borderRadius: 8,
         alignItems: 'center',
@@ -400,19 +398,6 @@ closeButtonText: {
     publishButtonText: {
         color: 'white',
         fontWeight: 'bold',
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContainer: {
-        width: 200,
-        padding: 20,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 10,
-        alignItems: 'center',
     },
     modalText: {
         fontSize: 16,
