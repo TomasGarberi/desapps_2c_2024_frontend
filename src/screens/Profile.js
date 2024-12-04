@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import HamburgerMenu from '../components/profile/HamburgerMenu';
@@ -72,7 +72,7 @@ export default function ProfileScreen() {
     );
 
     if (loading) {
-        return <Text style={styles.loadingText}>Loading...</Text>;
+        return <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
     }
 
     if (error) {
@@ -199,6 +199,12 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+    loader: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',

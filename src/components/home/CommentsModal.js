@@ -60,7 +60,7 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
     getComments();
   }, [])
 
-  const renderComment = async ({ item }) => {
+  const renderComment =  ({ item }) => {
     return (
       <View style={styles.commentContainer}>
         <Text style={styles.username}>@{item.user.username}</Text>
@@ -89,6 +89,7 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
           renderItem={renderComment}
           style={styles.commentsList}
           contentContainerStyle={styles.commentsContainer}
+          keyboardShouldPersistTaps="always"
         />
 
         {/* Input de nuevo comentario */}

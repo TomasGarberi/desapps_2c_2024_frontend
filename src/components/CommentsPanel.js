@@ -59,7 +59,7 @@ export default function CommentsPanel({ postId }) {
     }, [])
 
 
-    const renderComment = async ({ item }) => {
+    const renderComment =  ({ item }) => {
         return (
             <View style={styles.commentContainer}>
                 <Text style={styles.username}>@{item.user.username}</Text>

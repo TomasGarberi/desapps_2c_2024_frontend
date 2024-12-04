@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "../middleware/axios";
 
@@ -53,7 +53,7 @@ export default function OtherUserProfile() {
     };
 
     if (loading) {
-        return <Text style={styles.loadingText}>Cargando...</Text>;
+        return <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
     }
 
     if (error) {
@@ -136,6 +136,12 @@ export default function OtherUserProfile() {
 }
 
 const styles = StyleSheet.create({
+    loader: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',

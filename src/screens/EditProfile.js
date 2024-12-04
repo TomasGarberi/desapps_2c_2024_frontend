@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -17,7 +17,8 @@ const EditProfile = () => {
     const [images, setImages] = useState([null, null]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [userData, setUserData] = useState(null);
-
+    const [loading, setLoading] = useState(false);
+    
     const requestPermissions = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
@@ -72,7 +73,9 @@ const EditProfile = () => {
             console.error("User ID is undefined");
             return;
         }
-    
+        
+        setLoading(true);
+
         try {
             const formData = new FormData();
     
@@ -117,7 +120,7 @@ const EditProfile = () => {
                     "Content-Type": "multipart/form-data"},
             });
             
-    
+            setLoading(false);
             setShowSuccessModal(true);
             setTimeout(() => {
                 setShowSuccessModal(false);
@@ -209,7 +212,11 @@ const EditProfile = () => {
             </View>
 
             <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
-                <Text style={styles.publishButtonText}>Guardar</Text>
+                {loading ? (
+                <ActivityIndicator size="small" color="#FFFFFF" /> // Muestra un indicador de carga
+                    ) : (
+                        <Text style={styles.publishButtonText}>Guardar</Text>
+                    )}
             </TouchableOpacity>
 
             <Modal

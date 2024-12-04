@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, FlatList, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -18,6 +18,7 @@ const NewPostScreen = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showLocationModal, setShowLocationModal] = useState(false);
     const [places, setPlaces] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const requestPermissions = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -88,6 +89,9 @@ const NewPostScreen = () => {
     };
 
     const handlePublish = async () => {
+        
+        setLoading(true);
+
         try {
             const idResponse = await axios.get('/users/getId');
             const userId = idResponse.data;
@@ -109,6 +113,8 @@ const NewPostScreen = () => {
                     "Content-Type": "multipart/form-data"
                 },
             });
+
+            setLoading(false);
 
             if (response.status === 201) {
                 setShowSuccessModal(true);
@@ -200,7 +206,11 @@ const NewPostScreen = () => {
             </View>
 
             <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
-                <Text style={styles.publishButtonText}>Publicar</Text>
+            {loading ? (
+                <ActivityIndicator size="small" color="#FFFFFF" /> // Muestra un indicador de carga
+                    ) : (
+                        <Text style={styles.publishButtonText}>Publicar</Text>
+                    )}
             </TouchableOpacity>
 
             <Modal
