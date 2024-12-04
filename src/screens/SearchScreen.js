@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     width: 202,
-    height: 35,
-    marginVertical: 15,
+    height: 40,
+    marginVertical: 20,
     alignSelf: 'center',
     borderWidth: 2,
     borderRadius: 8,

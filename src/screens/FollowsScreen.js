@@ -85,7 +85,7 @@ const FollowsScreen = () => {
             borderRadius: 8,
             borderColor: 'transparent',
             borderImage: 'linear-gradient(to right, #902CA5, #00F0FF) 1',
-            backgroundColor: 'rgba(217, 217, 217, 0.26)',
+            //backgroundColor: 'rgba(217, 217, 217, 0.26)',
             justifyContent: 'center',
           },
           searchInput: {

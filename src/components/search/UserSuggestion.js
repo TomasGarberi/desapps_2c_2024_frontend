@@ -68,7 +68,7 @@ export default function UserSuggestion({ user, onPress }) {
         onPress={() => navigation.navigate('OtherUserProfile', { userId: user.id })}
         style={styles.userDataContainer}>
         <Image
-          source={user.profileImage ? { uri: user.profileImage } : require('../../assets/default-profile.png')}
+          source={user.urlImage ? { uri: user.urlImage } : require('../../assets/default-profile.png')}
           style={styles.profileImage}
         />
         <View style={styles.textContainer}>
