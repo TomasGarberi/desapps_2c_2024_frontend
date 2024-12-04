@@ -1,55 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, StyleSheet, FlatList } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Header from '../components/Header';
 import UserSuggestion from '../components/search/UserSuggestion';
 import axios from '../middleware/axios';
 
 export default function SearchScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestedUsers, setSuggestedUsers] = useState([]);  // Para mostrar sugerencias aleatorias
-  const [searchResults, setSearchResults] = useState([]);  // Para mostrar los resultados de la búsqueda
-  const [error, setError] = useState(null);  // Estado para manejar errores
+  const [suggestedUsers, setSuggestedUsers] = useState([]); // Para mostrar sugerencias aleatorias
+  const [searchResults, setSearchResults] = useState([]); // Para mostrar los resultados de la búsqueda
+  const [error, setError] = useState(null); // Estado para manejar errores
   const [userId, setUserId] = useState(null);
 
-  // Llamada al endpoint para obtener usuarios aleatorios
-  useEffect(() => {
-    const fetchSuggestedUsers = async () => {
+  // Función para obtener sugerencias de usuarios aleatorios
+  const fetchSuggestedUsers = async () => {
+    try {
+      const idResponse = await axios.get('/users/getId');
+      const userId = idResponse.data;
+      setUserId(userId);
+      const response = await axios.get(`/users/random/${userId}`);
+      setSuggestedUsers(response.data);
+      setError(null); // Limpiar el error si la llamada fue exitosa
+    } catch (error) {
+      console.error('Error fetching suggested users:', error);
+      setError('No se pudieron obtener sugerencias. Intenta de nuevo más tarde.');
+    }
+  };
+
+  // Función para realizar la búsqueda de usuarios
+  const searchUsers = async () => {
+    if (searchQuery.trim() === '') {
+      setSearchResults([]); // Limpiar resultados si no hay búsqueda
+    } else {
       try {
-        const idResponse = await axios.get('/users/getId');
-        const userId = idResponse.data;
-        setUserId(userId);
-        const response = await axios.get(`/users/random/${userId}`);
-        setSuggestedUsers(response.data);
-        setError(null); // Limpiar el error si la llamada fue exitosa
+        const response = await axios.get(`/users/search/${searchQuery}`);
+        const filteredResults = response.data.filter((user) => user.id !== userId);
+        setSearchResults(filteredResults);
+        setError(null); // Limpiar el error si la búsqueda fue exitosa
       } catch (error) {
-        console.error('Error fetching suggested users:', error);
-        setError('No se pudieron obtener sugerencias. Intenta de nuevo más tarde.');
+        console.error('Error searching users:', error);
+        setError('No se pudo realizar la búsqueda. Intenta de nuevo más tarde.');
       }
-    };
+    }
+  };
 
-    fetchSuggestedUsers();
-  }, []);
-
-  // Llamada al endpoint de búsqueda por username cuando el searchQuery cambia
+  // Efecto para realizar la búsqueda cuando cambia el query
   useEffect(() => {
-    const searchUsers = async () => {
-      if (searchQuery.trim() === '') {
-        setSearchResults([]);  // Limpiar resultados si no hay búsqueda
-      } else {
-        try {
-          const response = await axios.get(`/users/search/${searchQuery}`);
-          const filteredResults = response.data.filter(user => user.id !== userId);
-          setSearchResults(filteredResults);
-          setError(null); // Limpiar el error si la búsqueda fue exitosa
-        } catch (error) {
-          console.error('Error searching users:', error);
-          setError('No se pudo realizar la búsqueda. Intenta de nuevo más tarde.');
-        }
-      }
-    };
-
     searchUsers();
   }, [searchQuery]);
+
+  // Refresh automático al enfocar la pantalla
+  useFocusEffect(
+    useCallback(() => {
+      fetchSuggestedUsers();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
