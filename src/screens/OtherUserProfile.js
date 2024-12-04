@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "../middleware/axios";
 
 export default function OtherUserProfile() {
@@ -10,8 +9,8 @@ export default function OtherUserProfile() {
     const [error, setError] = useState(null);
     const [postData, setPostData] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
-    const route = useRoute();
     const navigation = useNavigation();
+    const route = useRoute();
     const { userId } = route.params;
 
     useEffect(() => {
@@ -21,10 +20,12 @@ export default function OtherUserProfile() {
                 setUserData(userResponse.data);
                 const postResponse = await axios.get(`/posts/user/${userId}`);
                 setPostData(postResponse.data);
-                setIsFollowing(userResponse.data.followersIds.includes(userId)); // Verificar si ya sigue al usuario
+                const authResponse = await axios.get('/users/getId');
+                const authUserId = authResponse.data;
+                setIsFollowing(userResponse.data.followersIds.includes(authUserId));
             } catch (err) {
                 console.error(err);
-                setError("Failed to fetch user data");
+                setError("Error al cargar los datos del usuario.");
             } finally {
                 setLoading(false);
             }
@@ -42,8 +43,17 @@ export default function OtherUserProfile() {
         }
     };
 
+    const handleUnfollow = async () => {
+        try {
+            await axios.delete(`/users/unfollow/${userId}`);
+            setIsFollowing(false);
+        } catch (error) {
+            console.error('Error al dejar de seguir al usuario:', error);
+        }
+    };
+
     if (loading) {
-        return <Text style={styles.loadingText}>Loading...</Text>;
+        return <Text style={styles.loadingText}>Cargando...</Text>;
     }
 
     if (error) {
@@ -53,7 +63,7 @@ export default function OtherUserProfile() {
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* Imagen de Portada */}
+                {/* Imagen de Portada con Sombra */}
                 <View style={styles.coverContainer}>
                     <Image
                         source={userData.backgroundImage ? { uri: userData.backgroundImage } : require('../assets/cover.png')}
@@ -64,51 +74,68 @@ export default function OtherUserProfile() {
 
                 {/* Información de Perfil */}
                 <View style={styles.profileContainer}>
-                    <Image
-                        source={userData.urlImage ? { uri: userData.urlImage } : require('../assets/default-profile.png')}
-                        style={styles.profilePicture}
-                    />
-                    <Text style={styles.name}>{userData.name} {userData.lastName}</Text>
-                    <Text style={styles.username}>@{userData.username}</Text>
-
-                    {/* Botón de Seguir */}
-                    {!isFollowing && (
-                        <TouchableOpacity style={styles.followButton} onPress={handleFollow}>
-                            <Text style={styles.followButtonText}>Seguir</Text>
+                    <View style={styles.leftContainer}>
+                        <Image
+                            source={userData.urlImage ? { uri: userData.urlImage } : require('../assets/default-profile.png')}
+                            style={styles.profilePicture}
+                        />
+                        <Text style={styles.name}>{userData.name} {userData.lastName}</Text>
+                        <TouchableOpacity
+                            style={isFollowing ? styles.unfollowButton : styles.followButton}
+                            onPress={isFollowing ? handleUnfollow : handleFollow}
+                        >
+                            <Text style={isFollowing ? styles.unfollowButtonText : styles.followButtonText}>
+                                {isFollowing ? 'Eliminar' : 'Seguir'}
+                            </Text>
                         </TouchableOpacity>
-                    )}
-
-                    <View style={styles.followInfo}>
-                        <Text style={styles.followCount}>
-                            {Array.isArray(userData.followersIds) ? userData.followersIds.length : 0} Seguidores
-                        </Text>
-                        <Text style={styles.followCount}>
-                            {Array.isArray(userData.followedIds) ? userData.followedIds.length : 0} Siguiendo
-                        </Text>
                     </View>
 
-                    <Text style={styles.bio}>
-                        {userData.description || "Este usuario no ha añadido una descripción."}
-                    </Text>
+                    <View style={styles.rightContainer}>
+                        <View style={styles.usernameContainer}>
+                            <Text style={styles.username}>@{userData.username}</Text>
+                        </View>
+                        <View style={styles.followInfo}>
+                            <View style={styles.followColumn}>
+                                <Text style={styles.followCount}>
+                                    {Array.isArray(userData.followersIds) ? userData.followersIds.length : 0}
+                                </Text>
+                                <Text style={styles.followLabel}>Seguidores</Text>
+                            </View>
+                            <View style={styles.followColumn}>
+                                <Text style={styles.followCount}>
+                                    {Array.isArray(userData.followedIds) ? userData.followedIds.length : 0}
+                                </Text>
+                                <Text style={styles.followLabel}>Siguiendo</Text>
+                            </View>
+                        </View>
+                        <Text style={styles.bio}>
+                            {userData.description || "Este usuario no ha añadido una descripción."}
+                        </Text>
+                    </View>
                 </View>
 
-                {/* Publicaciones */}
+                {/* Galería de publicaciones */}
                 <View style={styles.galleryContainer}>
                     {postData && postData.length > 0 ? (
-                        postData.map((post) => (
-                            <TouchableOpacity
-                                key={post.postId}
-                                style={styles.imageWrapper}
-                                onPress={() => navigation.navigate('FullPostScreen', { postId: post.postId })}
-                            >
-                                <Image
-                                    source={{ uri: post.image[0] }}
-                                    style={styles.galleryImage}
-                                />
-                            </TouchableOpacity>
-                        ))
+                        <View style={styles.galleryContainer}>
+                            {postData.map((post) => (
+                                <TouchableOpacity
+                                    key={post.postId}
+                                    style={styles.imageWrapper}
+                                    onPress={() => navigation.navigate('FullPostScreen', { postId: post.postId })}
+                                >
+                                    <Image
+                                        source={{ uri: post.image[0] }}
+                                        style={styles.galleryImage}
+                                    />
+                                </TouchableOpacity>
+                            ))}
+                        </View>
                     ) : (
-                        <Text style={styles.noPostsText}>Este usuario no tiene publicaciones.</Text>
+                        <View style={styles.noImagesContainer}>
+                            <Image source={require('../assets/no-images.png')} style={styles.noImagesIcon} />
+                            <Text style={styles.noImagesText}>Este usuario no tiene publicaciones.</Text>
+                        </View>
                     )}
                 </View>
             </ScrollView>
@@ -142,29 +169,39 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.4)',
     },
     profileContainer: {
+        flexDirection: 'row',
         alignItems: 'center',
         marginTop: -50,
+        paddingHorizontal: 20,
+    },
+    leftContainer: {
+        alignItems: 'center',
+        marginRight: 20,
     },
     profilePicture: {
-        width: 107,
-        height: 107,
-        borderRadius: 16.5,
-        marginBottom: 10,
+        width: 141,
+        height: 137,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
     },
     name: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
-    },
-    username: {
-        fontSize: 14,
-        color: '#7C8089',
+        marginTop: 10,
     },
     followButton: {
         backgroundColor: '#3B3F58',
         borderRadius: 16.5,
-        paddingVertical: 6,
-        paddingHorizontal: 20,
+        width: 107,
+        height: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
         marginTop: 10,
     },
     followButtonText: {
@@ -172,41 +209,93 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: 'bold',
     },
+    unfollowButton: {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 16.5,
+        width: 107,
+        height: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+        borderColor: '#4F5269',
+        borderWidth: 1,
+    },
+    unfollowButtonText: {
+        color: '#3B3F58',
+        fontSize: 11,
+        fontWeight: 'bold',
+    },
+    rightContainer: {
+        flex: 1,
+    },
+    usernameContainer: {
+        backgroundColor: '#FDFFFF',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 5,
+        marginBottom: 5,
+        alignSelf: 'flex-start',
+    },
+    username: {
+        fontSize: 16,
+        color: '#7C8089',
+    },
     followInfo: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginTop: 10,
+        justifyContent: 'space-between',
+        marginBottom: 5,
+    },
+    followColumn: {
+        alignItems: 'center',
+        width: 87,
+        height: 38,
     },
     followCount: {
-        fontSize: 14,
-        color: '#333',
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#0C0F14',
+    },
+    followLabel: {
+        fontSize: 12,
+        color: '#0C0F14',
     },
     bio: {
-        fontSize: 12,
-        color: '#555',
-        textAlign: 'center',
-        marginVertical: 10,
+        fontSize: 11,
+        color: '#7C8089',
+        marginTop: 10,
     },
     galleryContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        padding: 10,
+        paddingHorizontal: 10,
     },
     imageWrapper: {
         width: '48%',
         aspectRatio: 1,
         marginBottom: 10,
+        borderRadius: 10,
     },
     galleryImage: {
         width: '100%',
         height: '100%',
+        resizeMode: 'cover',
         borderRadius: 10,
     },
-    noPostsText: {
-        textAlign: 'center',
+    noImagesContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    noImagesIcon: {
+        width: 50,
+        height: 56,
+        marginBottom: 10,
+    },
+    noImagesText: {
         fontSize: 14,
         color: '#7C8089',
+        textAlign: 'center',
     },
 });
+
+
