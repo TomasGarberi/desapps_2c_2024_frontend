@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../middleware/axios';
 import Header from '../components/Header'; // Importa el Header
 
@@ -33,10 +33,12 @@ export default function NotificationsScreen() {
     }
   };
 
-  // Efecto para obtener los comentarios al entrar en la pantalla
-  useEffect(() => {
-    fetchCommentsCount();
-  }, []);
+  // Refresh automático al enfocar la pantalla
+  useFocusEffect(
+    useCallback(() => {
+      fetchCommentsCount();
+    }, [])
+  );
 
   const renderNotificationItem = ({ item }) => (
     <TouchableOpacity
@@ -62,7 +64,7 @@ export default function NotificationsScreen() {
 
       {/* Lista de notificaciones */}
       <FlatList
-        data={exampleNotifications}
+        data={exampleNotifications} // Notificaciones mockeadas
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderNotificationItem}
         contentContainerStyle={styles.notificationsList}
