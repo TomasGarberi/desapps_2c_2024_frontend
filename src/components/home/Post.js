@@ -5,6 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import CommentsModal from './CommentsModal';
 import ImageCarouselModal from '../ImageCarouselModal';
 import DefaultProfileImage from '../../assets/default-profile.png';
+import { useNavigation } from "@react-navigation/native";
 import axiosAlias from 'axios';
 
 
@@ -16,7 +17,7 @@ export default function Post({ post, onLikeUpdate }) {
   const [isLiked, setIsLiked] = useState(false); // Estado para el corazón
   const [isFavorited, setIsFavorited] = useState(false); // Estado para el favorito
   const [userId, setUserId]= useState('');
-  
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -68,18 +69,22 @@ export default function Post({ post, onLikeUpdate }) {
   return (
     <View style={styles.postContainer}>
       {/* Header del Usuario */}
+        <TouchableOpacity
+        onPress={() => navigation.navigate('OtherUserProfile', { userId: post.userId})}
+        >
       <View style={styles.header}>
-        <View style={styles.profileImageWrapper}>
-          <Image
-            source={profileImage ? { uri: profileImage } : DefaultProfileImage}
-            style={styles.profileImage}
-          />
-        </View>
-        <View style={styles.userInfo}>
-          <Text style={styles.username}>@{username}</Text>
-          <Text style={styles.location}>{post.direc}</Text>
-        </View>
+          <View style={styles.profileImageWrapper}>
+            <Image
+              source={profileImage ? { uri: profileImage } : DefaultProfileImage}
+              style={styles.profileImage}
+            />
+          </View>
+          <View style={styles.userInfo}>
+            <Text style={styles.username}>@{username}</Text>
+            <Text style={styles.location}>{post.direc}</Text>
+          </View>
       </View>
+        </TouchableOpacity>
 
       {/* Imagen de la Publicación */}
       <View style={styles.imageWrapper}>
@@ -184,9 +189,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   descriptionText: {
-    fontSize: 9,
-    color: '#FFFFFF',
+    fontSize: 12,
+    color: '#F0F0F0',
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   postImage: {
     width: 339,

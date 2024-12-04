@@ -94,7 +94,11 @@ export default function CommentsPanel({ postId }) {
                     value={commentText}
                     onChangeText={setCommentText}
                 />
-                <Button title="Enviar" onPress={sendComment} />
+                <Button
+                    title="Enviar"
+                    onPress={sendComment}
+                    disabled={!commentText.trim()} // Deshabilitar si commentText está vacío o tiene solo espacios
+                />
             </View>
         </View>
     );

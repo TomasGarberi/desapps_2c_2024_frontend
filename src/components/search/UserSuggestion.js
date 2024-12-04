@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   followButton: {
     backgroundColor: '#3B3F58',
     paddingVertical: 5,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     borderRadius: 20,
   },
   followButtonText: {
@@ -172,10 +172,11 @@ const styles = StyleSheet.create({
   unfollowButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     paddingVertical: 5,
-    paddingHorizontal: 15,
+    paddingHorizontal: 7,
     borderRadius: 20,
     borderColor: '#4F5269',
     borderWidth: 1,
+    marginRight: 10
   },
   unfollowButtonText: {
     color: '#3B3F58',
