@@ -17,7 +17,7 @@ export default function Ad({ ad = exampleAd }) {
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message: `Visita ${ad.username} en ${ad.websiteUrl}`,
+        message: `Visita ${ad.commerce} en ${ad.Url}`,
         url: ad.websiteUrl,
       });
       console.log(result);
