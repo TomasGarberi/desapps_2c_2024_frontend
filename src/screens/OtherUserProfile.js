@@ -80,14 +80,6 @@ export default function OtherUserProfile() {
                             style={styles.profilePicture}
                         />
                         <Text style={styles.name}>{userData.name} {userData.lastName}</Text>
-                        <TouchableOpacity
-                            style={isFollowing ? styles.unfollowButton : styles.followButton}
-                            onPress={isFollowing ? handleUnfollow : handleFollow}
-                        >
-                            <Text style={isFollowing ? styles.unfollowButtonText : styles.followButtonText}>
-                                {isFollowing ? 'Eliminar' : 'Seguir'}
-                            </Text>
-                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.rightContainer}>
@@ -173,6 +165,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: -50,
         paddingHorizontal: 20,
+        marginBottom: 30
     },
     leftContainer: {
         alignItems: 'center',

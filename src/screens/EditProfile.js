@@ -86,23 +86,21 @@ const EditProfile = () => {
             console.log(images[0]);
             // Agregar imágenes al FormData si están seleccionadas
             if (images[0]) {
-                console.log("ACA ESTA LA IMAGENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
                 console.log(images[0]);
                 formData.append('urlImage', {
                     uri: images[0].uri,
-                    name: images[0].fileName || 'photo.jpg', // Puedes personalizar el nombre
-                    type: images[0].mimeType || 'image/jpeg', // Asegúrate de que tenga un tipo válido
+                    name: images[0].fileName || 'photo.jpg', 
+                    type: images[0].mimeType || 'image/jpeg',
                 });
             }
     
             if (images[1]) {
-                console.log("ACA ESTA LA IMAGENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
                 console.log(images[1]);
 
                 formData.append('backImage', {
                     uri: images[1].uri,
-                    name: images[1].fileName || 'photo.jpg', // Puedes personalizar el nombre
-                    type: images[1].mimeType || 'image/jpeg', // Asegúrate de que tenga un tipo válido
+                    name: images[1].fileName || 'photo.jpg',
+                    type: images[1].mimeType || 'image/jpeg', 
                 });
             }
     
