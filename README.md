@@ -16,6 +16,14 @@ seguidores o amigos.
 - [Adriel Fierro](https://github.com/AdrielFierro)
 - [Kevin Cahuana](https://github.com/KevinCahuana)
 
+## Screenshots
+
+![App Screenshot](https://github.com/TomasGarberi/desapps_2c_2024_frontend/blob/main/src/assets/screenshots/screen-splash.png?raw=true)
+
+![App Screenshot](https://github.com/TomasGarberi/desapps_2c_2024_frontend/blob/main/src/assets/screenshots/screen-home.png?raw=true)
+
+![App Screenshot](https://github.com/TomasGarberi/desapps_2c_2024_frontend/blob/main/src/assets/screenshots/screen-profile.png?raw=true)
+
 ## Appendix
 
 Figma:
