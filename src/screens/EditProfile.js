@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     charLimitText: {
         fontSize: 12,
         color: 'gray',
-        alignSelf: 'flex-end',
+        alignSelf: 'flex-start',
         marginBottom: 10,
     },
     dropdown: {
