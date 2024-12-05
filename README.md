@@ -24,6 +24,55 @@ seguidores o amigos.
 
 ![App Screenshot](https://github.com/TomasGarberi/desapps_2c_2024_frontend/blob/main/src/assets/screenshots/screen-profile.png?raw=true)
 
+## Installation
+
+### Prerrequisitos:
+
+- **Node.js:** Versión 16 o superior
+- **Expo CLI:** Instalado globalmente (`npm install -g expo-cli`)
+- **Android Studio:** Configurado con un emulador que soporte Google Play Services
+- **Expo Go:** Instalado en el dispositivo físico (opcional)
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/TomasGarberi/desapps_2c_2024_frontend
+```
+
+Go to the project directory
+
+```bash
+  cd desapps_2c_2024_frontend
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+To start metro run
+
+```bash
+  npx expo start
+```
+
+To start the application on android run
+
+```bash
+  npx expo run:android
+```
+
+## Deployment
+
+To build a release (.apk):
+
+```bash
+  eas build --platform android
+```
+
 ## Appendix
 
 Figma:
