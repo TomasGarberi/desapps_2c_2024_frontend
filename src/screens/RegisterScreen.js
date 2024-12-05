@@ -87,10 +87,6 @@ export default function RegisterScreen() {
         params: { email: formData.email },
       });
       setLoading(false);
-      Alert.alert(
-        "Validacion de Cuenta",
-        "Se ha enviado un código de autenticacion a tu correo electrónico."
-      );
       
       if (response.status === 200) {
         setIsModalVisible(true); // Mostrar mensaje de éxito

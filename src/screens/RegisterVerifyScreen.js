@@ -49,7 +49,7 @@ export default function RegisterVerifyScreen() {
             const isValid = await verifyTotpCode(email, code);
 
             if (isValid) {
-                Alert.alert("Código Verificado", "El código es correcto.");
+                
                 try {
                     const response = await axios.post("/auth/register", {
                         name: formData.name,
