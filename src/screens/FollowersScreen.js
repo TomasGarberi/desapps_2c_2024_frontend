@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, TextInput, StyleSheet } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, FlatList, TextInput, StyleSheet,TouchableOpacity } from 'react-native';
+import { useFocusEffect,useNavigation } from '@react-navigation/native';
 import axios from '../middleware/axios';
 import UserSuggestion from '../components/search/UserSuggestion';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const FollowersScreen = () => {
   const [followers, setFollowers] = useState([]);
@@ -10,6 +11,7 @@ const FollowersScreen = () => {
   const [loading, setLoading] = useState(true);
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const navigation = useNavigation();
 
   const fetchFollowedUsers = async () => {
     try {
@@ -57,6 +59,9 @@ const FollowersScreen = () => {
 
   return (
     <View style={styles.container}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back-outline" size={24} color="#3B3F58" />
+        </TouchableOpacity>
       <Text style={styles.followedCountText}>Seguidores {followedCount} usuarios</Text>
 
       {/* Buscador */}

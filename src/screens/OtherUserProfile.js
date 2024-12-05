@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import axios from "../middleware/axios";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function OtherUserProfile() {
     const [userData, setUserData] = useState(null);
@@ -69,6 +70,9 @@ export default function OtherUserProfile() {
     return (
         <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="chevron-back-outline" size={24} color="#3B3F58" />
+            </TouchableOpacity>
             {/* Imagen de Portada con Sombra */}
             <View style={styles.coverContainer}>
             <Image
