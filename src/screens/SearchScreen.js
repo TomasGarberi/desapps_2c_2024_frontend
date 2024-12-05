@@ -34,8 +34,13 @@ export default function SearchScreen({ navigation }) {
     } else {
       try {
         const response = await axios.get(`/users/search/${searchQuery}`);
-        const filteredResults = response.data.filter((user) => user.id !== userId);
-        setSearchResults(filteredResults);
+        if (Array.isArray(response.data)) {
+          const filteredResults = response.data.filter((user) => user.id !== userId);
+          setSearchResults(filteredResults);
+        } else {
+          setSearchResults([]); // Si no es un array, no hay resultados
+          setError('No se encontraron usuarios.');
+        }
         setError(null); // Limpiar el error si la búsqueda fue exitosa
       } catch (error) {
         console.error('Error searching users:', error);
@@ -49,9 +54,16 @@ export default function SearchScreen({ navigation }) {
     searchUsers();
   }, [searchQuery]);
 
-  // Refresh automático al enfocar la pantalla
+  // Reset automático al enfocar la pantalla
   useFocusEffect(
     useCallback(() => {
+      // Restablecer los estados al enfocar la pantalla
+      setSearchQuery('');
+      setSuggestedUsers([]);
+      setSearchResults([]);
+      setError(null);
+
+      // Volver a cargar sugerencias de usuarios
       fetchSuggestedUsers();
     }, [])
   );
@@ -135,3 +147,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
