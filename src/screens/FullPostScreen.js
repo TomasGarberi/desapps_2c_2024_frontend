@@ -30,7 +30,7 @@ export default function FullPostScreen({ route, navigation }) {
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <Header></Header>
+            
             {!post ? (<Text> Loading...</Text >) :
                 <View style={styles.content}>
                     {/* Botón para cerrar */}
