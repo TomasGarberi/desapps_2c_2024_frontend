@@ -26,7 +26,7 @@ export default function SplashScreen({ navigation }) {
       }
 
       ExpoSplashScreen.hideAsync();
-    }, 3000)
+    }, 1000)
 
   }, []);
 
