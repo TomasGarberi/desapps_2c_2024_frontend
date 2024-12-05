@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import axios from "../middleware/axios"
@@ -8,6 +8,7 @@ export default function ForgotPasswordStep1() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,9 +29,11 @@ export default function ForgotPasswordStep1() {
 
   const sendPasswordResetEmail = async (email) => {
     try {
+      setLoading(true);
       await axios.post("/pass/request-reset", null, {
         params: { email },
       });
+      setLoading(false);
       Alert.alert(
         "Recuperación de Contraseña",
         "Se ha enviado un código de recuperación a tu correo electrónico."
@@ -99,7 +102,11 @@ export default function ForgotPasswordStep1() {
         style={styles.resetButton}
         onPress={handlePasswordReset}
       >
-        <Text style={styles.resetText}>Recuperar Contraseña</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Text style={styles.resetText}>Recuperar Contraseña</Text>
+        )}
       </TouchableOpacity>
     </LinearGradient>
   );

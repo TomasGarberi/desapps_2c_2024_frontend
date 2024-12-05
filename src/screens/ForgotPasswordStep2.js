@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "../middleware/axios";
@@ -12,6 +12,7 @@ export default function ForgotPasswordStep2() {
   const [showError, setShowError] = useState(false); // Estado para mostrar mensaje de error
   const route = useRoute();
   const email = route.params?.email || ""; // Obtén el email pasado desde ForgotPasswordStep1
+  const [loading, setLoading] =  useState(false);
 
   const handleChange = (text, index) => {
     const newCode = [...code];
@@ -22,9 +23,11 @@ export default function ForgotPasswordStep2() {
   // Función para verificar el TOTP
   const verifyTotpCode = async (email, code) => {
     try {
+      setLoading(true);
       const response = await axios.post("/pass/verify-totp", null, {
         params: { email, totpCode: code.join("") }, // Unimos el código de 4 dígitos en un string
       });
+      setLoading(false);
       return response.data.success;
     } catch (error) {
       console.error("Error al verificar el TOTP:", error);
@@ -114,7 +117,11 @@ export default function ForgotPasswordStep2() {
         onPress={handleValidation}
         disabled={attempts >= 3} // Deshabilitar el botón si ya se alcanzaron los 3 intentos
       >
-        <Text style={styles.validateText}>Validar</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Text style={styles.validateText}>Validar</Text>
+        )}
       </TouchableOpacity>
     </LinearGradient>
   );

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, ActivityIndicator, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import axios from '../middleware/axios'
-import axiosAlias from 'axios';
+import axios from '../middleware/axios';
 
 const EditProfile = () => {
     const navigation = useNavigation();
@@ -18,7 +17,7 @@ const EditProfile = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
-    
+
     const requestPermissions = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
@@ -35,7 +34,7 @@ const EditProfile = () => {
                     const userResponse = await axios.get(`/users/${userId}`);
                     const userData = userResponse.data;
                     setUserData(userData);
-        
+
                     // Inicializar estados aquí
                     setName(userData.name || '');
                     setLastName(userData.lastName || '');
@@ -49,11 +48,10 @@ const EditProfile = () => {
                 console.error("Failed to fetch user data", err);
             }
         };
-        
+
         fetchUserData();
         requestPermissions();
     }, []);
-    
 
     const pickImage = async (index) => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -134,104 +132,92 @@ const EditProfile = () => {
         }
     };
     
-    
-
+  
     return (
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="chevron-back-outline" size={24} color="#3B3F58" />
-                </TouchableOpacity>
-                <Text style={styles.header}>Editar Perfil</Text>
-            </View>
-
-            <View style={styles.imageRowContainer}>
-                {['Elegir imagen de Perfil', 'Elegir imagen de Portada'].map((label, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={styles.imageContainer}
-                        onPress={() => pickImage(index)}
-                    >
-                        {images[index] ? (
-                            <Image source={{ uri: images[index].uri }} style={styles.image} />
-                        ) : (
-                            <View style={styles.placeholder}>
-                                <Text>{label}</Text>
-                            </View>
-                        )}
+        <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+            <View style={styles.container}>
+                <View style={styles.headerContainer}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="chevron-back-outline" size={24} color="#3B3F58" />
                     </TouchableOpacity>
-                ))}
-            </View>
+                    <Text style={styles.header}>Editar Perfil</Text>
+                </View>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Nombre"
-                value={name}
-                onChangeText={setName}
-            />
+                <View style={styles.imageRowContainer}>
+                    {['Elegir imagen de Perfil', 'Elegir imagen de Portada'].map((label, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.imageContainer}
+                            onPress={() => pickImage(index)}
+                        >
+                            {images[index] ? (
+                                <Image source={{ uri: images[index].uri }} style={styles.image} />
+                            ) : (
+                                <View style={styles.placeholder}>
+                                    <Text>{label}</Text>
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                    ))}
+                </View>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Apellido"
-                value={lastName}
-                onChangeText={setLastName}
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nombre"
+                    value={name}
+                    onChangeText={setName}
+                />
 
-            <TextInput
-                style={styles.input}
-                placeholder="Usuario"
-                value={username}
-                onChangeText={setUsername}
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Apellido"
+                    value={lastName}
+                    onChangeText={setLastName}
+                />
 
-            <TextInput
-                style={[styles.input, styles.descriptionInput]}
-                placeholder="Escribe una breve descripción"
-                value={description}
-                onChangeText={setDescription}
-                multiline
-                maxLength={120}
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Usuario"
+                    value={username}
+                    onChangeText={setUsername}
+                />
 
-            <Text style={styles.charLimitText}>Máximo 120 Caracteres</Text>
+                <TextInput
+                    style={[styles.input, styles.descriptionInput]}
+                    placeholder="Escribe una breve descripción"
+                    value={description}
+                    onChangeText={setDescription}
+                    multiline
+                    maxLength={120}
+                />
 
-            <Text style={styles.label}>Género</Text>
-            <View style={styles.dropdown}>
-                {['Masculino', 'Femenino', 'Otrx', 'Prefiero no decir'].map((option) => (
-                    <TouchableOpacity
-                        key={option}
-                        style={[
-                            styles.dropdownOption,
-                            gender === option && styles.selectedOption,
-                        ]}
-                        onPress={() => setGender(option)}
-                    >
-                        <Text style={styles.dropdownOptionText}>{option}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
+                <Text style={styles.charLimitText}>Máximo 120 Caracteres</Text>
 
-            <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
-                {loading ? (
-                <ActivityIndicator size="small" color="#FFFFFF" /> // Muestra un indicador de carga
+                <Text style={styles.label}>Género</Text>
+                <View style={styles.dropdown}>
+                    {['Masculino', 'Femenino', 'Otrx', 'Prefiero no decir'].map((option) => (
+                        <TouchableOpacity
+                            key={option}
+                            style={[
+                                styles.dropdownOption,
+                                gender === option && styles.selectedOption,
+                            ]}
+                            onPress={() => setGender(option)}
+                        >
+                            <Text style={styles.dropdownOptionText}>{option}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
+                    {loading ? (
+                        <ActivityIndicator size="small" color="#FFFFFF" />
                     ) : (
                         <Text style={styles.publishButtonText}>Guardar</Text>
                     )}
-            </TouchableOpacity>
-
-            <Modal
-                transparent
-                visible={showSuccessModal}
-                animationType="fade"
-                onRequestClose={() => setShowSuccessModal(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalText}>¡Perfil actualizado con éxito!</Text>
-                    </View>
-                </View>
-            </Modal>
-        </View>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 };
 
@@ -239,6 +225,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+        backgroundColor: 'white',
+    },
+    scrollContainer: {
+        flex: 1,
         backgroundColor: 'white',
     },
     headerContainer: {

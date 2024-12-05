@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Switch, Modal, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Switch, Modal, Alert, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_300Light } from '@expo-google-fonts/roboto';
 import axios from "../middleware/axios";
+import { ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Para almacenar el token
 
 export default function RegisterScreen() {
@@ -20,6 +21,7 @@ export default function RegisterScreen() {
     password: "",
     role: "USER"
   });
+  const [loading, setLoading] = useState(false);
 
   // Cargar fuentes
   let [fontsLoaded] = useFonts({
@@ -79,11 +81,12 @@ export default function RegisterScreen() {
     }
 
     setErrors({});
-
+    setLoading(true);
     try {
       const response = await axios.post("/pass/verify-email", null, {
         params: { email: formData.email },
       });
+      setLoading(false);
       Alert.alert(
         "Validacion de Cuenta",
         "Se ha enviado un código de autenticacion a tu correo electrónico."
@@ -116,6 +119,10 @@ export default function RegisterScreen() {
       style={styles.background}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
+    >
+      <ScrollView 
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
     >
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Main")}>
         <Image source={require('../assets/back-icon.png')} style={styles.backIcon} />
@@ -164,8 +171,13 @@ export default function RegisterScreen() {
       </View>
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.registerText}>Crear Cuenta</Text>
+      {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Text style={styles.registerText}>Crear Cuenta</Text>
+        )}
       </TouchableOpacity>
+      </ScrollView>
 
       <Modal
         transparent={true}
@@ -188,6 +200,12 @@ export default function RegisterScreen() {
 
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 20, // Para evitar que el botón de registro quede pegado al borde inferior
+  },
   background: {
     flex: 1,
     justifyContent: "center",

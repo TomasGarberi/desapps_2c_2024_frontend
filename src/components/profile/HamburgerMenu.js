@@ -108,7 +108,9 @@ const HamburgerMenu = ({ visible, onClose, onLogout, navigation }) => {
                     end={{ x: 1, y: 1 }}
                 >
                     <Image source={require('../../assets/logo-header.png')} style={styles.logo} />
-                    <Text style={styles.menuItem}>INICIO</Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate('Home'); onClose(); }}>
+                        <Text style={styles.menuItem}>INICIO</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => { navigation.navigate('EditProfile'); onClose(); }}>
                         <Text style={styles.menuItem}>EDITAR PERFIL</Text>
                     </TouchableOpacity>

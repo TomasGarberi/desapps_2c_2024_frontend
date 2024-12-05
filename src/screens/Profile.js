@@ -5,6 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import HamburgerMenu from '../components/profile/HamburgerMenu';
 import axios from "../middleware/axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Header from '../components/Header';
 
 export default function ProfileScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -81,6 +82,7 @@ export default function ProfileScreen() {
 
     return (
         <View style={styles.container}>
+            
             <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.hamburgerButton}>
                 <Ionicons name="menu-outline" size={30} color="#000" />
             </TouchableOpacity>

@@ -4,6 +4,7 @@ import Post from '../components/home/Post';
 import CommentsPanel from '../components/CommentsPanel';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from '../middleware/axios';
+import Header from '../components/Header';
 
 export default function FullPostScreen({ route, navigation }) {
     const { postId } = route.params;
@@ -29,6 +30,7 @@ export default function FullPostScreen({ route, navigation }) {
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <Header></Header>
             {!post ? (<Text> Loading...</Text >) :
                 <View style={styles.content}>
                     {/* Botón para cerrar */}
