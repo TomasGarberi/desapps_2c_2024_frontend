@@ -6,8 +6,6 @@ import CommentsModal from './CommentsModal';
 import ImageCarouselModal from '../ImageCarouselModal';
 import DefaultProfileImage from '../../assets/default-profile.png';
 import { useNavigation } from "@react-navigation/native";
-import axiosAlias from 'axios';
-
 
 export default function Post({ post, onLikeUpdate }) {
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
@@ -16,7 +14,8 @@ export default function Post({ post, onLikeUpdate }) {
   const [profileImage, setProfileImage] = useState('');
   const [isLiked, setIsLiked] = useState(false); // Estado para el corazón
   const [isFavorited, setIsFavorited] = useState(false); // Estado para el favorito
-  const [userId, setUserId]= useState('');
+  const [userId, setUserId] = useState('');
+  const [refreshComments, setRefreshComments] = useState(false); // Nuevo estado
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -25,13 +24,15 @@ export default function Post({ post, onLikeUpdate }) {
         const idResponse = await axios.get('/users/getId');
         const userId = idResponse.data;
         setUserId(userId);
+
         const userResponse = await axios.get(`/users/${post.userId}`);
         setUsername(userResponse.data.username);
         setProfileImage(userResponse.data.urlImage);
-        const favsResponse = await axios.get(`favorites/user/${userId}`)
+
+        const favsResponse = await axios.get(`favorites/user/${userId}`);
         const favPosts = favsResponse.data;
         setIsFavorited(favPosts.some(fav => fav.postId === post.postId));
-        // Comprueba si el usuario actual ha dado like al post
+
         if (post.usersLikes.includes(userId)) {
           setIsLiked(true);
         }
@@ -43,36 +44,38 @@ export default function Post({ post, onLikeUpdate }) {
     fetchUserInfo();
   }, [post.userId, post.usersLikes]);
 
-  
-
   // Función para alternar el estado de "me gusta"
   const toggleLike = async () => {
-    console.log(userId);
-    if(isLiked){
+    if (isLiked) {
       await axios.delete(`/posts/${post.postId}/like?userId=${userId}`);
-    }else{
-      await axios.post(`/posts/${post.postId}/like?userId=${userId}`
-      );
+    } else {
+      await axios.post(`/posts/${post.postId}/like?userId=${userId}`);
     }
     setIsLiked(!isLiked);
     onLikeUpdate();
-  }
+  };
+
   // Función para alternar el estado de "favorito"
   const toggleFavorite = async () => {
-    if (isFavorited){
-      await axios.delete(`/favorites/delete`,{data:{userId: userId, postId: post.postId}});
-    }else{
-      await axios.post(`/favorites/add`,{userId: userId, postId: post.postId});
+    if (isFavorited) {
+      await axios.delete(`/favorites/delete`, { data: { userId: userId, postId: post.postId } });
+    } else {
+      await axios.post(`/favorites/add`, { userId: userId, postId: post.postId });
     }
     setIsFavorited(!isFavorited);
-  }
+  };
+
+  // Manejar la apertura del modal de comentarios
+  const handleOpenCommentsModal = () => {
+    setRefreshComments(prev => !prev); // Cambia el estado para forzar la actualización
+    setCommentModalVisible(true);
+  };
+
   return (
     <View style={styles.postContainer}>
       {/* Header del Usuario */}
-        <TouchableOpacity
-        onPress={() => navigation.navigate('OtherUserProfile', { userId: post.userId})}
-        >
-      <View style={styles.header}>
+      <TouchableOpacity onPress={() => navigation.navigate('OtherUserProfile', { userId: post.userId })}>
+        <View style={styles.header}>
           <View style={styles.profileImageWrapper}>
             <Image
               source={profileImage ? { uri: profileImage } : DefaultProfileImage}
@@ -83,8 +86,8 @@ export default function Post({ post, onLikeUpdate }) {
             <Text style={styles.username}>@{username}</Text>
             <Text style={styles.location}>{post.direc}</Text>
           </View>
-      </View>
-        </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
 
       {/* Imagen de la Publicación */}
       <View style={styles.imageWrapper}>
@@ -104,7 +107,7 @@ export default function Post({ post, onLikeUpdate }) {
                 <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={24} />
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setCommentModalVisible(true)}>
+            <TouchableOpacity onPress={handleOpenCommentsModal}>
               <View style={styles.icons}>
                 <Ionicons name="chatbubble-outline" size={24} />
               </View>
@@ -123,6 +126,7 @@ export default function Post({ post, onLikeUpdate }) {
         isVisible={isCommentModalVisible}
         onClose={() => setCommentModalVisible(false)}
         postId={post.postId}
+        refreshTrigger={refreshComments} // Pasa el estado para actualizar
       />
 
       {/* Modal de Carrusel de Imágenes */}

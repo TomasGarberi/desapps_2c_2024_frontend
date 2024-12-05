@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import axios from '../../middleware/axios';
 
-export default function CommentsModal({ isVisible, onClose, postId }) {
+export default function CommentsModal({ isVisible, onClose, postId, refreshTrigger }) {
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
 
@@ -23,8 +23,8 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
         const parsedComments = await Promise.allSettled(
           res.data.map(async (comment) => {
             const user = await getUser(comment.userId);
-            comment.user = user
-            return comment
+            comment.user = user;
+            return comment;
           })
         );
 
@@ -33,42 +33,50 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
         setComments([]);
       }
     } catch (error) {
-      console.log(error.response.data)
+      console.log(error.response?.data || error.message);
     }
-  }
+  };
 
   const sendComment = async () => {
     try {
-      const res = await axios.post(`/posts/${postId}/comments`, { comment: commentText.trim() });
+      await axios.post(`/posts/${postId}/comments`, { comment: commentText.trim() });
       getComments();
       setCommentText('');
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const getUser = async (id) => {
     try {
       const res = await axios.get(`/users/${id}`);
-      return res.data
+      return res.data;
     } catch (error) {
-      console.log(error.response.data)
+      console.log(error.response?.data || error.message);
     }
-  }
+  };
 
   useEffect(() => {
-    getComments();
-  }, [])
+    if (isVisible) {
+      getComments(); // Carga inicial de comentarios al abrir el modal
+    }
+  }, [isVisible]);
 
-  const renderComment =  ({ item }) => {
+  useEffect(() => {
+    if (refreshTrigger) {
+      getComments(); // Refresca los comentarios al recibir un trigger de refresh
+    }
+  }, [refreshTrigger]);
+
+  const renderComment = ({ item }) => {
     return (
       <View style={styles.commentContainer}>
-        <Text style={styles.username}>@{item.user.username}</Text>
+        <Text style={styles.username}>@{item.user?.username || 'Usuario desconocido'}</Text>
         <Text style={styles.timeAgo}>{item.timeAgo}</Text>
         <Text style={styles.commentText}>{item.comment}</Text>
       </View>
     );
-  }
+  };
 
   return (
     <Modal visible={isVisible} animationType="slide" transparent>
@@ -82,7 +90,6 @@ export default function CommentsModal({ isVisible, onClose, postId }) {
         </View>
 
         {/* Lista de comentarios */}
-
         <FlatList
           data={comments}
           keyExtractor={(item) => item.commentId}
